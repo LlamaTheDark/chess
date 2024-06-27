@@ -1,5 +1,10 @@
 package chess;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
+import chess.ChessGame.TeamColor;
+import chess.ChessPiece.PieceType;
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -7,46 +12,53 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    // TODO: implement chess board as a LinkedHashMap
-    static final ChessPiece[][] defaultBoard = {
-            {new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK)},
-            {new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN)},
-            {null, null, null, null, null, null, null, null},
-            {null, null, null, null, null, null, null, null},
-            {null, null, null, null, null, null, null, null},
-            {null, null, null, null, null, null, null, null},
-            {new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN)},
-            {new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT),
-                    new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK)}
-    };
-    ChessPiece[][] board = new ChessPiece[8][8];
+
+    /**
+     * The length/width of the chess board.
+     */
+    public static final int BOARD_SIZE = 8;
+
+    /**
+     * A HashMap which maps chess positions to chess pieces. "Linked" because it maintains insertion order for easier
+     * printing in case that happens. Although if there's no printing, I may just make it a regular HashMap.
+     */
+    private final HashMap<ChessPosition, ChessPiece> BOARD = new LinkedHashMap<>(BOARD_SIZE * BOARD_SIZE);
+
+    /**
+     * A Hashmap which maps chess positions to chess pieces. This is instantiated with the default staring positions for
+     * a standard game of chess.
+     */
+    private static final HashMap<ChessPosition, ChessPiece> DEFAULT_BOARD = new LinkedHashMap<>(BOARD_SIZE * BOARD_SIZE);
+    static {
+        DEFAULT_BOARD.put(new ChessPosition(1, 1), new ChessPiece(TeamColor.WHITE, PieceType.ROOK));
+        DEFAULT_BOARD.put(new ChessPosition(1, 2), new ChessPiece(TeamColor.WHITE, PieceType.KNIGHT));
+        DEFAULT_BOARD.put(new ChessPosition(1, 3), new ChessPiece(TeamColor.WHITE, PieceType.BISHOP));
+        DEFAULT_BOARD.put(new ChessPosition(1, 4), new ChessPiece(TeamColor.WHITE, PieceType.QUEEN));
+        DEFAULT_BOARD.put(new ChessPosition(1, 5), new ChessPiece(TeamColor.WHITE, PieceType.KING));
+        DEFAULT_BOARD.put(new ChessPosition(1, 6), new ChessPiece(TeamColor.WHITE, PieceType.BISHOP));
+        DEFAULT_BOARD.put(new ChessPosition(1, 7), new ChessPiece(TeamColor.WHITE, PieceType.KNIGHT));
+        DEFAULT_BOARD.put(new ChessPosition(1, 8), new ChessPiece(TeamColor.WHITE, PieceType.ROOK));
+        for(int i = 1; i <= ChessBoard.BOARD_SIZE; i++){
+            DEFAULT_BOARD.put(new ChessPosition(2, i), new ChessPiece(TeamColor.WHITE, PieceType.PAWN));
+        }
+        for(int i = 3; i <= 6; i++){
+            for(int j = 1; j <= ChessBoard.BOARD_SIZE; j++){
+                DEFAULT_BOARD.put(new ChessPosition(i, j), null);
+            }
+        }
+        for(int i = 1; i <= ChessBoard.BOARD_SIZE; i++){
+            DEFAULT_BOARD.put(new ChessPosition(7, i), new ChessPiece(TeamColor.BLACK, PieceType.PAWN));
+        }
+        DEFAULT_BOARD.put(new ChessPosition(8, 1), new ChessPiece(TeamColor.BLACK, PieceType.ROOK));
+        DEFAULT_BOARD.put(new ChessPosition(8, 2), new ChessPiece(TeamColor.BLACK, PieceType.KNIGHT));
+        DEFAULT_BOARD.put(new ChessPosition(8, 3), new ChessPiece(TeamColor.BLACK, PieceType.BISHOP));
+        DEFAULT_BOARD.put(new ChessPosition(8, 4), new ChessPiece(TeamColor.BLACK, PieceType.QUEEN));
+        DEFAULT_BOARD.put(new ChessPosition(8, 5), new ChessPiece(TeamColor.BLACK, PieceType.KING));
+        DEFAULT_BOARD.put(new ChessPosition(8, 6), new ChessPiece(TeamColor.BLACK, PieceType.BISHOP));
+        DEFAULT_BOARD.put(new ChessPosition(8, 7), new ChessPiece(TeamColor.BLACK, PieceType.KNIGHT));
+        DEFAULT_BOARD.put(new ChessPosition(8, 8), new ChessPiece(TeamColor.BLACK, PieceType.ROOK));
+    }
+
 
     public ChessBoard() {
         resetBoard();
@@ -59,7 +71,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()][position.getColumn()] = piece;
+        BOARD.put(position, piece);
     }
 
     /**
@@ -70,7 +82,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()][position.getColumn()];
+        return BOARD.get(position);
     }
 
     /**
@@ -78,8 +90,19 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        for (int i = 0; i < 8; i++) {
-            System.arraycopy(defaultBoard[i], 0, this.board[i], 0, 8);
-        }
+        this.BOARD.putAll(DEFAULT_BOARD);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return BOARD.equals(that.BOARD);
+    }
+
+    @Override
+    public int hashCode() {
+        return BOARD.hashCode();
     }
 }
