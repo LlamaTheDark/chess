@@ -7,6 +7,7 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
+    // TODO: implement chess board as a LinkedHashMap
     static final ChessPiece[][] defaultBoard = {
             {new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK),
                     new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT),
