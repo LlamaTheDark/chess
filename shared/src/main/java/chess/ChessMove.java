@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Objects;
+
 /**
  * Represents moving a chess piece on a chessboard
  * <p>
@@ -7,23 +9,29 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessMove {
+    private final ChessPosition START_POSITION;
+    private final ChessPosition END_POSITION;
+    private final ChessPiece.PieceType PROMOTION_PIECE;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
+        this.START_POSITION = startPosition;
+        this.END_POSITION = endPosition;
+        this.PROMOTION_PIECE = promotionPiece;
     }
 
     /**
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        throw new RuntimeException("Not implemented");
+        return START_POSITION;
     }
 
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-        throw new RuntimeException("Not implemented");
+        return END_POSITION;
     }
 
     /**
@@ -33,6 +41,19 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        throw new RuntimeException("Not implemented");
+        return PROMOTION_PIECE;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessMove chessMove = (ChessMove) o;
+        return Objects.equals(START_POSITION, chessMove.START_POSITION) && Objects.equals(END_POSITION, chessMove.END_POSITION) && PROMOTION_PIECE == chessMove.PROMOTION_PIECE;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(START_POSITION, END_POSITION, PROMOTION_PIECE);
     }
 }
