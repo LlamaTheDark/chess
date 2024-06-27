@@ -1,9 +1,5 @@
 package chess;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
