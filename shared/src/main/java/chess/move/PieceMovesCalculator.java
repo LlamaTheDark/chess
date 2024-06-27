@@ -1,10 +1,11 @@
 package chess.move;
 
 import chess.ChessBoard;
+import chess.ChessMove;
 import chess.ChessPosition;
 
 import java.util.Collection;
 
 public interface PieceMovesCalculator {
-    Collection<ChessPosition> pieceMoves(ChessBoard chessBoard, ChessPosition position);
+    Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position);
 }
