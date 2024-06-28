@@ -2,7 +2,6 @@ package chess.move;
 
 import chess.ChessBoard;
 import chess.ChessMove;
-import chess.ChessPiece;
 import chess.ChessPosition;
 
 import java.util.Collection;
@@ -19,14 +18,17 @@ public interface PieceMovesCalculator {
      * @param validMoves A HashSet which will store the moves which have been validated.
      * @param board The board on which the pieces are arranged.
      * @param startPosition The position the testing will begin.
+     * @param line A boolean value that tells whether to validate in a line in the direction of the given vector (true)
+     *             or only once (false). True by default.
      */
-    static void validateDirection(int[] directionVector, HashSet<ChessMove> validMoves, ChessBoard board, ChessPosition startPosition){
+    static void validateMovesFromVector(int[] directionVector, HashSet<ChessMove> validMoves, ChessBoard board,
+                                        ChessPosition startPosition, boolean line){
         /*
         test each position in position + directionVector until ya hit something.
          */
         int rowOffset = 0, colOffset = 0;
         boolean validMove, stop = false;
-        while(!stop){
+        do{
             rowOffset+=directionVector[0];
             colOffset+=directionVector[1];
             var endPosition = new ChessPosition(startPosition.getRow()+rowOffset,
@@ -47,7 +49,12 @@ public interface PieceMovesCalculator {
             }else validMove = true;
 
             if (validMove) validMoves.add(new ChessMove(startPosition, endPosition));
-        }
+        } while(!stop && line);
     }
+    static void validateMovesFromVector(int[] directionVector, HashSet<ChessMove> validMoves, ChessBoard board,
+                                        ChessPosition startPosition){
+        validateMovesFromVector(directionVector, validMoves, board, startPosition, true);
+    }
+
     Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position);
 }

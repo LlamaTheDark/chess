@@ -12,10 +12,10 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
         var validMoves = new HashSet<ChessMove>();
 
-        PieceMovesCalculator.validateDirection(new int[]{ 1,  1}, validMoves, chessBoard, position);
-        PieceMovesCalculator.validateDirection(new int[]{-1,  1}, validMoves, chessBoard, position);
-        PieceMovesCalculator.validateDirection(new int[]{-1, -1}, validMoves, chessBoard, position);
-        PieceMovesCalculator.validateDirection(new int[]{ 1, -1}, validMoves, chessBoard, position);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{ 1,  1}, validMoves, chessBoard, position);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{-1,  1}, validMoves, chessBoard, position);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{-1, -1}, validMoves, chessBoard, position);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{ 1, -1}, validMoves, chessBoard, position);
 
         return validMoves;
     }
