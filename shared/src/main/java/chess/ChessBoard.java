@@ -73,6 +73,13 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
+        /*
+        Every valid position should exist upon instantiation, so we'll throw an illegal argument exception
+        if we get one that's not already there.
+         */
+        if(!BOARD.containsKey(position)) throw new IllegalArgumentException(
+                String.format("Chess position illegal. Suggested addition:\nRow: %d, Col: %d",
+                        position.getRow(), position.getColumn()));
         BOARD.put(position, piece);
     }
 

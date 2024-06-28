@@ -12,14 +12,14 @@ public class KnightMovesCalculator implements PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
         var validMoves = new HashSet<ChessMove>();
 
-        PieceMovesCalculator.validateMovesFromVector(new int[]{2, 1}, validMoves, chessBoard, position, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{1, 2}, validMoves, chessBoard, position, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-1, 2}, validMoves, chessBoard, position, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-2, 1}, validMoves, chessBoard, position, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-2, -1}, validMoves, chessBoard, position, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-1, -2}, validMoves, chessBoard, position, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{1, -2}, validMoves, chessBoard, position, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{2, -1}, validMoves, chessBoard, position, false);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{2, 1}, validMoves, chessBoard, position, 1);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{1, 2}, validMoves, chessBoard, position, 1);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{-1, 2}, validMoves, chessBoard, position, 1);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{-2, 1}, validMoves, chessBoard, position, 1);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{-2, -1}, validMoves, chessBoard, position, 1);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{-1, -2}, validMoves, chessBoard, position, 1);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{1, -2}, validMoves, chessBoard, position, 1);
+        PieceMovesCalculator.validateMovesFromVector(new int[]{2, -1}, validMoves, chessBoard, position, 1);
 
         return validMoves;
     }

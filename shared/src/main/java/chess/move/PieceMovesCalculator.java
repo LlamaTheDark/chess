@@ -13,20 +13,19 @@ public interface PieceMovesCalculator {
     // maybe turn validateVector into a static function and pass in VALID_MOVES as well?
 
     /**
-     * Loops through each position along the line of the given direction vector from the initalPosition.
+     * Loops through each position along the line of the given direction vector from the initial position.
      * @param directionVector An integer array of size 2: {row offset, column offset}
      * @param validMoves A HashSet which will store the moves which have been validated.
      * @param board The board on which the pieces are arranged.
      * @param startPosition The position the testing will begin.
-     * @param line A boolean value that tells whether to validate in a line in the direction of the given vector (true)
-     *             or only once (false). True by default.
+     * @param maxLineLength The length of the line to be tested for (default BOARD_SIZE)
      */
     static void validateMovesFromVector(int[] directionVector, HashSet<ChessMove> validMoves, ChessBoard board,
-                                        ChessPosition startPosition, boolean line){
+                                        ChessPosition startPosition, int maxLineLength){
         /*
         test each position in position + directionVector until ya hit something.
          */
-        int rowOffset = 0, colOffset = 0;
+        int rowOffset = 0, colOffset = 0, lineLength = 1;
         boolean validMove, stop = false;
         do{
             rowOffset+=directionVector[0];
@@ -49,11 +48,11 @@ public interface PieceMovesCalculator {
             }else validMove = true;
 
             if (validMove) validMoves.add(new ChessMove(startPosition, endPosition));
-        } while(!stop && line);
+        } while(!stop && (lineLength++ < maxLineLength));
     }
     static void validateMovesFromVector(int[] directionVector, HashSet<ChessMove> validMoves, ChessBoard board,
                                         ChessPosition startPosition){
-        validateMovesFromVector(directionVector, validMoves, board, startPosition, true);
+        validateMovesFromVector(directionVector, validMoves, board, startPosition, ChessBoard.BOARD_SIZE-1);
     }
 
     Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position);
