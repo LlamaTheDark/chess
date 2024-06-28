@@ -19,16 +19,15 @@ public class ChessBoard {
     public static final int BOARD_SIZE = 8;
 
     /**
-     * A HashMap which maps chess positions to chess pieces. "Linked" because it maintains insertion order for easier
-     * printing in case that happens. Although if there's no printing, I may just make it a regular HashMap.
+     * A HashMap which maps chess positions to chess pieces.
      */
-    private final HashMap<ChessPosition, ChessPiece> BOARD = new LinkedHashMap<>(BOARD_SIZE * BOARD_SIZE);
+    private final HashMap<ChessPosition, ChessPiece> BOARD = new HashMap<>(BOARD_SIZE * BOARD_SIZE);
 
     /**
      * A Hashmap which maps chess positions to chess pieces. This is instantiated with the default staring positions for
      * a standard game of chess.
      */
-    private static final HashMap<ChessPosition, ChessPiece> DEFAULT_BOARD = new LinkedHashMap<>(BOARD_SIZE * BOARD_SIZE);
+    private static final HashMap<ChessPosition, ChessPiece> DEFAULT_BOARD = new HashMap<>(BOARD_SIZE * BOARD_SIZE);
     static {
         DEFAULT_BOARD.put(new ChessPosition(1, 1), new ChessPiece(TeamColor.WHITE, PieceType.ROOK));
         DEFAULT_BOARD.put(new ChessPosition(1, 2), new ChessPiece(TeamColor.WHITE, PieceType.KNIGHT));
@@ -41,11 +40,11 @@ public class ChessBoard {
         for(int i = 1; i <= ChessBoard.BOARD_SIZE; i++){
             DEFAULT_BOARD.put(new ChessPosition(2, i), new ChessPiece(TeamColor.WHITE, PieceType.PAWN));
         }
-        for(int i = 3; i <= 6; i++){
-            for(int j = 1; j <= ChessBoard.BOARD_SIZE; j++){
-                DEFAULT_BOARD.put(new ChessPosition(i, j), null);
-            }
-        }
+//        for(int i = 3; i <= 6; i++){
+//            for(int j = 1; j <= ChessBoard.BOARD_SIZE; j++){
+//                DEFAULT_BOARD.put(new ChessPosition(i, j), null);
+//            }
+//        }
         for(int i = 1; i <= ChessBoard.BOARD_SIZE; i++){
             DEFAULT_BOARD.put(new ChessPosition(7, i), new ChessPiece(TeamColor.BLACK, PieceType.PAWN));
         }
@@ -61,7 +60,6 @@ public class ChessBoard {
 
 
     public ChessBoard() {
-        resetBoard();
     }
 
     /**
