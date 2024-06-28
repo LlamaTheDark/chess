@@ -21,7 +21,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
         test each position in position + directionVector until ya hit something.
          */
         int rowOffset = 0, colOffset = 0;
-        boolean validMove = true, stop = false;
+        boolean validMove, stop = false;
         while(!stop){
             rowOffset+=directionVector[0];
             colOffset+=directionVector[1];
