@@ -41,21 +41,26 @@ public interface PieceMovesCalculator {
 
             if(board.getPiece(endPosition) != null){
                 // is a valid move if it's not null, but it is an enemy
-                validMove = board.getPiece(endPosition).getTeamColor() != board.getPiece(startPosition).getTeamColor() && canCapture;
+                validMove = board.getPiece(endPosition).getTeamColor() != board.getPiece(startPosition).getTeamColor()
+                        && canCapture;
 
                 // if we hit something that's not null, we'll have to stop whether we add the move or not
                 stop = true;
 
-                // is a valid move if it's null
+            // is a valid move if it's null, unless otherwise specified
             }else validMove = allowNull;
 
-            if(promotionPiece && validMove){
-                validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN));
-                validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.BISHOP));
-                validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.ROOK));
-                validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.KNIGHT));
-            }else{
-                if (validMove) validMoves.add(new ChessMove(startPosition, endPosition));
+            if(validMove){
+                // if the piece is a promotion piece, we need 4 separate moves added.
+                if(promotionPiece){
+                    validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN));
+                    validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.BISHOP));
+                    validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.ROOK));
+                    validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.KNIGHT));
+                // otherwise, just add the one
+                }else{
+                    validMoves.add(new ChessMove(startPosition, endPosition));
+                }
             }
         } while(!stop && (lineLength++ < maxLineLength));
     }
