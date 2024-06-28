@@ -14,12 +14,6 @@ public class ChessPosition {
     private final int COL;
 
     public ChessPosition(int row, int col) {
-        if (row > chess.ChessBoard.BOARD_SIZE || col > chess.ChessBoard.BOARD_SIZE){
-            throw new RuntimeException(String.format("""
-                    Suggested chess position cannot be greater than 8.
-                    Requested position creation: (row) %d, (col) %d
-                    """, row, col));
-        }
         this.ROW = row;
         this.COL = col;
     }
