@@ -2,16 +2,13 @@ package chess.move;
 
 import chess.ChessBoard;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 
 import java.util.Collection;
 import java.util.HashSet;
 
 public interface PieceMovesCalculator {
-    // TODO: rename validateDirection to validateVector and give it another parameter (isLine: boolean)
-    // ^ this should let the same basic function work for everything but the pawn
-    // maybe turn validateVector into a static function and pass in VALID_MOVES as well?
-
     /**
      * Loops through each position along the line of the given direction vector from the initial position.
      * @param directionVector An integer array of size 2: {row offset, column offset}
@@ -19,9 +16,14 @@ public interface PieceMovesCalculator {
      * @param board The board on which the pieces are arranged.
      * @param startPosition The position the testing will begin.
      * @param maxLineLength The length of the line to be tested for (default BOARD_SIZE)
+     * @param canCapture A boolean value. True: allows movement into an enemy space. False: does not allow movement
+     *                   into enemy space. True by default.
+     * @param allowNull A boolean value. True: allows movement into an empty space. False: does not allow movement
+     *                  into an empty space. True by default.
      */
     static void validateMovesFromVector(int[] directionVector, HashSet<ChessMove> validMoves, ChessBoard board,
-                                        ChessPosition startPosition, int maxLineLength){
+                                        ChessPosition startPosition, int maxLineLength, boolean canCapture,
+                                        boolean allowNull, boolean promotionPiece){
         /*
         test each position in position + directionVector until ya hit something.
          */
@@ -39,20 +41,31 @@ public interface PieceMovesCalculator {
 
             if(board.getPiece(endPosition) != null){
                 // is a valid move if it's not null, but it is an enemy
-                validMove = board.getPiece(endPosition).getTeamColor() != board.getPiece(startPosition).getTeamColor();
+                validMove = board.getPiece(endPosition).getTeamColor() != board.getPiece(startPosition).getTeamColor() && canCapture;
 
                 // if we hit something that's not null, we'll have to stop whether we add the move or not
                 stop = true;
 
                 // is a valid move if it's null
-            }else validMove = true;
+            }else validMove = allowNull;
 
-            if (validMove) validMoves.add(new ChessMove(startPosition, endPosition));
+            if(promotionPiece && validMove){
+                validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN));
+                validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.BISHOP));
+                validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.ROOK));
+                validMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.KNIGHT));
+            }else{
+                if (validMove) validMoves.add(new ChessMove(startPosition, endPosition));
+            }
         } while(!stop && (lineLength++ < maxLineLength));
     }
     static void validateMovesFromVector(int[] directionVector, HashSet<ChessMove> validMoves, ChessBoard board,
+                                        ChessPosition startPosition, int maxLineLength){
+        validateMovesFromVector(directionVector, validMoves, board, startPosition, maxLineLength, true, true, false);
+    }
+    static void validateMovesFromVector(int[] directionVector, HashSet<ChessMove> validMoves, ChessBoard board,
                                         ChessPosition startPosition){
-        validateMovesFromVector(directionVector, validMoves, board, startPosition, ChessBoard.BOARD_SIZE-1);
+        validateMovesFromVector(directionVector, validMoves, board, startPosition, ChessBoard.BOARD_SIZE-1, true, true, false);
     }
 
     Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position);
