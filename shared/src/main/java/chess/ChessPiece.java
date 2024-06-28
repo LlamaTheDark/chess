@@ -1,6 +1,9 @@
 package chess;
 
+import chess.move.*;
+
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -10,10 +13,10 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private final ChessPiece.PieceType type;
+    private final PieceType type;
     private final ChessGame.TeamColor pieceColor;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.type = type;
         this.pieceColor = pieceColor;
     }
@@ -48,7 +51,14 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return switch(board.getPiece(myPosition).getPieceType()){
+            case KING -> new KingMovesCalculator().pieceMoves(board, myPosition);
+            case QUEEN -> new QueenMovesCalculator().pieceMoves(board, myPosition);
+            case BISHOP -> new BishopMovesCalculator().pieceMoves(board, myPosition);
+            case KNIGHT -> new KnightMovesCalculator().pieceMoves(board, myPosition);
+            case ROOK -> new RookMovesCalculator().pieceMoves(board, myPosition);
+            case PAWN -> new PawnMovesCalculator().pieceMoves(board, myPosition);
+        };
     }
 
     @Override
