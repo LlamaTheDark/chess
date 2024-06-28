@@ -1,7 +1,6 @@
 package chess;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import chess.ChessGame.TeamColor;
 import chess.ChessPiece.PieceType;
@@ -40,11 +39,11 @@ public class ChessBoard {
         for(int i = 1; i <= ChessBoard.BOARD_SIZE; i++){
             DEFAULT_BOARD.put(new ChessPosition(2, i), new ChessPiece(TeamColor.WHITE, PieceType.PAWN));
         }
-//        for(int i = 3; i <= 6; i++){
-//            for(int j = 1; j <= ChessBoard.BOARD_SIZE; j++){
-//                DEFAULT_BOARD.put(new ChessPosition(i, j), null);
-//            }
-//        }
+        for(int i = 3; i <= 6; i++){
+            for(int j = 1; j <= ChessBoard.BOARD_SIZE; j++){
+                DEFAULT_BOARD.put(new ChessPosition(i, j), null);
+            }
+        }
         for(int i = 1; i <= ChessBoard.BOARD_SIZE; i++){
             DEFAULT_BOARD.put(new ChessPosition(7, i), new ChessPiece(TeamColor.BLACK, PieceType.PAWN));
         }
@@ -60,6 +59,11 @@ public class ChessBoard {
 
 
     public ChessBoard() {
+        for(int row = 1; row <= BOARD_SIZE; row++){
+            for(int col = 1; col <= BOARD_SIZE; col++) {
+                BOARD.put(new ChessPosition(row, col), null);
+            }
+        }
     }
 
     /**
