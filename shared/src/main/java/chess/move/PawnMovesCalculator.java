@@ -14,7 +14,7 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
         var validMoves = new HashSet<ChessMove>();
 
         /*
-        pawnData has 3 parameters: [0] indicates the direction marked as "foward" for the pawn
+        pawnData has 3 parameters: [0] indicates the direction marked as "forward" for the pawn
                                    [1] indicates which row is this pawn's starting row.
                                    [2] indicates the other's side's pawn row (for promotion pieces)
          */
