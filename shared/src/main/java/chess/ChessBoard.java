@@ -12,21 +12,20 @@ import chess.ChessPiece.PieceType;
  */
 public class ChessBoard {
 
-    /**
-     * The length/width of the chess board.
-     */
-    public static final int BOARD_SIZE = 8;
+/*
+########## STATIC ##########
+ */
+    private static final int BOARD_SIZE = 8;
 
     /**
-     * A HashMap which maps chess positions to chess pieces.
-     */
-    private final HashMap<ChessPosition, ChessPiece> BOARD = new HashMap<>(BOARD_SIZE * BOARD_SIZE);
-
-    /**
-     * A Hashmap which maps chess positions to chess pieces. This is instantiated with the default staring positions for
+     * A Hashmap which maps chess positions to chess pieces. This is instantiated with the default starting positions for
      * a standard game of chess.
      */
-    private static final HashMap<ChessPosition, ChessPiece> DEFAULT_BOARD = new HashMap<>(BOARD_SIZE * BOARD_SIZE);
+    private static final HashMap<ChessPosition, ChessPiece> DEFAULT_BOARD = new HashMap<>(getBoardSize() * getBoardSize());
+
+    /*
+    Instantiates the DEFAULT_BOARD map.
+     */
     static {
         DEFAULT_BOARD.put(new ChessPosition(1, 1), new ChessPiece(TeamColor.WHITE, PieceType.ROOK));
         DEFAULT_BOARD.put(new ChessPosition(1, 2), new ChessPiece(TeamColor.WHITE, PieceType.KNIGHT));
@@ -36,15 +35,15 @@ public class ChessBoard {
         DEFAULT_BOARD.put(new ChessPosition(1, 6), new ChessPiece(TeamColor.WHITE, PieceType.BISHOP));
         DEFAULT_BOARD.put(new ChessPosition(1, 7), new ChessPiece(TeamColor.WHITE, PieceType.KNIGHT));
         DEFAULT_BOARD.put(new ChessPosition(1, 8), new ChessPiece(TeamColor.WHITE, PieceType.ROOK));
-        for(int i = 1; i <= ChessBoard.BOARD_SIZE; i++){
+        for(int i = 1; i <= ChessBoard.getBoardSize(); i++){
             DEFAULT_BOARD.put(new ChessPosition(2, i), new ChessPiece(TeamColor.WHITE, PieceType.PAWN));
         }
         for(int i = 3; i <= 6; i++){
-            for(int j = 1; j <= ChessBoard.BOARD_SIZE; j++){
+            for(int j = 1; j <= ChessBoard.getBoardSize(); j++){
                 DEFAULT_BOARD.put(new ChessPosition(i, j), null);
             }
         }
-        for(int i = 1; i <= ChessBoard.BOARD_SIZE; i++){
+        for(int i = 1; i <= ChessBoard.getBoardSize(); i++){
             DEFAULT_BOARD.put(new ChessPosition(7, i), new ChessPiece(TeamColor.BLACK, PieceType.PAWN));
         }
         DEFAULT_BOARD.put(new ChessPosition(8, 1), new ChessPiece(TeamColor.BLACK, PieceType.ROOK));
@@ -57,13 +56,35 @@ public class ChessBoard {
         DEFAULT_BOARD.put(new ChessPosition(8, 8), new ChessPiece(TeamColor.BLACK, PieceType.ROOK));
     }
 
+    /**
+     * The length/width of the chess board.
+     */
+    public static int getBoardSize() {
+        return BOARD_SIZE;
+    }
+
+/*
+########## INSTANCE ##########
+ */
+    /**
+     * A HashMap which maps chess positions to chess pieces.
+     */
+    private final HashMap<ChessPosition, ChessPiece> BOARD = new HashMap<>(getBoardSize() * getBoardSize());
 
     public ChessBoard() {
-        for(int row = 1; row <= BOARD_SIZE; row++){
-            for(int col = 1; col <= BOARD_SIZE; col++) {
+        for(int row = 1; row <= getBoardSize(); row++){
+            for(int col = 1; col <= getBoardSize(); col++) {
                 BOARD.put(new ChessPosition(row, col), null);
             }
         }
+    }
+
+    /**
+     * Sets the board to the default starting board
+     * (How the game of chess normally starts)
+     */
+    public void resetBoard() {
+        this.BOARD.putAll(DEFAULT_BOARD);
     }
 
     /**
@@ -94,14 +115,6 @@ public class ChessBoard {
         return BOARD.get(position);
     }
 
-    /**
-     * Sets the board to the default starting board
-     * (How the game of chess normally starts)
-     */
-    public void resetBoard() {
-        this.BOARD.putAll(DEFAULT_BOARD);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -114,4 +127,5 @@ public class ChessBoard {
     public int hashCode() {
         return BOARD.hashCode();
     }
+
 }

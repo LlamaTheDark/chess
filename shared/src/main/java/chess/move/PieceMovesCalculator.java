@@ -9,6 +9,9 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public interface PieceMovesCalculator {
+/*
+########## STATIC ##########
+ */
     /**
      * Loops through each position along the line of the given direction vector from the initial position and
      * adds valid moves to the move set.
@@ -39,7 +42,7 @@ public interface PieceMovesCalculator {
                     startPosition.getColumn()+colOffset);
 
             // if rows or columns are out of bounds, break the loop
-            if(endPosition.getRow() > ChessBoard.BOARD_SIZE || endPosition.getColumn() > ChessBoard.BOARD_SIZE
+            if(endPosition.getRow() > ChessBoard.getBoardSize() || endPosition.getColumn() > ChessBoard.getBoardSize()
                     || endPosition.getRow() < 1 || endPosition.getColumn() < 1) break;
 
             if(board.getPiece(endPosition) != null){
@@ -74,8 +77,10 @@ public interface PieceMovesCalculator {
     }
     static void validateMovesFromVector(int[] directionVector, HashSet<ChessMove> validMoves, ChessBoard board,
                                         ChessPosition startPosition){
-        validateMovesFromVector(directionVector, validMoves, board, startPosition, ChessBoard.BOARD_SIZE-1, true, true, false);
+        validateMovesFromVector(directionVector, validMoves, board, startPosition, ChessBoard.getBoardSize() -1, true, true, false);
     }
-
+/*
+########## INSTANCE / NEED IMPLEMENTATION ##########
+ */
     Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position);
 }

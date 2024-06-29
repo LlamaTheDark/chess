@@ -10,6 +10,9 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPosition {
+/*
+########## INSTANCE ##########
+ */
     private final int ROW;
     private final int COL;
 

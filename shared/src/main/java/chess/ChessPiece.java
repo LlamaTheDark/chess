@@ -13,14 +13,9 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private final PieceType type;
-    private final ChessGame.TeamColor pieceColor;
-
-    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
-        this.type = type;
-        this.pieceColor = pieceColor;
-    }
-
+/*
+########## STATIC ##########
+ */
     /**
      * The various different chess piece options
      */
@@ -31,6 +26,17 @@ public class ChessPiece {
         KNIGHT,
         ROOK,
         PAWN
+    }
+
+/*
+########## INSTANCE ##########
+ */
+    private final PieceType type;
+    private final ChessGame.TeamColor pieceColor;
+
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
+        this.type = type;
+        this.pieceColor = pieceColor;
     }
 
     /**
