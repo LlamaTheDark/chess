@@ -79,6 +79,23 @@ public interface PieceMovesCalculator {
                                         ChessPosition startPosition){
         validateMovesFromVector(directionVector, validMoves, board, startPosition, ChessBoard.getBoardSize() -1, true, true, false);
     }
+
+    /**
+     *
+     * @param type The type of chess piece to create.
+     * @return An instance of the correct implementing class for the given piece type.
+     */
+    static PieceMovesCalculator createInstance(ChessPiece.PieceType type){
+        return switch(type){
+            case KING -> new KingMovesCalculator();
+            case QUEEN -> new QueenMovesCalculator();
+            case BISHOP -> new BishopMovesCalculator();
+            case KNIGHT -> new KnightMovesCalculator();
+            case ROOK -> new RookMovesCalculator();
+            case PAWN -> new PawnMovesCalculator();
+        };
+    }
+
 /*
 ########## INSTANCE / NEED IMPLEMENTATION ##########
  */
