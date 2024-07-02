@@ -1,7 +1,6 @@
 package chess.move;
 
 import chess.ChessBoard;
-import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 
