@@ -7,19 +7,13 @@ import java.util.Collection;
 import java.util.HashSet;
 
 
-public class QueenMovesCalculator implements PieceMovesCalculator {
+public class QueenMovesCalculator extends PieceMovesCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
         var validMoves = new HashSet<ChessMove>();
 
-        PieceMovesCalculator.validateMovesFromVector(new int[]{0, 1}, validMoves, chessBoard, position);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{1, 0}, validMoves, chessBoard, position);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{0, -1}, validMoves, chessBoard, position);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-1, 0}, validMoves, chessBoard, position);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{ 1,  1}, validMoves, chessBoard, position);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-1,  1}, validMoves, chessBoard, position);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-1, -1}, validMoves, chessBoard, position);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{ 1, -1}, validMoves, chessBoard, position);
+        validMoves.addAll(new RookMovesCalculator().pieceMoves(chessBoard, position));
+        validMoves.addAll(new BishopMovesCalculator().pieceMoves(chessBoard, position));
 
         return validMoves;
     }
