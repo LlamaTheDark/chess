@@ -90,15 +90,15 @@ public class ChessBoard {
     }
 
     /**
-     * Sets the board to the default starting board
-     * (How the game of chess normally starts)
+     * Sets the board to the default starting board.
+     * @see chess.ChessBoard#DEFAULT_BOARD
      */
     public void resetBoard() {
         this.BOARD.putAll(DEFAULT_BOARD);
     }
 
     /**
-     * Adds a chess piece to the chessboard
+     * Adds a {@link ChessPiece} to the chessboard at a given {@link ChessPosition}.
      *
      * @param position where to add the piece to
      * @param piece    the piece to add
