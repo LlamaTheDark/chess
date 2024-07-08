@@ -83,7 +83,7 @@ public class ChessBoard {
     /**
      * Tests to see if a ChessPosition exists in the BOARD HashMap.
      * @param position The position in question.
-     * @return Whether position is in the board. True: yes, position is in the board. False: no, position is not in the board.
+     * @return Whether position is in the board.<br><code>true</code>: yes, position is in the board.<br><code>false</code>: no, position is not in the board.
      */
     public boolean hasPosition(ChessPosition position) {
         return BOARD.containsKey(position);
