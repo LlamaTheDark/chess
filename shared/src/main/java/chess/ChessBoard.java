@@ -1,6 +1,10 @@
 package chess;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import chess.ChessGame.TeamColor;
 import chess.ChessPiece.PieceType;
@@ -22,7 +26,7 @@ public class ChessBoard {
      * A Hashmap which maps chess positions to chess pieces. This is instantiated with the default starting positions for
      * a standard game of chess.
      */
-    private static final HashMap<ChessPosition, ChessPiece> DEFAULT_BOARD = new HashMap<>(getBoardSize() * getBoardSize());
+    private static final LinkedHashMap<ChessPosition, ChessPiece> DEFAULT_BOARD = new LinkedHashMap<>(getBoardSize() * getBoardSize());
 
     /*
     Instantiates the DEFAULT_BOARD map.
@@ -70,7 +74,7 @@ public class ChessBoard {
     /**
      * A HashMap which maps chess positions to chess pieces.
      */
-    private final HashMap<ChessPosition, ChessPiece> BOARD = new HashMap<>(getBoardSize() * getBoardSize());
+    private final LinkedHashMap<ChessPosition, ChessPiece> BOARD = new LinkedHashMap<>(getBoardSize() * getBoardSize());
 
     public ChessBoard() {
         for(int row = 1; row <= getBoardSize(); row++){
