@@ -1,13 +1,8 @@
 package chess;
 
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
-
-/*
-TODO: outline pre- and post-conditions for relevant functions
- */
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -17,14 +12,14 @@ TODO: outline pre- and post-conditions for relevant functions
  */
 public class ChessGame {
 
-    private class GameState {
+    private static class GameState {
         TeamColor teamTurn = TeamColor.WHITE;
         ChessBoard board;
 
-        EnumMap<TeamColor, Boolean> isChecked = new EnumMap<>(TeamColor.class);
+        HashMap<TeamColor, ChessPosition> kingLocation = new HashMap<>(2);
         {
-            isChecked.put(TeamColor.BLACK, false);
-            isChecked.put(TeamColor.WHITE, false);
+            kingLocation.put(TeamColor.WHITE, new ChessPosition(1, 5));
+            kingLocation.put(TeamColor.BLACK, new ChessPosition(8, 5));
         }
 
         public GameState(ChessBoard board) {
@@ -32,23 +27,23 @@ public class ChessGame {
         }
     }
 
-    ChessGame.GameState state;
+    private final ChessGame.GameState STATE;
 
     public ChessGame() {
-        state = new GameState(new ChessBoard());
+        STATE = new GameState(new ChessBoard());
     }
 
     /**
      * @return Which team's turn it is
      */
-    public TeamColor getTeamTurn() { return state.teamTurn; }
+    public TeamColor getTeamTurn() { return STATE.teamTurn; }
 
     /**
      * Set's which teams turn it is
      *
      * @param team the team whose turn it is
      */
-    public void setTeamTurn(TeamColor team) { state.teamTurn = team; }
+    public void setTeamTurn(TeamColor team) { STATE.teamTurn = team; }
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -76,8 +71,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         var validMoves = new HashSet<ChessMove>();
-        var moves = state.board.getPiece(startPosition).pieceMoves(state.board, startPosition);
-
+        var moves = STATE.board.getPiece(startPosition).pieceMoves(STATE.board, startPosition);
 
         /*
         The following verifications are inherited from pieceMoves():
@@ -92,13 +86,38 @@ public class ChessGame {
                 add move to validMoves
 
         seems like a huge hassle of a way to do it, maybe there's a better way
+        here's another approach:
+        for each move in moves:
+            make the move in the current game
+            are we not in check?
+                add to the validMoves list
+            *reverse the move lol*
          */
+
+        for(var move : moves) {
+            var oldEndPiece = STATE.board.getPiece(move.getEndPosition());
+            var startPiece = STATE.board.getPiece(move.getStartPosition());
+
+            var isKing = startPiece.getPieceType() == ChessPiece.PieceType.KING;
+
+            // make the move
+            STATE.board.addPiece(move.getEndPosition(), startPiece);
+            STATE.board.addPiece(move.getStartPosition(), null);
+            if(isKing) STATE.kingLocation.put(startPiece.getTeamColor(), move.getEndPosition());
+
+            if(!isInCheck(startPiece.getTeamColor())) validMoves.add(move);
+
+            // reverse the move
+            STATE.board.addPiece(move.getStartPosition(), STATE.board.getPiece(move.getEndPosition()));
+            STATE.board.addPiece(move.getEndPosition(), oldEndPiece);
+            if(isKing) STATE.kingLocation.put(startPiece.getTeamColor(), move.getStartPosition());
+        }
 
         return validMoves;
     }
 
     /**
-     * Makes a move in a chess game
+     * Makes a move in a chess game.
      *
      * @param move chess move to preform
      * @throws InvalidMoveException if move is invalid
@@ -123,11 +142,14 @@ public class ChessGame {
         board.addPiece(move.start, null)
          */
         var validMoves = validMoves(move.getStartPosition());
-        if(!(state.board.getPiece(move.getStartPosition()).getTeamColor() == state.teamTurn)
+        var piece = STATE.board.getPiece(move.getStartPosition());
+        if(!(piece.getTeamColor() == STATE.teamTurn)
             || (validMoves != null && !validMoves.contains(move))) throw new InvalidMoveException();
 
-        state.board.addPiece(move.getEndPosition(), state.board.getPiece(move.getStartPosition()));
-        state.board.addPiece(move.getStartPosition(), null);
+        STATE.board.addPiece(move.getEndPosition(), piece);
+        STATE.board.addPiece(move.getStartPosition(), null);
+
+        if(piece.getPieceType() == ChessPiece.PieceType.KING) STATE.kingLocation.put(STATE.teamTurn, move.getEndPosition());
     }
 
     /**
@@ -139,12 +161,23 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         /*
         for each position in the chess board:
-            get the possible positions
+            get the possible moves
             if the opposing king is in the set of those moves:
                 that king is in check
 
          */
+        var positions = STATE.board.positionIterator();
+        while(positions.hasNext()) {
+            var position = positions.next();
+            var piece = STATE.board.getPiece(position);
+            if(piece == null) continue;
+            if(piece.getTeamColor() == teamColor) continue;
 
+            var possibleMoves = piece.pieceMoves(STATE.board, position);
+            for(var move : possibleMoves) {
+                if (move.getEndPosition().equals(STATE.kingLocation.get(teamColor))) return true;
+            }
+        }
         return false;
     }
 
@@ -186,8 +219,15 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        state.board = board;
+        STATE.board = board;
+        var positions = STATE.board.positionIterator();
+        while(positions.hasNext()) {
+            var position = positions.next();
+            var piece = STATE.board.getPiece(position);
+            if(piece == null) continue;
 
+            if(piece.getPieceType() == ChessPiece.PieceType.KING) STATE.kingLocation.put(piece.getTeamColor(), position);
+        }
     }
 
     /**
@@ -195,5 +235,5 @@ public class ChessGame {
      *
      * @return the chessboard
      */
-    public ChessBoard getBoard() { return state.board; }
+    public ChessBoard getBoard() { return STATE.board; }
 }

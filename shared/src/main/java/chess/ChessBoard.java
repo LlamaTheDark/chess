@@ -1,10 +1,7 @@
 package chess;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.Consumer;
 
 import chess.ChessGame.TeamColor;
 import chess.ChessPiece.PieceType;
@@ -74,14 +71,17 @@ public class ChessBoard {
     /**
      * A HashMap which maps chess positions to chess pieces.
      */
-    private final LinkedHashMap<ChessPosition, ChessPiece> BOARD = new LinkedHashMap<>(getBoardSize() * getBoardSize());
+    private LinkedHashMap<ChessPosition, ChessPiece> board = new LinkedHashMap<>(getBoardSize() * getBoardSize());
 
     public ChessBoard() {
         for(int row = 1; row <= getBoardSize(); row++){
             for(int col = 1; col <= getBoardSize(); col++) {
-                BOARD.put(new ChessPosition(row, col), null);
+                board.put(new ChessPosition(row, col), null);
             }
         }
+    }
+    public ChessBoard(ChessBoard toCopy){
+        this.board.putAll(toCopy.board);
     }
 
     /**
@@ -90,7 +90,7 @@ public class ChessBoard {
      * @return Whether position is in the board.<br><code>true</code>: yes, position is in the board.<br><code>false</code>: no, position is not in the board.
      */
     public boolean hasPosition(ChessPosition position) {
-        return BOARD.containsKey(position);
+        return board.containsKey(position);
     }
 
     /**
@@ -98,7 +98,7 @@ public class ChessBoard {
      * @see chess.ChessBoard#DEFAULT_BOARD
      */
     public void resetBoard() {
-        this.BOARD.putAll(DEFAULT_BOARD);
+        this.board.putAll(DEFAULT_BOARD);
     }
 
     /**
@@ -112,10 +112,10 @@ public class ChessBoard {
         Every valid position should exist upon instantiation, so we'll throw an illegal argument exception
         if we get one that's not already there.
          */
-        if(!BOARD.containsKey(position)) throw new IllegalArgumentException(
+        if(!board.containsKey(position)) throw new IllegalArgumentException(
                 String.format("Chess position illegal. Suggested addition:\nRow: %d, Col: %d",
                         position.getRow(), position.getColumn()));
-        BOARD.put(position, piece);
+        board.put(position, piece);
     }
 
     /**
@@ -126,7 +126,11 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return BOARD.get(position);
+        return board.get(position);
+    }
+
+    public Iterator<ChessPosition> positionIterator(){
+        return board.keySet().iterator();
     }
 
     @Override
@@ -134,12 +138,22 @@ public class ChessBoard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
-        return BOARD.equals(that.BOARD);
+        return board.equals(that.board);
     }
 
     @Override
     public int hashCode() {
-        return BOARD.hashCode();
+        return board.hashCode();
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (ChessPosition inst : board.keySet()) {
+            sb.append(String.format("r:%s,c:%s => %s\n", inst.getRow(), inst.getColumn(),
+                    board.get(inst) == null ? "null" : board.get(inst).getPieceType()));
+        }
+
+        return sb.toString();
+    }
 }
