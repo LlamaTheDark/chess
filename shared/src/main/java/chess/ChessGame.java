@@ -20,8 +20,8 @@ public class ChessGame {
 
         HashMap<TeamColor, ChessPosition> kingLocation = new HashMap<>(2);
         {
-            kingLocation.put(TeamColor.WHITE, new ChessPosition(1, 5));
-            kingLocation.put(TeamColor.BLACK, new ChessPosition(8, 5));
+            kingLocation.put(TeamColor.WHITE, null);
+            kingLocation.put(TeamColor.BLACK, null);
         }
 
         private enum GameEndState {
@@ -33,6 +33,8 @@ public class ChessGame {
         public GameState(ChessBoard board) {
             this.endState = GameEndState.NONE;
             this.board = board;
+            this.board.resetBoard();
+            this.refreshKingPositions();
         }
 
         /**
@@ -64,7 +66,19 @@ public class ChessGame {
             else if(moves && !isInCheck) endState = GameEndState.STALEMATE;
             else endState = GameEndState.NONE;
         }
+        public void refreshKingPositions(){
+            kingLocation.put(TeamColor.BLACK, null);
+            kingLocation.put(TeamColor.WHITE, null);
 
+            var positions = this.board.positionIterator();
+            while(positions.hasNext()) {
+                var position = positions.next();
+                var piece = this.board.getPiece(position);
+                if(piece == null) continue;
+
+                if(piece.getPieceType() == ChessPiece.PieceType.KING) this.kingLocation.put(piece.getTeamColor(), position);
+            }
+        }
     }
 
     private final ChessGame.GameState STATE;
@@ -110,6 +124,8 @@ public class ChessGame {
      * at <code>startPosition</code>
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        if (STATE.board.getPiece(startPosition) == null) return null;
+
         var validMoves = new HashSet<ChessMove>();
         var moves = STATE.board.getPiece(startPosition).pieceMoves(STATE.board, startPosition);
 
@@ -141,14 +157,19 @@ public class ChessGame {
             var isKing = startPiece.getPieceType() == ChessPiece.PieceType.KING;
 
             // make the move
-            STATE.board.addPiece(move.getEndPosition(), startPiece);
+            STATE.board.addPiece(
+                    move.getEndPosition(),
+                    move.getPromotionPiece() != null
+                            ? new ChessPiece(STATE.teamTurn, move.getPromotionPiece())
+                            : startPiece
+            );
             STATE.board.addPiece(move.getStartPosition(), null);
             if(isKing) STATE.kingLocation.put(startPiece.getTeamColor(), move.getEndPosition());
 
             if(!isInCheck(startPiece.getTeamColor())) validMoves.add(move);
 
             // reverse the move
-            STATE.board.addPiece(move.getStartPosition(), STATE.board.getPiece(move.getEndPosition()));
+            STATE.board.addPiece(move.getStartPosition(), startPiece);
             STATE.board.addPiece(move.getEndPosition(), oldEndPiece);
             if(isKing) STATE.kingLocation.put(startPiece.getTeamColor(), move.getStartPosition());
         }
@@ -182,14 +203,25 @@ public class ChessGame {
         board.addPiece(move.start, null)
          */
         var validMoves = validMoves(move.getStartPosition());
-        var piece = STATE.board.getPiece(move.getStartPosition());
-        if(!(piece.getTeamColor() == STATE.teamTurn)
-            || (validMoves != null && !validMoves.contains(move))) throw new InvalidMoveException();
+        if(validMoves == null) throw new InvalidMoveException();
 
-        STATE.board.addPiece(move.getEndPosition(), piece);
+        var piece = STATE.board.getPiece(move.getStartPosition());
+
+        if(!(piece.getTeamColor() == STATE.teamTurn)
+            || !validMoves.contains(move)) throw new InvalidMoveException();
+
+        STATE.board.addPiece(
+                move.getEndPosition(),
+                move.getPromotionPiece() != null
+                        ? new ChessPiece(STATE.teamTurn, move.getPromotionPiece())
+                        : piece
+        );
         STATE.board.addPiece(move.getStartPosition(), null);
 
         if(piece.getPieceType() == ChessPiece.PieceType.KING) STATE.kingLocation.put(STATE.teamTurn, move.getEndPosition());
+
+        // Switch turns
+        this.setTeamTurn(STATE.teamTurn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
     }
 
     /**
@@ -262,15 +294,7 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         STATE.board = board;
-        var positions = STATE.board.positionIterator();
-        while(positions.hasNext()) {
-            var position = positions.next();
-            var piece = STATE.board.getPiece(position);
-            if(piece == null) continue;
-
-            if(piece.getPieceType() == ChessPiece.PieceType.KING) STATE.kingLocation.put(piece.getTeamColor(), position);
-        }
-
+        STATE.refreshKingPositions();
         STATE.endState = GameState.GameEndState.NONE;
     }
 
