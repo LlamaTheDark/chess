@@ -10,11 +10,11 @@ import java.util.HashSet;
 public class QueenMovesCalculator extends PieceMovesCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
-        var validMoves = new HashSet<ChessMove>();
+        var possibleMoves = new HashSet<ChessMove>();
 
-        validMoves.addAll(new RookMovesCalculator().pieceMoves(chessBoard, position));
-        validMoves.addAll(new BishopMovesCalculator().pieceMoves(chessBoard, position));
+        possibleMoves.addAll(new RookMovesCalculator().pieceMoves(chessBoard, position));
+        possibleMoves.addAll(new BishopMovesCalculator().pieceMoves(chessBoard, position));
 
-        return validMoves;
+        return possibleMoves;
     }
 }

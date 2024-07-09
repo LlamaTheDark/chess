@@ -10,14 +10,13 @@ import java.util.HashSet;
 public class RookMovesCalculator extends PieceMovesCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
-        //TODO: include castling
-        var validMoves = new HashSet<ChessMove>();
+        var possibleMoves = new HashSet<ChessMove>();
 
-        PieceMovesCalculator.validateMovesFromVector(new int[]{0, 1}, validMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{1, 0}, validMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{0, -1}, validMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-1, 0}, validMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{0, 1}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{1, 0}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{0, -1}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{-1, 0}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
 
-        return validMoves;
+        return possibleMoves;
     }
 }

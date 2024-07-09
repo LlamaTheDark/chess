@@ -10,13 +10,13 @@ import java.util.HashSet;
 public class BishopMovesCalculator extends PieceMovesCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
-        var validMoves = new HashSet<ChessMove>();
+        var possibleMoves = new HashSet<ChessMove>();
 
-        PieceMovesCalculator.validateMovesFromVector(new int[]{ 1,  1}, validMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-1,  1}, validMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-1, -1}, validMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{ 1, -1}, validMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{ 1,  1}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{-1,  1}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{-1, -1}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{ 1, -1}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
 
-        return validMoves;
+        return possibleMoves;
     }
 }

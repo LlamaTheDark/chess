@@ -10,7 +10,7 @@ import java.util.HashSet;
 public class PawnMovesCalculator extends PieceMovesCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
-        var validMoves = new HashSet<ChessMove>();
+        var possibleMoves = new HashSet<ChessMove>();
 
         /*
         pawnData has 3 parameters: [0] indicates the direction marked as "forward" for the pawn
@@ -34,12 +34,12 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
         }
 
         // move forward
-        PieceMovesCalculator.validateMovesFromVector(new int[]{pawnData[0], 0}, validMoves, chessBoard, position, maxForwardLength, false, true, promotionPiece);
+        PieceMovesCalculator.addPossibleMoves(new int[]{pawnData[0], 0}, possibleMoves, chessBoard, position, maxForwardLength, false, true, promotionPiece);
 
         // capture diagonally
-        PieceMovesCalculator.validateMovesFromVector(new int[]{pawnData[0], 1}, validMoves, chessBoard, position, 1, true, false, promotionPiece);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{pawnData[0], -1}, validMoves, chessBoard, position, 1, true, false, promotionPiece);
+        PieceMovesCalculator.addPossibleMoves(new int[]{pawnData[0], 1}, possibleMoves, chessBoard, position, 1, true, false, promotionPiece);
+        PieceMovesCalculator.addPossibleMoves(new int[]{pawnData[0], -1}, possibleMoves, chessBoard, position, 1, true, false, promotionPiece);
 
-        return validMoves;
+        return possibleMoves;
     }
 }

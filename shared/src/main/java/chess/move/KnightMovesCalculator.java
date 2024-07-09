@@ -10,17 +10,17 @@ import java.util.HashSet;
 public class KnightMovesCalculator extends PieceMovesCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
-        var validMoves = new HashSet<ChessMove>();
+        var possibleMoves = new HashSet<ChessMove>();
 
-        PieceMovesCalculator.validateMovesFromVector(new int[]{2, 1}, validMoves, chessBoard, position, 1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{1, 2}, validMoves, chessBoard, position, 1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-1, 2}, validMoves, chessBoard, position, 1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-2, 1}, validMoves, chessBoard, position, 1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-2, -1}, validMoves, chessBoard, position, 1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{-1, -2}, validMoves, chessBoard, position, 1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{1, -2}, validMoves, chessBoard, position, 1, true, true, false);
-        PieceMovesCalculator.validateMovesFromVector(new int[]{2, -1}, validMoves, chessBoard, position, 1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{2, 1}, possibleMoves, chessBoard, position, 1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{1, 2}, possibleMoves, chessBoard, position, 1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{-1, 2}, possibleMoves, chessBoard, position, 1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{-2, 1}, possibleMoves, chessBoard, position, 1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{-2, -1}, possibleMoves, chessBoard, position, 1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{-1, -2}, possibleMoves, chessBoard, position, 1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{1, -2}, possibleMoves, chessBoard, position, 1, true, true, false);
+        PieceMovesCalculator.addPossibleMoves(new int[]{2, -1}, possibleMoves, chessBoard, position, 1, true, true, false);
 
-        return validMoves;
+        return possibleMoves;
     }
 }
