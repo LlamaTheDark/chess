@@ -12,9 +12,11 @@ import java.util.HashSet;
  */
 public class ChessGame {
 
-    private static class GameState {
+    private class GameState {
         TeamColor teamTurn = TeamColor.WHITE;
         ChessBoard board;
+        TeamColor endStateLoser;
+        GameEndState endState;
 
         HashMap<TeamColor, ChessPosition> kingLocation = new HashMap<>(2);
         {
@@ -22,9 +24,47 @@ public class ChessGame {
             kingLocation.put(TeamColor.BLACK, new ChessPosition(8, 5));
         }
 
+        private enum GameEndState {
+            NONE,
+            CHECKMATE,
+            STALEMATE
+        }
+
         public GameState(ChessBoard board) {
+            this.endState = GameEndState.NONE;
             this.board = board;
         }
+
+        /**
+         * Determines whether any pieces on a team can make moves and returns the respective boolean.
+         * @param teamColor The team to search for moves from.
+         * @return Whether this team can make any valid moves.
+         */
+        private boolean moves(TeamColor teamColor){
+            var positions = STATE.board.positionIterator();
+            while(positions.hasNext()) {
+                var position = positions.next();
+                var piece = STATE.board.getPiece(position);
+                if(piece == null) continue;
+                if(piece.getTeamColor() == teamColor) continue;
+
+                if(!validMoves(position).isEmpty()) return true;
+            }
+            return false;
+        }
+        public void refreshGameEndState(TeamColor teamColor){
+            if(endState == GameEndState.NONE) return;
+
+            boolean moves = moves(teamColor), isInCheck = isInCheck(teamColor);
+
+            if(!moves && isInCheck) {
+                endState = GameEndState.CHECKMATE;
+                endStateLoser = teamColor;
+            }
+            else if(moves && !isInCheck) endState = GameEndState.STALEMATE;
+            else endState = GameEndState.NONE;
+        }
+
     }
 
     private final ChessGame.GameState STATE;
@@ -199,7 +239,8 @@ public class ChessGame {
                 return false
         return true
          */
-        return false;
+        STATE.refreshGameEndState(teamColor);
+        return STATE.endState == GameState.GameEndState.CHECKMATE;
     }
 
     /**
@@ -210,7 +251,8 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        STATE.refreshGameEndState(teamColor);
+        return STATE.endState == GameState.GameEndState.STALEMATE;
     }
 
     /**
@@ -228,6 +270,8 @@ public class ChessGame {
 
             if(piece.getPieceType() == ChessPiece.PieceType.KING) STATE.kingLocation.put(piece.getTeamColor(), position);
         }
+
+        STATE.endState = GameState.GameEndState.NONE;
     }
 
     /**
