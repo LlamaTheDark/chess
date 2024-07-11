@@ -34,11 +34,11 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
         }
 
         // move forward
-        PieceMovesCalculator.addPossibleMoves(new int[]{pawnData[0], 0}, possibleMoves, chessBoard, position, maxForwardLength, false, true, promotionPiece);
+        PieceMovesCalculator.addAttackRange(new int[]{pawnData[0], 0}, possibleMoves, chessBoard, position, maxForwardLength, false, true, promotionPiece);
 
         // capture diagonally
-        PieceMovesCalculator.addPossibleMoves(new int[]{pawnData[0], 1}, possibleMoves, chessBoard, position, 1, true, false, promotionPiece);
-        PieceMovesCalculator.addPossibleMoves(new int[]{pawnData[0], -1}, possibleMoves, chessBoard, position, 1, true, false, promotionPiece);
+        PieceMovesCalculator.addAttackRange(new int[]{pawnData[0], 1}, possibleMoves, chessBoard, position, 1, true, false, promotionPiece);
+        PieceMovesCalculator.addAttackRange(new int[]{pawnData[0], -1}, possibleMoves, chessBoard, position, 1, true, false, promotionPiece);
 
         return possibleMoves;
     }

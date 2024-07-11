@@ -11,14 +11,14 @@ public class KingMovesCalculator extends PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
         var possibleMoves = new HashSet<ChessMove>();
 
-        PieceMovesCalculator.addPossibleMoves(new int[]{0, 1}, possibleMoves, chessBoard, position, 1,true, true, false);
-        PieceMovesCalculator.addPossibleMoves(new int[]{1, 0}, possibleMoves, chessBoard, position, 1,true, true, false);
-        PieceMovesCalculator.addPossibleMoves(new int[]{0, -1}, possibleMoves, chessBoard, position, 1,true, true, false);
-        PieceMovesCalculator.addPossibleMoves(new int[]{-1, 0}, possibleMoves, chessBoard, position, 1,true, true, false);
-        PieceMovesCalculator.addPossibleMoves(new int[]{ 1,  1}, possibleMoves, chessBoard, position, 1,true, true, false);
-        PieceMovesCalculator.addPossibleMoves(new int[]{-1,  1}, possibleMoves, chessBoard, position, 1,true, true, false);
-        PieceMovesCalculator.addPossibleMoves(new int[]{-1, -1}, possibleMoves, chessBoard, position, 1,true, true, false);
-        PieceMovesCalculator.addPossibleMoves(new int[]{ 1, -1}, possibleMoves, chessBoard, position, 1,true, true, false);
+        PieceMovesCalculator.addAttackRange(new int[]{0, 1}, possibleMoves, chessBoard, position, 1,true, true, false);
+        PieceMovesCalculator.addAttackRange(new int[]{1, 0}, possibleMoves, chessBoard, position, 1,true, true, false);
+        PieceMovesCalculator.addAttackRange(new int[]{0, -1}, possibleMoves, chessBoard, position, 1,true, true, false);
+        PieceMovesCalculator.addAttackRange(new int[]{-1, 0}, possibleMoves, chessBoard, position, 1,true, true, false);
+        PieceMovesCalculator.addAttackRange(new int[]{ 1,  1}, possibleMoves, chessBoard, position, 1,true, true, false);
+        PieceMovesCalculator.addAttackRange(new int[]{-1,  1}, possibleMoves, chessBoard, position, 1,true, true, false);
+        PieceMovesCalculator.addAttackRange(new int[]{-1, -1}, possibleMoves, chessBoard, position, 1,true, true, false);
+        PieceMovesCalculator.addAttackRange(new int[]{ 1, -1}, possibleMoves, chessBoard, position, 1,true, true, false);
 
         return possibleMoves;
     }

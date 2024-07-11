@@ -42,9 +42,9 @@ public abstract class PieceMovesCalculator {
      * @param promotion A boolean value. True: if this is a valid move, this move will promote the piece in
      *                       question. False: This move cannot promote a piece.
      */
-    protected static void addPossibleMoves(int[] vec, HashSet<ChessMove> possibleMoves, ChessBoard board,
-                                           ChessPosition start, int maxLength, boolean capture,
-                                           boolean empty, boolean promotion){
+    protected static void addAttackRange(int[] vec, HashSet<ChessMove> possibleMoves, ChessBoard board,
+                                         ChessPosition start, int maxLength, boolean capture,
+                                         boolean empty, boolean promotion){
         int[] offset = new int[]{0, 0};
         int length = 1;
 
