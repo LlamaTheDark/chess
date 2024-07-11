@@ -95,7 +95,7 @@ public class ChessBoard {
 
     /**
      * Sets the board to the default starting board.
-     * @see chess.ChessBoard#DEFAULT_BOARD
+     * @see ChessBoard#DEFAULT_BOARD
      */
     public void resetBoard() {
         this.board.putAll(DEFAULT_BOARD);
@@ -149,10 +149,29 @@ public class ChessBoard {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (ChessPosition inst : board.keySet()) {
-            sb.append(String.format("r:%s,c:%s => %s\n", inst.getRow(), inst.getColumn(),
-                    board.get(inst) == null ? "null" : board.get(inst).getPieceType()));
+        for(int row = BOARD_SIZE; row >= 1; row--){
+            sb.append("\n|");
+            for(int col = 1; col <= BOARD_SIZE; col++){
+                var piece = board.get(new ChessPosition(row, col));
+                if(piece == null){
+                    sb.append(" ");
+                }else {
+                    sb.append(switch (piece.getPieceType()) {
+                        case KING -> piece.getTeamColor() == TeamColor.WHITE ? "K" : "k";
+                        case QUEEN -> piece.getTeamColor() == TeamColor.WHITE ? "Q" : "q";
+                        case BISHOP -> piece.getTeamColor() == TeamColor.WHITE ? "B" : "b";
+                        case KNIGHT -> piece.getTeamColor() == TeamColor.WHITE ? "N" : "n";
+                        case ROOK -> piece.getTeamColor() == TeamColor.WHITE ? "R" : "r";
+                        case PAWN -> piece.getTeamColor() == TeamColor.WHITE ? "P" : "p";
+                    });
+                }
+                sb.append("|");
+            }
         }
+//        for (ChessPosition inst : board.keySet()) {
+//            sb.append(String.format("r:%s,c:%s => %s\n", inst.getRow(), inst.getColumn(),
+//                    board.get(inst) == null ? "null" : board.get(inst).getPieceType()));
+//        }
 
         return sb.toString();
     }
