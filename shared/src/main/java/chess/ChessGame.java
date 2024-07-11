@@ -133,27 +133,6 @@ public class ChessGame {
         var validMoves = new HashSet<ChessMove>();
         var moves = STATE.board.getPiece(startPosition).pieceMoves(STATE.board, startPosition);
 
-        /*
-        The following verifications are inherited from pieceMoves():
-        (1) the moves are not out of bounds
-        (2) the moves follow the move-patterns of each piece
-
-        one approach to realize hypothetical moves is to create a copy of the board:
-        for each move in moves:
-            boardCopy = copyOf(board)
-            make the move on the board copy
-            not boardCopy.isInCheck(your team)?
-                add move to validMoves
-
-        seems like a huge hassle of a way to do it, maybe there's a better way
-        here's another approach:
-        for each move in moves:
-            make the move in the current game
-            are we not in check?
-                add to the validMoves list
-            *reverse the move lol*
-         */
-
         for(var move : moves) {
             var oldEndPiece = STATE.board.getPiece(move.getEndPosition());
             var startPiece = STATE.board.getPiece(move.getStartPosition());
@@ -188,24 +167,6 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        /*
-        VALIDATE MOVE
-        The following should already be verified by validMoves():
-        (1) invalid if the king is left in check
-        (2) invalid if the piece cannot move there
-
-        Checks left to make in this function:
-        (1) is it your turn?
-
-        Implementation:
-        is gameTurn = yourColor?
-        is move not in validMoves?
-            throw exception
-
-        MAKE MOVE
-        board.addPiece(move.end, board.get(board.start))
-        board.addPiece(move.start, null)
-         */
         var validMoves = validMoves(move.getStartPosition());
         if(validMoves == null) throw new InvalidMoveException();
 
@@ -235,13 +196,6 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        /*
-        for each position in the chess board:
-            get the possible moves
-            if the opposing king is in the set of those moves:
-                that king is in check
-
-         */
         var positions = STATE.board.positionIterator();
         while(positions.hasNext()) {
             var position = positions.next();
@@ -264,17 +218,6 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        /*
-        (validMoves is null if the piece cannot not leave the king in check, therefore)
-        if validMoves(friendlyPosition) is null for ALL friendly pieces:
-            return true
-
-        ooor
-        for all friendlyPos:
-            if validMoves(friendlyPosition) != null:
-                return false
-        return true
-         */
         STATE.refreshGameEndStates(teamColor);
         return STATE.endStates.get(teamColor) == GameState.GameEndState.CHECKMATE;
     }
