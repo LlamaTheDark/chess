@@ -3,7 +3,6 @@ package chess;
 import chess.move.*;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -57,7 +56,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return PieceMovesCalculator.createInstance(this.getPieceType()).pieceMoves(board, myPosition);
+        return PieceMovesCalculatorFIDE.createInstance(this.getPieceType()).pieceMoves(board, myPosition);
     }
 
     @Override

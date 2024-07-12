@@ -7,13 +7,13 @@ import java.util.Collection;
 import java.util.HashSet;
 
 
-public class QueenMovesCalculator extends PieceMovesCalculator {
+public class QueenMovesCalculatorFIDE extends PieceMovesCalculatorFIDE {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
         var possibleMoves = new HashSet<ChessMove>();
 
-        possibleMoves.addAll(new RookMovesCalculator().pieceMoves(chessBoard, position));
-        possibleMoves.addAll(new BishopMovesCalculator().pieceMoves(chessBoard, position));
+        possibleMoves.addAll(new RookMovesCalculatorFIDE().pieceMoves(chessBoard, position));
+        possibleMoves.addAll(new BishopMovesCalculatorFIDE().pieceMoves(chessBoard, position));
 
         return possibleMoves;
     }

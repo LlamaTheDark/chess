@@ -7,7 +7,7 @@ import chess.ChessPosition;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class PawnMovesCalculator extends PieceMovesCalculator {
+public class PawnMovesCalculatorFIDE extends PieceMovesCalculatorFIDE {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
         var possibleMoves = new HashSet<ChessMove>();
@@ -34,11 +34,11 @@ public class PawnMovesCalculator extends PieceMovesCalculator {
         }
 
         // move forward
-        PieceMovesCalculator.addAttackRange(new int[]{pawnData[0], 0}, possibleMoves, chessBoard, position, maxForwardLength, false, true, promotionPiece);
+        PieceMovesCalculatorFIDE.addAttackRange(new int[]{pawnData[0], 0}, possibleMoves, chessBoard, position, maxForwardLength, false, true, promotionPiece);
 
         // capture diagonally
-        PieceMovesCalculator.addAttackRange(new int[]{pawnData[0], 1}, possibleMoves, chessBoard, position, 1, true, false, promotionPiece);
-        PieceMovesCalculator.addAttackRange(new int[]{pawnData[0], -1}, possibleMoves, chessBoard, position, 1, true, false, promotionPiece);
+        PieceMovesCalculatorFIDE.addAttackRange(new int[]{pawnData[0], 1}, possibleMoves, chessBoard, position, 1, true, false, promotionPiece);
+        PieceMovesCalculatorFIDE.addAttackRange(new int[]{pawnData[0], -1}, possibleMoves, chessBoard, position, 1, true, false, promotionPiece);
 
         return possibleMoves;
     }

@@ -8,7 +8,7 @@ import chess.ChessPosition;
 import java.util.Collection;
 import java.util.HashSet;
 
-public abstract class PieceMovesCalculator {
+public abstract class PieceMovesCalculatorFIDE {
 /*
 ########## STATIC ##########
  */
@@ -89,14 +89,14 @@ public abstract class PieceMovesCalculator {
      * @param type The type of chess piece whose move calculator will be returned.
      * @return An instance of the correct move-calculating class for the given piece type.
      */
-    public static PieceMovesCalculator createInstance(ChessPiece.PieceType type){
+    public static PieceMovesCalculatorFIDE createInstance(ChessPiece.PieceType type){
         return switch(type){
-            case KING -> new KingMovesCalculator();
-            case QUEEN -> new QueenMovesCalculator();
-            case BISHOP -> new BishopMovesCalculator();
-            case KNIGHT -> new KnightMovesCalculator();
-            case ROOK -> new RookMovesCalculator();
-            case PAWN -> new PawnMovesCalculator();
+            case KING -> new KingMovesCalculatorFIDE();
+            case QUEEN -> new QueenMovesCalculatorFIDE();
+            case BISHOP -> new BishopMovesCalculatorFIDE();
+            case KNIGHT -> new KnightMovesCalculatorFIDE();
+            case ROOK -> new RookMovesCalculatorFIDE();
+            case PAWN -> new PawnMovesCalculatorFIDE();
         };
     }
 

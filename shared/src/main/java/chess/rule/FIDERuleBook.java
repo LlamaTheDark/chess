@@ -1,7 +1,7 @@
 package chess.rule;
 
 import chess.*;
-import chess.move.PieceMovesCalculator;
+import chess.move.PieceMovesCalculatorFIDE;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -65,7 +65,7 @@ public class FIDERuleBook implements ChessRuleBook {
      *     <li> The move does not leave the team's king in check. </li>
      * </ol>
      *
-     * Criteria <b>1.</b> and <b>2.</b> are provided for by {@link PieceMovesCalculator}. Thus, this function only tests for
+     * Criteria <b>1.</b> and <b>2.</b> are provided for by {@link PieceMovesCalculatorFIDE}. Thus, this function only tests for
      * the same king's check state.
      *
      * @param start the piece to get valid moves for
