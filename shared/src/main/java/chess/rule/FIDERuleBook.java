@@ -1,10 +1,10 @@
 package chess.rule;
 
 import chess.*;
+import chess.move.PieceMovesCalculator;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * The internationally recognized standard rules of chess.
@@ -18,6 +18,23 @@ public class FIDERuleBook implements ChessRuleBook {
     public FIDERuleBook(){ }
     public int getRegulationBoardSize(){ return REGULATION_BOARD_SIZE; }
 
+    /**
+     * Gets a collection of valid moves for a piece at the given location. A valid move is one that meets the
+     * following criteria:
+     * <ol>
+     *     <li> The move exists within the board. </li>
+     *     <li> The move follows appropriate move patterns for each piece. </li>
+     *     <li> The move does not leave the team's king in check. </li>
+     * </ol>
+     *
+     * Criteria <b>1.</b> and <b>2.</b> are provided for by {@link PieceMovesCalculator}. Thus, this function only tests for
+     * the same king's check state.
+     *
+     * @param start the piece to get valid moves for
+     * @param board the board the game takes place on.
+     * @return Set of valid moves for requested piece, or <code>null</code> if there is no piece
+     * at <code>startPosition</code>
+     */
     @Override
     public Collection<ChessMove> validMoves(ChessPosition start, ChessBoard board) {
         if (board.getPiece(start) == null) return null;
@@ -47,6 +64,13 @@ public class FIDERuleBook implements ChessRuleBook {
         return validMoves;
     }
 
+    /**
+     * Determines if the given team is in check
+     *
+     * @param teamColor which team to check for check
+     * @param board the board on which the game takes place
+     * @return True if the specified team is in check
+     */
     @Override
     public boolean isInCheck(ChessGame.TeamColor teamColor, ChessBoard board) {
         var positions = board.positionIterator();
@@ -66,16 +90,36 @@ public class FIDERuleBook implements ChessRuleBook {
         return false;
     }
 
+    /**
+     * Determines if the given team is in checkmate
+     *
+     * @param teamColor which team to check for checkmate
+     * @param board the board upon which the game takes place
+     * @return True if the specified team is in checkmate
+     */
     @Override
     public boolean isInCheckmate(ChessGame.TeamColor teamColor, ChessBoard board) {
         return getEndState(teamColor, board) == EndState.CHECKMATE;
     }
 
+    /**
+     * Determines if the given team is in stalemate, which here is defined as having
+     * no valid moves
+     *
+     * @param teamColor which team to check for stalemate
+     * @param board the board upon which the game takes place
+     * @return True if the specified team is in stalemate, otherwise false
+     */
     @Override
     public boolean isInStalemate(ChessGame.TeamColor teamColor, ChessBoard board) {
         return getEndState(teamColor, board) == EndState.STALEMATE;
     }
 
+    /**
+     * Determines whether a board is valid according to FIDE regulation size (8).
+     * @param board The board in question.
+     * @return Whether the board is a valid board according to FIDE.
+     */
     @Override
     public boolean isBoardValid(ChessBoard board) {
         return ChessBoard.getBoardSize() == 8;

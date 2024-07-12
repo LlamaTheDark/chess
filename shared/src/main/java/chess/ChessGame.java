@@ -55,20 +55,7 @@ public class ChessGame {
     }
 
     /**
-     * Gets a collection of valid moves for a piece at the given location. A valid move is one that meets the
-     * following criteria:
-     * <ol>
-     *     <li> The move exists within the board. </li>
-     *     <li> The move follows appropriate move patterns for each piece. </li>
-     *     <li> The move does not leave the team's king in check. </li>
-     * </ol>
-     *
-     * Criteria <b>1.</b> and <b>2.</b> are provided for by {@link chess.move.PieceMovesCalculator}. Thus, this function only tests for
-     * the same king's check state.
-     *
-     * @param startPosition the piece to get valid moves for
-     * @return Set of valid moves for requested piece, or <code>null</code> if there is no piece
-     * at <code>startPosition</code>
+     * @see ChessRuleBook#validMoves(ChessPosition, ChessBoard)
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         return getRuleBook().validMoves(startPosition, getBoard());
