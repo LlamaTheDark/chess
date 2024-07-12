@@ -1,8 +1,9 @@
 package chess;
 
+import chess.rule.ChessRuleBook;
+import chess.rule.FIDERuleBook;
+
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -12,83 +13,25 @@ import java.util.HashSet;
  */
 public class ChessGame {
 
-    private class GameState {
+    private static class GameState {
         TeamColor teamTurn = TeamColor.WHITE;
         ChessBoard board;
 
-        HashMap<TeamColor, GameEndState> endStates = new HashMap<>(2);
-        HashMap<TeamColor, ChessPosition> kingLocation = new HashMap<>(2);
-        {
-            kingLocation.put(TeamColor.WHITE, null);
-            kingLocation.put(TeamColor.BLACK, null);
-        }
-
-        private enum GameEndState {
-            CHECKMATE,
-            STALEMATE
-        }
-
         public GameState(ChessBoard board) {
-            this.resetEndStates();
             this.board = board;
             this.board.resetBoard();
-            this.refreshKingPositions();
-        }
-
-        /**
-         * Determines whether any pieces on a team can make moves and returns the respective boolean.
-         * @param teamColor The team to search for moves from.
-         * @return Whether this team can make any valid moves.
-         */
-        private boolean moves(TeamColor teamColor){
-            var positions = STATE.board.positionIterator();
-            while(positions.hasNext()) {
-                var position = positions.next();
-                var piece = STATE.board.getPiece(position);
-                if(piece == null) continue;
-                if(piece.getTeamColor() != teamColor) continue;
-
-                if(!validMoves(position).isEmpty()) return true;
-            }
-            return false;
-        }
-        private void resetEndStates(){
-            endStates.put(TeamColor.WHITE, null);
-            endStates.put(TeamColor.BLACK, null);
-        }
-        public void refreshGameEndStates(TeamColor teamColor){
-            if(endStates.get(teamColor) != null) return;
-
-            boolean moves = moves(teamColor), isInCheck = isInCheck(teamColor);
-
-            if(!moves && isInCheck) {
-                endStates.put(teamColor, GameEndState.CHECKMATE);
-            }
-            else if(!moves /* && !isInCheck */) {
-                endStates.put(teamColor, GameEndState.STALEMATE);
-            }else{
-                resetEndStates();
-            }
-        }
-        public void refreshKingPositions(){
-            kingLocation.put(TeamColor.BLACK, null);
-            kingLocation.put(TeamColor.WHITE, null);
-
-            var positions = this.board.positionIterator();
-            while(positions.hasNext()) {
-                var position = positions.next();
-                var piece = this.board.getPiece(position);
-                if(piece == null) continue;
-
-                if(piece.getPieceType() == ChessPiece.PieceType.KING) this.kingLocation.put(piece.getTeamColor(), position);
-            }
         }
     }
 
     private final ChessGame.GameState STATE;
+    private final ChessRuleBook ruleBook;
 
     public ChessGame() {
-        STATE = new GameState(new ChessBoard());
+        this(new FIDERuleBook());
+    }
+    public ChessGame(ChessRuleBook ruleBook){
+        STATE = new GameState(new ChessBoard(/* TODO: ruleBook.getRegulationBoardSize() */));
+        this.ruleBook = ruleBook;
     }
 
     /**
@@ -128,36 +71,7 @@ public class ChessGame {
      * at <code>startPosition</code>
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (STATE.board.getPiece(startPosition) == null) return null;
-
-        var validMoves = new HashSet<ChessMove>();
-        var moves = STATE.board.getPiece(startPosition).pieceMoves(STATE.board, startPosition);
-
-        for(var move : moves) {
-            var oldEndPiece = STATE.board.getPiece(move.getEndPosition());
-            var startPiece = STATE.board.getPiece(move.getStartPosition());
-
-            var isKing = startPiece.getPieceType() == ChessPiece.PieceType.KING;
-
-            // make the move
-            STATE.board.addPiece(
-                    move.getEndPosition(),
-                    move.getPromotionPiece() != null
-                            ? new ChessPiece(STATE.teamTurn, move.getPromotionPiece())
-                            : startPiece
-            );
-            STATE.board.addPiece(move.getStartPosition(), null);
-            if(isKing) STATE.kingLocation.put(startPiece.getTeamColor(), move.getEndPosition());
-
-            if(!isInCheck(startPiece.getTeamColor())) validMoves.add(move);
-
-            // reverse the move
-            STATE.board.addPiece(move.getStartPosition(), startPiece);
-            STATE.board.addPiece(move.getEndPosition(), oldEndPiece);
-            if(isKing) STATE.kingLocation.put(startPiece.getTeamColor(), move.getStartPosition());
-        }
-
-        return validMoves;
+        return getRuleBook().validMoves(startPosition, getBoard());
     }
 
     /**
@@ -183,8 +97,6 @@ public class ChessGame {
         );
         STATE.board.addPiece(move.getStartPosition(), null);
 
-        if(piece.getPieceType() == ChessPiece.PieceType.KING) STATE.kingLocation.put(STATE.teamTurn, move.getEndPosition());
-
         // Switch turns
         this.setTeamTurn(STATE.teamTurn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
     }
@@ -196,19 +108,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        var positions = STATE.board.positionIterator();
-        while(positions.hasNext()) {
-            var position = positions.next();
-            var piece = STATE.board.getPiece(position);
-            if(piece == null) continue;
-            if(piece.getTeamColor() == teamColor) continue;
-
-            var possibleMoves = piece.pieceMoves(STATE.board, position);
-            for(var move : possibleMoves) {
-                if (move.getEndPosition().equals(STATE.kingLocation.get(teamColor))) return true;
-            }
-        }
-        return false;
+        return getRuleBook().isInCheck(teamColor, getBoard());
     }
 
     /**
@@ -218,8 +118,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        STATE.refreshGameEndStates(teamColor);
-        return STATE.endStates.get(teamColor) == GameState.GameEndState.CHECKMATE;
+        return getRuleBook().isInCheckmate(teamColor, getBoard());
     }
 
     /**
@@ -230,8 +129,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        STATE.refreshGameEndStates(teamColor);
-        return STATE.endStates.get(teamColor) == GameState.GameEndState.STALEMATE;
+        return getRuleBook().isInStalemate(teamColor, getBoard());
     }
 
     /**
@@ -241,8 +139,6 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         STATE.board = board;
-        STATE.refreshKingPositions();
-        STATE.resetEndStates();
     }
 
     /**
@@ -251,4 +147,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() { return STATE.board; }
+
+    public ChessRuleBook getRuleBook() { return ruleBook; }
 }

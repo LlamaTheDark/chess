@@ -13,7 +13,10 @@ import java.util.List;
  *     </a>
  */
 public class FIDERuleBook implements ChessRuleBook {
+    private static final int REGULATION_BOARD_SIZE = 8;
 
+    public FIDERuleBook(){ }
+    public int getRegulationBoardSize(){ return REGULATION_BOARD_SIZE; }
 
     @Override
     public Collection<ChessMove> validMoves(ChessPosition start, ChessBoard board) {
@@ -54,8 +57,10 @@ public class FIDERuleBook implements ChessRuleBook {
             if(piece.getTeamColor() == teamColor) continue;
 
             for(var move : piece.pieceMoves(board, position)) {
-                if (board.getPiece(move.getEndPosition()).getPieceType().equals(ChessPiece.PieceType.KING)
-                    && board.getPiece(move.getEndPosition()).getTeamColor().equals(teamColor)) return true;
+                var endPiece = board.getPiece(move.getEndPosition());
+                if (endPiece != null
+                        && endPiece.getPieceType().equals(ChessPiece.PieceType.KING)
+                        && endPiece.getTeamColor().equals(teamColor)) return true;
             }
         }
         return false;
@@ -76,6 +81,11 @@ public class FIDERuleBook implements ChessRuleBook {
         return ChessBoard.getBoardSize() == 8;
     }
 
+    /**
+     * Determines whether any pieces on a team can make moves and returns the respective boolean.
+     * @param teamColor The team to search for moves from.
+     * @return Whether this team can make any valid moves.
+     */
     private boolean moves(ChessGame.TeamColor teamColor, ChessBoard board){
         var positions = board.positionIterator();
         while(positions.hasNext()) {
@@ -89,6 +99,19 @@ public class FIDERuleBook implements ChessRuleBook {
         return false;
     }
 
+    /**
+     * Determines whether the team specified is in checkmate or stalemate.
+     * @param teamColor The team to determine state for.
+     * @param board The board on which the game is played.
+     * @return <ul>
+     *     <li>
+     *         {@link EndState#CHECKMATE} if the team can make no moves and the team's king is in check.
+     *     </li>
+     *     <li>
+     *          {@link EndState#STALEMATE} if the team can make no moves and the team's king is <b>not</b> in check.
+     *     </li>
+     *     </ul>
+     */
     private EndState getEndState(ChessGame.TeamColor teamColor, ChessBoard board) {
         boolean moves = moves(teamColor, board), isInCheck = isInCheck(teamColor, board);
 
