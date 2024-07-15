@@ -1,0 +1,120 @@
+actor Client
+participant Server
+participant Service
+participant DataAccess
+database db
+
+group #navy Registration #white
+Client -> Server: [POST] /user\n{username, password, email}
+Server -> Service: register(username, password, email)
+Service -> DataAccess: getUser(username)
+DataAccess -> db: SELECT username from user
+DataAccess --> Service: null
+Service -> DataAccess: createUser(username, password, email)
+DataAccess -> db: INSERT username, password, email INTO user
+Service -> DataAccess: createAuth(username)
+DataAccess -> db: INSERT username, authToken INTO auth
+DataAccess --> Service: authToken
+Service --> Server: authToken
+Server --> Client: 200\n{username, authToken}
+end
+
+group #orange Login #white
+Client -> Server: [POST] /session\n{username, password}
+Server -> Service: login(username, password)
+Service -> DataAccess: getUser(username, password)
+DataAccess -> db: SELECT username, password FROM user
+DataAccess --> Service: not null
+Service -> DataAccess: createAuth(username)
+DataAccess -> db: INSERT username, authToken INTO auth
+DataAccess --> Service: authToken
+Service --> Server: authToken
+Server --> Client: 200\n{username, authToken}
+end
+
+group #green Logout #white
+Client -> Server: [DELETE] /session\nauthToken
+Server -> Service: logout(authToken)
+
+Service -> DataAccess: getAuth(authToken)
+DataAccess -> db: SELECT authToken FROM auth
+DataAccess --> Service: not null
+
+Service -> DataAccess: deleteAuth(authToken)
+DataAccess -> db: DELETE FROM auth\nWHERE AuthToken = authToken
+DataAccess --> Service: 1
+Service --> Server: LogoutResponse
+Server --> Client: 200\n{}
+end
+
+group #red List Games #white
+Client -> Server: [GET] /game\nauthToken
+Server -> Service: listGames(authToken)
+
+Service -> DataAccess: getAuth(authToken)
+DataAccess -> db: SELECT authToken FROM auth
+DataAccess --> Service: not null
+
+Service -> DataAccess: getGames()
+DataAccess -> db: SELECT gameID, whiteUsername, blackUsername, gameName\nFROM game
+DataAccess --> Service: gameID, whiteUsername,\nblackUsername, gameName
+Service --> Server: ListGamesResponse
+Server --> Client: 200\n{"games": [gameID, whiteUsername,\n blackUsername, gameName]}
+end
+
+group #purple Create Game #white
+Client -> Server: [POST] /game\nauthToken\n{gameName}
+Server -> Service: createGame(gameName)
+
+Service -> DataAccess: getAuth(authToken)
+DataAccess -> db: SELECT authToken FROM auth
+DataAccess --> Service: not null
+
+Service -> DataAccess: getGame(gameName)
+DataAccess -> db: SELECT gameName FROM game
+DataAccess --> Service: null
+Service -> DataAccess: createGame(gameName, game)
+DataAccess -> db: INSERT gameID, null, null, gameName, game INTO game
+DataAccess --> Service: gameID
+Service --> Server: CreateGameResponse
+Server --> Client: 200\n{gameID}
+end
+
+group #yellow Join Game #black
+Client -> Server: [PUT] /game\nauthToken\n{playerColor, gameID}
+Server -> Service: joinGame(playerColor, gameID)
+
+// Authorize
+Service -> DataAccess: getAuth(authToken)
+DataAccess -> db: SELECT authToken FROM auth
+DataAccess --> Service: not null
+
+Service -> DataAccess: getAuth(authToken)
+DataAccess -> db: SELECT username FROM auth\nWHERE Auth Token = authToken
+DataAccess --> Service: username
+
+// Verify that game exists
+Service -> DataAccess: getGame(gameID)
+DataAccess -> db: SELECT gameID FROM game
+DataAccess --> Service: not null
+
+// Add player to game
+Service -> DataAccess: getGamePlayerColor(gameID, playerColor) 
+DataAccess -> db: SELECT playerColor FROM game\nWHERE Game ID = gameID
+DataAccess --> Service: null
+Service -> DataAccess: addPlayerToGame(username, playerColor, gameID)
+DataAccess -> db: UPDATE game\nSET playerColor = username\nWHERE Game ID = gameID
+Service --> Server:JoinGameResponse
+Server --> Client:200\n{}
+end
+
+group #gray Clear application #white
+Client -> Server: [DELETE] /db
+Server -> Service: clearApplication()
+Service -> DataAccess: deleteAll()
+DataAccess -> db: DELETE game
+DataAccess -> db: DELETE auth
+DataAccess -> db: DEELTE user
+Service --> Server: ClearApplicationResponse
+Server --> Client:200\n{} 
+end
