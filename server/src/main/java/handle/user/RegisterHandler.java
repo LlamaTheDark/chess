@@ -17,6 +17,9 @@ public class RegisterHandler implements Route {
                         registerResponse
                 )
         );
+        /*
+        TODO: find a way to make the code not show up in the json...
+         */
         response.status(registerResponse.getStatusCode());
         return response.body();
     }
