@@ -1,7 +1,7 @@
 package server;
 
+import handle.dev.ClearApplicationHandler;
 import handle.user.*;
-import handle.*;
 import spark.*;
 
 public class Server {
