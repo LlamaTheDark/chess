@@ -32,7 +32,6 @@ public class LoginService implements Service<LoginResponse, LoginRequest> {
                 new AuthData(authToken, request.getUsername())
             );
 
-            response.setStatusCode(200);
             response.setAuthToken(authToken);
             response.setUsername(request.getUsername());
         }

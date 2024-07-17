@@ -22,8 +22,6 @@ public class ClearApplicationService implements Service<ClearApplicationResponse
         user.clear();
         game.clear();
 
-        response.setStatusCode(200);
-
         return response;
     }
 }

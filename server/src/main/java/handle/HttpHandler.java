@@ -23,7 +23,8 @@ public final class HttpHandler {
                             exchangeResponse
                     )
             );
-            response.status(exchangeResponse.getStatusCode());
+            // default response code is 200 OK because if something went wrong, we'd be in an exception right now
+            response.status(200);
 
         } catch (DataAccessException dae){
             response.status(500);
