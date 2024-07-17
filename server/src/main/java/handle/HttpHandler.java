@@ -6,7 +6,7 @@ import service.Service;
 /**
  * Handler to reduce code duplication, seeing as most handler classes reuse the same basic algorithm.
  */
-public class HttpHandler {
+public final class HttpHandler {
     public static
     <P extends exchange.Response, Q extends exchange.Request>
     void handleHttpRequest( spark.Request request, Class<Q> requestClass, Service<P,Q> service, spark.Response response ) {
