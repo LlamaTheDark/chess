@@ -5,10 +5,10 @@ import chess.ChessGame;
 import java.util.Collection;
 
 public interface GameDAO {
-    void createGame();
-    ChessGame getGame();
-    Collection<ChessGame> listGames();
-    void updateGame();
+    void createGame() throws DataAccessException;
+    ChessGame getGame() throws DataAccessException;
+    Collection<ChessGame> listGames() throws DataAccessException;
+    void updateGame() throws DataAccessException;
 
-    void clear();
+    void clear() throws DataAccessException;
 }
