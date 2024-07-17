@@ -1,7 +1,7 @@
 package service.user;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryUserDAO;
+import dataaccess.memory.MemoryUserDAO;
 import exchange.user.*;
 import model.UserData;
 import service.Service;
