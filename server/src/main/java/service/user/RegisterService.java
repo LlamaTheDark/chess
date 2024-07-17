@@ -14,10 +14,7 @@ public class RegisterService implements Service<RegisterResponse, RegisterReques
 
         var userDAO = new MemoryUserDAO();
         if (userDAO.getUser(request.getUsername()) != null) {
-            /*
-            TODO: maybe don't require the need for formatting the message in json (i.e. have this done at a higher level)?
-             */
-            throw new ServiceException(403, "{ \"message\": \"Error: already taken\"}");
+            throw new ServiceException(403, "Error: already taken");
         }
         /*
         todo: handle password encryption
