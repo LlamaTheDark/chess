@@ -28,10 +28,10 @@ public final class HttpHandler {
 
         } catch (DataAccessException dae){
             response.status(500);
-            response.body("{\"message\": " + dae.getMessage() + "}");
+            response.body("{\"message\": \"" + dae.getMessage() + "\"}");
         } catch (ServiceException se){
             response.status(se.getStatusCode());
-            response.body("{\"message\": " + se.getMessage() + "}");
+            response.body("{\"message\": \"" + se.getMessage() + "\"}");
         }
     }
 }
