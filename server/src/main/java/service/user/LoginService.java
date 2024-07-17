@@ -1,37 +1,43 @@
 package service.user;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.memory.MemoryAuthDAO;
+import dataaccess.memory.MemoryUserDAO;
 import exchange.user.LoginRequest;
 import exchange.user.LoginResponse;
 import service.Authenticator;
 import service.Service;
 import model.AuthData;
+import service.ServiceException;
 
 public class LoginService implements Service<LoginResponse, LoginRequest> {
 
     @Override
-    public LoginResponse serve(LoginRequest request) {
+    public LoginResponse serve(LoginRequest request) throws DataAccessException, ServiceException {
         LoginResponse response = new LoginResponse();
-        try{
-            var user = new MemoryUserDAO().getUser(request.getUsername(), request.getPassword());
-            if(user == null){
-                response.setStatusCode(401);
-                response.setMessage("Error: unauthorized");
-            }else{
-                String authToken = Authenticator.generateToken();
-                new MemoryAuthDAO().createAuth(
-                    new AuthData(authToken, request.getUsername())
-                );
+        /*
+        TODO: see if the user is already logged in
+         */
+        boolean credentialsMatch =
+                new MemoryUserDAO().getUser(request.getUsername(), request.getPassword()) != null;
 
-                response.setStatusCode(200);
-                response.setAuthToken(authToken);
-                response.setUsername(request.getUsername());
-            }
-        }catch(DataAccessException e){
-            response.setStatusCode(500);
-            response.setMessage(e.getMessage());
+        /*
+        TODO: these checks to make sure the person isn't already logged in aren't working
+         */
+        var authDAO = new MemoryAuthDAO();
+        boolean alreadyLoggedIn = authDAO.getAuth(request.getUsername()) != null;
+
+        if(!credentialsMatch || alreadyLoggedIn){
+            throw new ServiceException(401, "Error: unauthorized");
+        }else{
+            String authToken = Authenticator.generateToken();
+            authDAO.createAuth(
+                new AuthData(authToken, request.getUsername())
+            );
+
+            response.setStatusCode(200);
+            response.setAuthToken(authToken);
+            response.setUsername(request.getUsername());
         }
         return response;
     }

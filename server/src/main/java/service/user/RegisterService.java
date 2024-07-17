@@ -5,33 +5,28 @@ import dataaccess.memory.MemoryUserDAO;
 import exchange.user.*;
 import model.UserData;
 import service.Service;
+import service.ServiceException;
 
 public class RegisterService implements Service<RegisterResponse, RegisterRequest> {
     @Override
-    public RegisterResponse serve(RegisterRequest request) {
+    public RegisterResponse serve(RegisterRequest request) throws DataAccessException, ServiceException {
         RegisterResponse response = new RegisterResponse();
 
-        try {
-            var userDAO = new MemoryUserDAO();
-            if (userDAO.getUser(request.getUsername()) != null) {
-                response = new RegisterResponse();
-                response.setMessage("Error: already taken");
-                response.setStatusCode(403);
-                return response;
-            }
+        var userDAO = new MemoryUserDAO();
+        if (userDAO.getUser(request.getUsername()) != null) {
             /*
-            todo: handle password encryption
+            TODO: maybe don't require the need for formatting the message in json (i.e. have this done at a higher level)?
              */
-            userDAO.createUser(new UserData(request.getUsername(), request.getPassword(), request.getEmail()));
-
-            response = new LoginService().serve(
-                    new LoginRequest(request.getUsername(), request.getPassword())
-            );
-        }catch(DataAccessException e) {
-            // This error would be thrown from
-            response.setStatusCode(500);
-            response.setMessage(e.getMessage());
+            throw new ServiceException(403, "{ \"message\": \"Error: already taken\"}");
         }
+        /*
+        todo: handle password encryption
+         */
+        userDAO.createUser(new UserData(request.getUsername(), request.getPassword(), request.getEmail()));
+
+        response = new LoginService().serve(
+                new LoginRequest(request.getUsername(), request.getPassword())
+        );
 
         return response;
     }
