@@ -9,7 +9,7 @@ import service.Authenticator;
 import service.Service;
 import model.AuthData;
 
-public class LoginService implements Service<LoginRequest, LoginResponse> {
+public class LoginService implements Service<LoginResponse, LoginRequest> {
 
     @Override
     public LoginResponse serve(LoginRequest request) {

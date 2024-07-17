@@ -3,6 +3,9 @@ package service;
 import exchange.Request;
 import exchange.Response;
 
-public interface Service<T extends Request, S extends Response> {
-    S serve(T request);
+/*
+TODO: use generic method instead of generic class
+ */
+public interface Service<P extends Response, Q extends Request> {
+    P serve(Q request);
 }

@@ -6,7 +6,7 @@ import exchange.user.*;
 import model.UserData;
 import service.Service;
 
-public class RegisterService implements Service<RegisterRequest, RegisterResponse> {
+public class RegisterService implements Service<RegisterResponse, RegisterRequest> {
     @Override
     public RegisterResponse serve(RegisterRequest request) {
         RegisterResponse response = new RegisterResponse();
