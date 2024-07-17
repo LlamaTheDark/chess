@@ -11,11 +11,6 @@ public class MemoryUserDAO implements UserDAO {
     private static final HashMap<String, UserData> USERS = new HashMap<>();
 
     @Override
-    public void clear() throws DataAccessException {
-        USERS.clear();
-    }
-
-    @Override
     public void createUser(UserData userData) throws DataAccessException {
         USERS.put(userData.username(), userData);
     }
@@ -33,5 +28,10 @@ public class MemoryUserDAO implements UserDAO {
             return USERS.get(username);
         }
         return null;
+    }
+
+    @Override
+    public void clear() throws DataAccessException {
+        USERS.clear();
     }
 }
