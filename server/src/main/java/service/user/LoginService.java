@@ -21,9 +21,6 @@ public class LoginService implements Service<LoginResponse, LoginRequest> {
         boolean credentialsMatch =
                 new MemoryUserDAO().getUser(request.getUsername(), request.getPassword()) != null;
 
-        /*
-        TODO: these checks to make sure the person isn't already logged in aren't working
-         */
         var authDAO = new MemoryAuthDAO();
         boolean alreadyLoggedIn = authDAO.getAuth(request.getUsername()) != null;
 
