@@ -15,26 +15,32 @@ public class LoginService implements Service<LoginResponse, LoginRequest> {
     @Override
     public LoginResponse serve(LoginRequest request) throws DataAccessException, UnauthorizedException {
         LoginResponse response = new LoginResponse();
-        /*
-        TODO: see if the user is already logged in
-         */
         boolean credentialsMatch =
                 new MemoryUserDAO().getUser(request.getUsername(), request.getPassword()) != null;
 
         var authDAO = new MemoryAuthDAO();
-        boolean alreadyLoggedIn = authDAO.getAuth(request.getUsername()) != null;
 
-        if(!credentialsMatch || alreadyLoggedIn){
+
+        if(!credentialsMatch) {
             throw new UnauthorizedException("Error: unauthorized");
-        }else{
+        }
+
+        var loggedInAuth = authDAO.getAuthByUsername(request.getUsername());
+        boolean alreadyLoggedIn = loggedInAuth != null;
+
+        if(alreadyLoggedIn){
+            response.setAuthToken(loggedInAuth.authToken());
+            response.setUsername(loggedInAuth.username());
+        }else {
             String authToken = Authenticator.generateToken();
             authDAO.createAuth(
-                new AuthData(authToken, request.getUsername())
+                    new AuthData(authToken, request.getUsername())
             );
 
             response.setAuthToken(authToken);
             response.setUsername(request.getUsername());
         }
+
         return response;
     }
 }
