@@ -7,6 +7,8 @@ public class RegisterRequest extends Request {
     String password;
     String email;
 
+    public RegisterRequest() { }
+
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 

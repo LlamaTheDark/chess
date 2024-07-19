@@ -17,9 +17,14 @@ public final class HttpHandler {
     void handleHttpRoute(spark.Request request, Class<Q> requestClass, Service<P,Q> service, spark.Response response) {
         try{
 
-            var exchangeResponse = service.serve(
-                    Serializer.deserialize(request.body(), requestClass)
-            );
+            var deserializedRequest = Serializer.deserialize(request.body(), requestClass);
+            String authorization = request.headers("Authorization");
+            if(authorization != null){
+                deserializedRequest.setAuthToken(authorization);
+            }
+
+            var exchangeResponse = service.serve( deserializedRequest );
+
             response.type("text/json");
             response.body(
                     Serializer.serialize(
