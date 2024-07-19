@@ -10,11 +10,15 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MemoryGameDAO implements GameDAO {
-    private static final HashMap<String, GameData> GAME = new HashMap<>();
+    /**
+     * Maps <code>int</code> gameID to <code>GameData</code>.
+     */
+    private static final HashMap<Integer, GameData> GAME = new HashMap<>();
+    private static int nextID = 1;
 
     @Override
-    public void createGame() throws DataAccessException {
-
+    public void createGame(GameData data) throws DataAccessException {
+        GAME.put(data.gameID(), data);
     }
 
     @Override
@@ -34,6 +38,11 @@ public class MemoryGameDAO implements GameDAO {
 
     @Override
     public void clear() throws DataAccessException {
+        nextID = 1;
         GAME.clear();
+    }
+
+    public static int getNextID() {
+        return nextID++;
     }
 }
