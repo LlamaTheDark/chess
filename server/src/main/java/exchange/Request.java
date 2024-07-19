@@ -2,6 +2,8 @@ package exchange;
 
 /*
 TODO: use records instead of classes here
+TODO: what's with all your constructors for your requests? do you even need them?
+TODO: I think you just need the variables there for the requests, then you need the getters and constructors for the responses
  */
 
 public class Request {
