@@ -3,7 +3,7 @@ package handle;
 import dataaccess.DataAccessException;
 import handle.util.Serializer;
 import service.Service;
-import service.ServiceException;
+import service.error.ServiceException;
 
 /**
  * Handler to reduce code duplication, seeing as most handler classes reuse the same basic algorithm.

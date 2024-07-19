@@ -8,7 +8,7 @@ import exchange.user.LoginResponse;
 import service.Authenticator;
 import service.Service;
 import model.AuthData;
-import service.ServiceException;
+import service.error.ServiceException;
 
 public class LoginService implements Service<LoginResponse, LoginRequest> {
 

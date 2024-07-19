@@ -5,12 +5,11 @@ import dataaccess.memory.MemoryUserDAO;
 import exchange.user.*;
 import model.UserData;
 import service.Service;
-import service.ServiceException;
+import service.error.ServiceException;
 
 public class RegisterService implements Service<RegisterResponse, RegisterRequest> {
     @Override
     public RegisterResponse serve(RegisterRequest request) throws DataAccessException, ServiceException {
-        RegisterResponse response = new RegisterResponse();
 
         var userDAO = new MemoryUserDAO();
         if (userDAO.getUser(request.getUsername()) != null) {
@@ -21,10 +20,8 @@ public class RegisterService implements Service<RegisterResponse, RegisterReques
          */
         userDAO.createUser(new UserData(request.getUsername(), request.getPassword(), request.getEmail()));
 
-        response = new LoginService().serve(
+        return new LoginService().serve(
                 new LoginRequest(request.getUsername(), request.getPassword())
         );
-
-        return response;
     }
 }

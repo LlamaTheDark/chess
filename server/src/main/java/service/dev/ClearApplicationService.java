@@ -7,7 +7,6 @@ import dataaccess.memory.MemoryUserDAO;
 import exchange.dev.ClearApplicationRequest;
 import exchange.dev.ClearApplicationResponse;
 import service.Service;
-import service.ServiceException;
 
 public class ClearApplicationService implements Service<ClearApplicationResponse, ClearApplicationRequest> {
     @Override

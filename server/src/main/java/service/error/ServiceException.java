@@ -1,4 +1,4 @@
-package service;
+package service.error;
 
 public class ServiceException extends Exception {
     private final int statusCode;
