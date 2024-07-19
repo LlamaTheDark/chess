@@ -3,7 +3,10 @@ package handle;
 import dataaccess.DataAccessException;
 import handle.util.Serializer;
 import service.Service;
+import service.error.BadRequestException;
+import service.error.ForbiddenException;
 import service.error.ServiceException;
+import service.error.UnauthorizedException;
 
 /**
  * Handler to reduce code duplication, seeing as most handler classes reuse the same basic algorithm.
@@ -26,11 +29,17 @@ public final class HttpHandler {
             // default response code is 200 OK because if something went wrong, we'd be in an exception right now
             response.status(200);
 
-        } catch (DataAccessException dae){
+        } catch (BadRequestException bre){
+            response.status(400);
+            response.body("{\"message\": \"" + bre.getMessage() + "\"}");
+        } catch (UnauthorizedException ue) {
+            response.status(401);
+            response.body("{\"message\": \"" + ue.getMessage() + "\"}");
+        } catch (ForbiddenException fe) {
+            response.status(403);
+            response.body("{\"message\": \"" + fe.getMessage() + "\"}");
+        } catch (ServiceException | DataAccessException se) {
             response.status(500);
-            response.body("{\"message\": \"" + dae.getMessage() + "\"}");
-        } catch (ServiceException se){
-            response.status(se.getStatusCode());
             response.body("{\"message\": \"" + se.getMessage() + "\"}");
         }
     }

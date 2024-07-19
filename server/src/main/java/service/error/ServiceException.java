@@ -1,15 +1,7 @@
 package service.error;
 
-public class ServiceException extends Exception {
-    private final int statusCode;
-
-    public ServiceException(int statusCode, String message) {
-        super(message);
-        this.statusCode = statusCode;
-    }
-
-    public int getStatusCode() {
-        return statusCode;
-    }
+public abstract class ServiceException extends Exception {
+    public ServiceException(String message) { super(message); }
 }
+
 

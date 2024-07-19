@@ -5,15 +5,15 @@ import dataaccess.memory.MemoryAuthDAO;
 import dataaccess.memory.MemoryUserDAO;
 import exchange.user.LoginRequest;
 import exchange.user.LoginResponse;
+import model.AuthData;
 import service.Authenticator;
 import service.Service;
-import model.AuthData;
-import service.error.ServiceException;
+import service.error.UnauthorizedException;
 
 public class LoginService implements Service<LoginResponse, LoginRequest> {
 
     @Override
-    public LoginResponse serve(LoginRequest request) throws DataAccessException, ServiceException {
+    public LoginResponse serve(LoginRequest request) throws DataAccessException, UnauthorizedException {
         LoginResponse response = new LoginResponse();
         /*
         TODO: see if the user is already logged in
@@ -25,7 +25,7 @@ public class LoginService implements Service<LoginResponse, LoginRequest> {
         boolean alreadyLoggedIn = authDAO.getAuth(request.getUsername()) != null;
 
         if(!credentialsMatch || alreadyLoggedIn){
-            throw new ServiceException(401, "Error: unauthorized");
+            throw new UnauthorizedException("Error: unauthorized");
         }else{
             String authToken = Authenticator.generateToken();
             authDAO.createAuth(
