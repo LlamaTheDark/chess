@@ -224,19 +224,4 @@ class ServiceTests {
                 }
         );
     }
-
-    @Test
-    @Order(18)
-    @DisplayName("Clear Application Does Not Return Data")
-    public
-    void clearApplicationDoesNotReturnData() throws DataAccessException {
-        var response = new ClearApplicationService().serve(new ClearApplicationRequest());
-        //        var badResponse = new ClearApplicationResponse();
-        //        badResponse.setMessage(
-        //                "blahblah I don't know what negative test to do for this one. It's pretty straightforward,
-        //                no?");
-
-        //        Assertions.assertNotEquals(response.getMessage(), badResponse.getMessage());
-    }
-
 }
