@@ -8,27 +8,34 @@ import exchange.user.LoginResponse;
 import model.AuthData;
 import service.Authenticator;
 import service.Service;
+import service.error.BadRequestException;
+import service.error.ServiceException;
 import service.error.UnauthorizedException;
 
 public class LoginService implements Service<LoginResponse, LoginRequest> {
 
     @Override
-    public LoginResponse serve(LoginRequest request) throws DataAccessException, UnauthorizedException {
-        LoginResponse response = new LoginResponse();
+    public LoginResponse serve(LoginRequest request) throws DataAccessException, ServiceException {
+        // bad request checks
+        if(request.getUsername() == null || request.getPassword() == null) {
+            throw new BadRequestException();
+        }
+
         boolean credentialsMatch =
                 new MemoryUserDAO().getUser(request.getUsername(), request.getPassword()) != null;
 
         var authDAO = new MemoryAuthDAO();
 
-
         if(!credentialsMatch) {
-            throw new UnauthorizedException("Error: unauthorized");
+            throw new UnauthorizedException();
         }
 
         String authToken = Authenticator.generateToken();
         authDAO.createAuth(
                 new AuthData(authToken, request.getUsername())
         );
+
+        LoginResponse response = new LoginResponse();
 
         response.setAuthToken(authToken);
         response.setUsername(request.getUsername());
