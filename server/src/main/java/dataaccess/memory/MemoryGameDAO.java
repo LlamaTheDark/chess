@@ -7,6 +7,9 @@ import model.GameData;
 import java.util.Collection;
 import java.util.HashMap;
 
+/**
+ * Implements the {@link GameDAO} interface using a local-memory database.
+ */
 public
 class MemoryGameDAO implements GameDAO {
     /**

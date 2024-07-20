@@ -7,6 +7,9 @@ import model.AuthData;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implements the {@link AuthDAO} interface using a local-memory database.
+ */
 public
 class MemoryAuthDAO implements AuthDAO {
     /**
