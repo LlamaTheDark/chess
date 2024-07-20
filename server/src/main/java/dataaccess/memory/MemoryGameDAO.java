@@ -22,8 +22,8 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public ChessGame getGame() throws DataAccessException {
-        return null;
+    public GameData getGame(int id) throws DataAccessException {
+        return GAME.get(id);
     }
 
     @Override
@@ -32,8 +32,10 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame() throws DataAccessException {
-
+    public void updateGame(GameData data) throws DataAccessException {
+        GAME.put(data.gameID(), new GameData(
+                data.gameID(), data.whiteUsername(), data.blackUsername(), data.gameName(), data.game()
+        ));
     }
 
     @Override
