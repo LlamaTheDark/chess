@@ -1,4 +1,4 @@
 /**
- * Implements {@link exchange} interfaces for development-related services.
+ * Implements {@link exchange} interfaces and classes for development-related services.
  */
 package exchange.dev;

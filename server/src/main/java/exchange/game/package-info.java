@@ -1,4 +1,4 @@
 /**
- * Implements {@link exchange} interfaces for game-related services.
+ * Implements {@link exchange} interfaces and classes for game-related services.
  */
 package exchange.game;
