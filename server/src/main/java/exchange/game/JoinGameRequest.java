@@ -10,6 +10,11 @@ public class JoinGameRequest extends Request {
         this.playerColor = playerColor;
         this.gameID = gameID;
     }
+    public JoinGameRequest(String playerColor, int gameID, String authToken) {
+        super(authToken);
+        this.playerColor = playerColor;
+        this.gameID = gameID;
+    }
 
     public String getPlayerColor() {
         return playerColor;

@@ -7,6 +7,10 @@ public class CreateGameRequest extends Request {
     public CreateGameRequest(String gameName) {
         this.gameName = gameName;
     }
+    public CreateGameRequest(String gameName, String authToken) {
+        super(authToken);
+        this.gameName = gameName;
+    }
 
     public String getGameName() {
         return gameName;
