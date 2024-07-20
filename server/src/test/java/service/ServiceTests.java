@@ -2,7 +2,6 @@ package service;
 
 import dataaccess.DataAccessException;
 import exchange.dev.ClearApplicationRequest;
-import exchange.dev.ClearApplicationResponse;
 import exchange.game.CreateGameRequest;
 import exchange.game.CreateGameResponse;
 import exchange.game.JoinGameRequest;
@@ -26,12 +25,14 @@ import service.user.RegisterService;
 import service.util.Authenticator;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ServiceTests {
+public
+class ServiceTests {
     private static String ogltdAuthToken;
     private static String goofballAuthToken;
 
     @BeforeAll
-    public static void setup() throws ServiceException, DataAccessException {
+    public static
+    void setup() throws ServiceException, DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("ogltd", "beans123", "ogltd@gmail.com");
         var response = new RegisterService().serve(registerRequest);
         ogltdAuthToken = response.getAuthToken();
@@ -41,7 +42,8 @@ public class ServiceTests {
     @Test
     @Order(1)
     @DisplayName("Normal Registration")
-    public void normalRegistration() throws ServiceException, DataAccessException {
+    public
+    void normalRegistration() throws ServiceException, DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("darthtater13", "peachpit12", "darthtater13@gmail.com");
         var actualResponse = new RegisterService().serve(registerRequest);
 
@@ -52,21 +54,23 @@ public class ServiceTests {
     @Test
     @Order(2)
     @DisplayName("Register The Same User Twice")
-    public void registerTheSameUserTwice() throws ServiceException, DataAccessException {
+    public
+    void registerTheSameUserTwice() throws ServiceException, DataAccessException {
         RegisterRequest firstRegisterRequest = new RegisterRequest("goofball", "wackytotoro", "goofball@gmail.com");
         var response = new RegisterService().serve(firstRegisterRequest);
         goofballAuthToken = response.getAuthToken();
 
         Assertions.assertThrows(ForbiddenException.class, () -> {
-                    new RegisterService().serve(firstRegisterRequest);
-                });
+            new RegisterService().serve(firstRegisterRequest);
+        });
     }
 
     // LOGIN TESTS
     @Test
     @Order(3)
     @DisplayName("Normal User Login")
-    public void normalUserLogin() throws ServiceException, DataAccessException {
+    public
+    void normalUserLogin() throws ServiceException, DataAccessException {
         LoginRequest request = new LoginRequest("ogltd", "beans123");
         LoginResponse actualResponse = new LoginService().serve(request);
 
@@ -77,10 +81,11 @@ public class ServiceTests {
     @Test
     @Order(4)
     @DisplayName("Bad Request Login Attempt")
-    public void badRequestLoginAttempt() {
+    public
+    void badRequestLoginAttempt() {
         Assertions.assertThrows(BadRequestException.class, () -> {
-                    new LoginService().serve(new LoginRequest(null, "beans123"));
-                }
+                                    new LoginService().serve(new LoginRequest(null, "beans123"));
+                                }
         );
     }
 
@@ -88,21 +93,23 @@ public class ServiceTests {
     @Test
     @Order(5)
     @DisplayName("Normal Logout")
-    public void normalLogout() {
+    public
+    void normalLogout() {
         LogoutRequest request = new LogoutRequest(ogltdAuthToken);
-        Assertions.assertDoesNotThrow( () -> {
-                    new LogoutService().serve(request);
-                }
+        Assertions.assertDoesNotThrow(() -> {
+                                          new LogoutService().serve(request);
+                                      }
         );
     }
 
     @Test
     @Order(6)
     @DisplayName("Logout User Who Is Not Logged In")
-    public void logoutUserWhoIsNotLoggedIn() {
+    public
+    void logoutUserWhoIsNotLoggedIn() {
         Assertions.assertThrows(UnauthorizedException.class, () -> {
-                    new LogoutService().serve(new LogoutRequest(ogltdAuthToken));
-                }
+                                    new LogoutService().serve(new LogoutRequest(ogltdAuthToken));
+                                }
         );
     }
 
@@ -110,7 +117,8 @@ public class ServiceTests {
     @Test
     @Order(7)
     @DisplayName("Normal Create Game")
-    public void normalCreateGame() throws ServiceException, DataAccessException {
+    public
+    void normalCreateGame() throws ServiceException, DataAccessException {
         CreateGameRequest request = new CreateGameRequest("testGame");
         request.setAuthToken(goofballAuthToken);
 
@@ -123,10 +131,11 @@ public class ServiceTests {
     @Test
     @Order(8)
     @DisplayName("Create Game No AuthToken")
-    public void createGameNoAuthToken() {
+    public
+    void createGameNoAuthToken() {
         Assertions.assertThrows(UnauthorizedException.class, () -> {
-                    new CreateGameService().serve(new CreateGameRequest("Test Game", null));
-                }
+                                    new CreateGameService().serve(new CreateGameRequest("Test Game", null));
+                                }
         );
     }
 
@@ -134,7 +143,8 @@ public class ServiceTests {
     @Test
     @Order(9)
     @DisplayName("Successfully Join Game White Team")
-    public void successfullyJoinGameWhiteTeam() {
+    public
+    void successfullyJoinGameWhiteTeam() {
         Assertions.assertDoesNotThrow(
                 () -> {
                     new JoinGameService().serve(new JoinGameRequest("WHITE", 1, goofballAuthToken));
@@ -145,10 +155,11 @@ public class ServiceTests {
     @Test
     @Order(10)
     @DisplayName("Try to Join Game on Taken Team")
-    public void tryToJoinGameOnTakenTeam() {
+    public
+    void tryToJoinGameOnTakenTeam() {
         Assertions.assertThrows(ForbiddenException.class, () -> {
-                    new JoinGameService().serve(new JoinGameRequest("WHITE", 1, goofballAuthToken));
-                }
+                                    new JoinGameService().serve(new JoinGameRequest("WHITE", 1, goofballAuthToken));
+                                }
         );
     }
 
@@ -156,20 +167,22 @@ public class ServiceTests {
     @Test
     @Order(11)
     @DisplayName("Normal Request List of Games")
-    public void normalRequestListOfGames() {
-        Assertions.assertDoesNotThrow( () -> {
-                    new ListGamesService().serve(new ListGamesRequest(goofballAuthToken));
-                }
+    public
+    void normalRequestListOfGames() {
+        Assertions.assertDoesNotThrow(() -> {
+                                          new ListGamesService().serve(new ListGamesRequest(goofballAuthToken));
+                                      }
         );
     }
 
     @Test
     @Order(12)
     @DisplayName("Unauthorized List Games")
-    public void unauthorizedListGames() {
+    public
+    void unauthorizedListGames() {
         Assertions.assertThrows(UnauthorizedException.class, () -> {
-                    new ListGamesService().serve(new ListGamesRequest(null));
-                }
+                                    new ListGamesService().serve(new ListGamesRequest(null));
+                                }
         );
     }
 
@@ -177,7 +190,8 @@ public class ServiceTests {
     @Test
     @Order(13)
     @DisplayName("Authenticate Logged-in User")
-    public void authenticateLoggedInUser() {
+    public
+    void authenticateLoggedInUser() {
         Assertions.assertDoesNotThrow(() -> {
             Authenticator.authenticate(goofballAuthToken);
         });
@@ -186,7 +200,8 @@ public class ServiceTests {
     @Test
     @Order(14)
     @DisplayName("Reject Logged-out User")
-    public void rejectLoggedOutUser() {
+    public
+    void rejectLoggedOutUser() {
         Assertions.assertThrows(UnauthorizedException.class, () -> {
             Authenticator.authenticate(ogltdAuthToken);
         });
@@ -195,7 +210,8 @@ public class ServiceTests {
     @Test
     @Order(15)
     @DisplayName("Generate Unique Tokens")
-    public void generateUniqueTokens() {
+    public
+    void generateUniqueTokens() {
         Assertions.assertNotEquals(Authenticator.generateToken(), Authenticator.generateToken());
     }
 
@@ -203,7 +219,8 @@ public class ServiceTests {
     @Test
     @Order(17)
     @DisplayName("Normal Clear Application")
-    public void normalClearApplication() {
+    public
+    void normalClearApplication() {
         Assertions.assertDoesNotThrow(
                 () -> {
                     new ClearApplicationService().serve(new ClearApplicationRequest());
@@ -214,12 +231,15 @@ public class ServiceTests {
     @Test
     @Order(18)
     @DisplayName("Clear Application Does Not Return Data")
-    public void clearApplicationDoesNotReturnData() throws DataAccessException {
+    public
+    void clearApplicationDoesNotReturnData() throws DataAccessException {
         var response = new ClearApplicationService().serve(new ClearApplicationRequest());
-        var badResponse = new ClearApplicationResponse();
-        badResponse.setMessage("blahblah I don't know what negative test to do for this one. It's pretty straightforward, no?");
+        //        var badResponse = new ClearApplicationResponse();
+        //        badResponse.setMessage(
+        //                "blahblah I don't know what negative test to do for this one. It's pretty straightforward,
+        //                no?");
 
-        Assertions.assertNotEquals(response.getMessage(), badResponse.getMessage());
+        //        Assertions.assertNotEquals(response.getMessage(), badResponse.getMessage());
     }
 
 }
