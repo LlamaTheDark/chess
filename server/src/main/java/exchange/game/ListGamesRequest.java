@@ -5,11 +5,8 @@ import exchange.Request;
 public
 class ListGamesRequest extends Request {
     public
-    ListGamesRequest(String authToken) {
-        super(authToken);
-    }
-    public
-    ListGamesRequest() {
+    ListGamesRequest(String authToken) {super(authToken);}
 
-    }
+    public
+    ListGamesRequest() {}
 }

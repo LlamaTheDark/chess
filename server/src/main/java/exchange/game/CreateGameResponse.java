@@ -4,7 +4,7 @@ import exchange.Response;
 
 public
 class CreateGameResponse implements Response {
-    int gameID;
+    private int gameID;
 
     public
     CreateGameResponse(int gameID) {
