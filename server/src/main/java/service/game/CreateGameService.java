@@ -6,10 +6,10 @@ import dataaccess.memory.MemoryGameDAO;
 import exchange.game.CreateGameRequest;
 import exchange.game.CreateGameResponse;
 import model.GameData;
-import service.Authenticator;
 import service.Service;
 import service.error.BadRequestException;
 import service.error.ServiceException;
+import service.util.Authenticator;
 
 public class CreateGameService implements Service<CreateGameResponse, CreateGameRequest> {
     @Override

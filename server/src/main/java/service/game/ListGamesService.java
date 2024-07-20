@@ -4,9 +4,9 @@ import dataaccess.DataAccessException;
 import dataaccess.memory.MemoryGameDAO;
 import exchange.game.ListGamesRequest;
 import exchange.game.ListGamesResponse;
-import service.Authenticator;
 import service.Service;
 import service.error.ServiceException;
+import service.util.Authenticator;
 
 public class ListGamesService implements Service<ListGamesResponse, ListGamesRequest> {
     @Override

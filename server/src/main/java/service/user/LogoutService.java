@@ -4,9 +4,9 @@ import dataaccess.DataAccessException;
 import dataaccess.memory.MemoryAuthDAO;
 import exchange.user.LogoutRequest;
 import exchange.user.LogoutResponse;
-import service.Authenticator;
 import service.Service;
 import service.error.ServiceException;
+import service.util.Authenticator;
 
 public class LogoutService implements Service<LogoutResponse, LogoutRequest> {
     @Override

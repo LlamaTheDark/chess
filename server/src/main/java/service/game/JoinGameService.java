@@ -6,11 +6,11 @@ import dataaccess.memory.MemoryGameDAO;
 import exchange.game.JoinGameRequest;
 import exchange.game.JoinGameResponse;
 import model.GameData;
-import service.Authenticator;
 import service.Service;
 import service.error.BadRequestException;
 import service.error.ForbiddenException;
 import service.error.ServiceException;
+import service.util.Authenticator;
 
 public class JoinGameService implements Service<JoinGameResponse, JoinGameRequest> {
     public enum PlayerColor {

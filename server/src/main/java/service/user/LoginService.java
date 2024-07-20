@@ -6,11 +6,11 @@ import dataaccess.memory.MemoryUserDAO;
 import exchange.user.LoginRequest;
 import exchange.user.LoginResponse;
 import model.AuthData;
-import service.Authenticator;
 import service.Service;
 import service.error.BadRequestException;
 import service.error.ServiceException;
 import service.error.UnauthorizedException;
+import service.util.Authenticator;
 
 public class LoginService implements Service<LoginResponse, LoginRequest> {
 
