@@ -1,10 +1,10 @@
 package chess;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-
 import chess.ChessGame.TeamColor;
 import chess.ChessPiece.PieceType;
+
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -71,7 +71,7 @@ public class ChessBoard {
     /**
      * A HashMap which maps chess positions to chess pieces.
      */
-    private LinkedHashMap<ChessPosition, ChessPiece> board = new LinkedHashMap<>(getBoardSize() * getBoardSize());
+    private final LinkedHashMap<ChessPosition, ChessPiece> board = new LinkedHashMap<>(getBoardSize() * getBoardSize());
 
     public ChessBoard() {
         for(int row = 1; row <= getBoardSize(); row++){

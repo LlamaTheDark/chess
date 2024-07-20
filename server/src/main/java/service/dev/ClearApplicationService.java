@@ -8,9 +8,11 @@ import exchange.dev.ClearApplicationRequest;
 import exchange.dev.ClearApplicationResponse;
 import service.Service;
 
-public class ClearApplicationService implements Service<ClearApplicationResponse, ClearApplicationRequest> {
+public
+class ClearApplicationService implements Service<ClearApplicationResponse, ClearApplicationRequest> {
     @Override
-    public ClearApplicationResponse serve(ClearApplicationRequest request) throws DataAccessException {
+    public
+    ClearApplicationResponse serve(ClearApplicationRequest request) throws DataAccessException {
         ClearApplicationResponse response = new ClearApplicationResponse();
 
         MemoryAuthDAO auth = new MemoryAuthDAO();

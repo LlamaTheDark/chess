@@ -9,9 +9,11 @@ import handle.user.LogoutHandler;
 import handle.user.RegisterHandler;
 import spark.Spark;
 
-public class Server {
+public
+class Server {
 
-    public int run(int desiredPort) {
+    public
+    int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
@@ -28,21 +30,27 @@ public class Server {
         return Spark.port();
     }
 
-    private void registerUserEndpoints() {
+    private
+    void registerUserEndpoints() {
         Spark.post("/user", new RegisterHandler());
         Spark.post("/session", new LoginHandler());
         Spark.delete("/session", new LogoutHandler());
     }
-    private void registerGameEndpoints() {
+
+    private
+    void registerGameEndpoints() {
         Spark.post("/game", new CreateGameHandler());
         Spark.put("/game", new JoinGameHandler());
         Spark.get("/game", new ListGamesHandler());
     }
-    private void registerDevEndpoints() {
+
+    private
+    void registerDevEndpoints() {
         Spark.delete("/db", new ClearApplicationHandler());
     }
 
-    public void stop() {
+    public
+    void stop() {
         Spark.stop();
         Spark.awaitStop();
     }

@@ -12,14 +12,11 @@ import service.error.ForbiddenException;
 import service.error.ServiceException;
 import service.util.Authenticator;
 
-public class JoinGameService implements Service<JoinGameResponse, JoinGameRequest> {
-    public enum PlayerColor {
-        WHITE,
-        BLACK
-    }
-    
+public
+class JoinGameService implements Service<JoinGameResponse, JoinGameRequest> {
     @Override
-    public JoinGameResponse serve(JoinGameRequest request) throws DataAccessException, ServiceException {
+    public
+    JoinGameResponse serve(JoinGameRequest request) throws DataAccessException, ServiceException {
         // unauthenticated checks
         Authenticator.authenticate(request.getAuthToken());
 
@@ -27,27 +24,27 @@ public class JoinGameService implements Service<JoinGameResponse, JoinGameReques
         var requestedGame = gameDAO.getGame(request.getGameID());
 
         // bad request checks
-        if(request.getPlayerColor() == null || requestedGame == null) {
+        if (request.getPlayerColor() == null || requestedGame == null) {
             throw new BadRequestException();
         }
 
-        var playerColor = switch(request.getPlayerColor()) {
+        var playerColor = switch (request.getPlayerColor()) {
             case "WHITE" -> PlayerColor.WHITE;
             case "BLACK" -> PlayerColor.BLACK;
             default -> throw new BadRequestException();
         };
 
         // forbidden checks
-        if(switch(playerColor) {
+        if (switch (playerColor) {
             case WHITE -> requestedGame.whiteUsername() != null;
             case BLACK -> requestedGame.blackUsername() != null;
-        }){
+        }) {
             throw new ForbiddenException("Error: already taken");
         }
 
         // join the game
         var playerUsername = new MemoryAuthDAO().getAuthByToken(request.getAuthToken()).username();
-        gameDAO.updateGame(switch(playerColor){
+        gameDAO.updateGame(switch (playerColor) {
             case WHITE -> new GameData(requestedGame.gameID(), playerUsername, requestedGame.blackUsername(),
                                        requestedGame.gameName(), requestedGame.game());
             case BLACK -> new GameData(requestedGame.gameID(), requestedGame.whiteUsername(), playerUsername,
@@ -55,5 +52,11 @@ public class JoinGameService implements Service<JoinGameResponse, JoinGameReques
         });
 
         return new JoinGameResponse();
+    }
+
+    public
+    enum PlayerColor {
+        WHITE,
+        BLACK
     }
 }
