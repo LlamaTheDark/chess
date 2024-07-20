@@ -9,6 +9,9 @@ TODO: I think you just need the variables there with the getters for the request
 public class Request {
     private String authToken;
     public Request(){ }
+    public Request(String authToken) {
+        this.authToken = authToken;
+    }
     public String getAuthToken() {
         return authToken;
     }
