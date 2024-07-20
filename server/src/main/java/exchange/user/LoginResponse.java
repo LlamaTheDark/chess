@@ -1,6 +1,5 @@
 package exchange.user;
 
-import exchange.Response;
-
-public class LoginResponse extends RegisterResponse {
+public
+class LoginResponse extends RegisterResponse {
 }

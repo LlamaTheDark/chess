@@ -11,19 +11,20 @@ import service.error.UnauthorizedException;
 /**
  * Handler to reduce code duplication, seeing as most handler classes reuse the same basic algorithm.
  */
-public final class HttpHandler {
+public final
+class HttpHandler {
     public static
     <P extends exchange.Response, Q extends exchange.Request>
-    void handleHttpRoute(spark.Request request, Class<Q> requestClass, Service<P,Q> service, spark.Response response) {
-        try{
+    void handleHttpRoute(spark.Request request, Class<Q> requestClass, Service<P, Q> service, spark.Response response) {
+        try {
 
             var deserializedRequest = Serializer.deserialize(request.body(), requestClass);
             String authorization = request.headers("Authorization");
-            if(authorization != null){
+            if (authorization != null) {
                 deserializedRequest.setAuthToken(authorization);
             }
 
-            var exchangeResponse = service.serve( deserializedRequest );
+            var exchangeResponse = service.serve(deserializedRequest);
 
             response.type("text/json");
             response.body(
@@ -34,7 +35,7 @@ public final class HttpHandler {
             // default response code is 200 OK because if something went wrong, we'd be in an exception right now
             response.status(200);
 
-        } catch (BadRequestException bre){
+        } catch (BadRequestException bre) {
             response.status(400);
             response.body("{\"message\": \"" + bre.getMessage() + "\"}");
         } catch (UnauthorizedException ue) {

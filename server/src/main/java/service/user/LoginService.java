@@ -12,12 +12,14 @@ import service.error.ServiceException;
 import service.error.UnauthorizedException;
 import service.util.Authenticator;
 
-public class LoginService implements Service<LoginResponse, LoginRequest> {
+public
+class LoginService implements Service<LoginResponse, LoginRequest> {
 
     @Override
-    public LoginResponse serve(LoginRequest request) throws DataAccessException, ServiceException {
+    public
+    LoginResponse serve(LoginRequest request) throws DataAccessException, ServiceException {
         // bad request checks
-        if(request.getUsername() == null || request.getPassword() == null) {
+        if (request.getUsername() == null || request.getPassword() == null) {
             throw new BadRequestException();
         }
 
@@ -26,7 +28,7 @@ public class LoginService implements Service<LoginResponse, LoginRequest> {
 
         var authDAO = new MemoryAuthDAO();
 
-        if(!credentialsMatch) {
+        if (!credentialsMatch) {
             throw new UnauthorizedException();
         }
 

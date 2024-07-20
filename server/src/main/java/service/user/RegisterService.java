@@ -11,9 +11,11 @@ import service.error.BadRequestException;
 import service.error.ForbiddenException;
 import service.error.ServiceException;
 
-public class RegisterService implements Service<RegisterResponse, RegisterRequest> {
+public
+class RegisterService implements Service<RegisterResponse, RegisterRequest> {
     @Override
-    public RegisterResponse serve(RegisterRequest request) throws DataAccessException, ServiceException {
+    public
+    RegisterResponse serve(RegisterRequest request) throws DataAccessException, ServiceException {
 
         var userDAO = new MemoryUserDAO();
         if (userDAO.getUser(request.getUsername()) != null) {
@@ -24,7 +26,7 @@ public class RegisterService implements Service<RegisterResponse, RegisterReques
          */
 
         // test to make sure all fields are legitimate
-        if(request.getUsername() == null || request.getPassword() == null || request.getEmail() == null){
+        if (request.getUsername() == null || request.getPassword() == null || request.getEmail() == null) {
             throw new BadRequestException("Error: bad request");
         }
 
