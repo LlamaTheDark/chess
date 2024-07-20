@@ -6,7 +6,7 @@ import model.GameData;
 import java.util.Collection;
 
 public
-class ListGamesResponse extends Response {
+class ListGamesResponse implements Response {
     private Collection<GameData> games;
 
     public

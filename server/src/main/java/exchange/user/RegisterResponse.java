@@ -3,7 +3,7 @@ package exchange.user;
 import exchange.Response;
 
 public
-class RegisterResponse extends Response {
+class RegisterResponse implements Response {
     String username;
     String authToken;
 

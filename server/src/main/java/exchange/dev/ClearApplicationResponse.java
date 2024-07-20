@@ -3,5 +3,5 @@ package exchange.dev;
 import exchange.Response;
 
 public
-class ClearApplicationResponse extends Response {
+class ClearApplicationResponse implements Response {
 }

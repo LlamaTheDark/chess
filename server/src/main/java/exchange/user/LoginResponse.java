@@ -1,5 +1,4 @@
 package exchange.user;
 
 public
-class LoginResponse extends RegisterResponse {
-}
+class LoginResponse extends RegisterResponse {}

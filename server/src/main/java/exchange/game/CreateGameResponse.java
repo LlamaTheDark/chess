@@ -3,7 +3,7 @@ package exchange.game;
 import exchange.Response;
 
 public
-class CreateGameResponse extends Response {
+class CreateGameResponse implements Response {
     int gameID;
 
     public
