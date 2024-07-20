@@ -1,12 +1,13 @@
-package handle;
+package handle.util;
 
 import dataaccess.DataAccessException;
-import handle.util.Serializer;
 import service.Service;
 import service.error.BadRequestException;
 import service.error.ForbiddenException;
 import service.error.ServiceException;
 import service.error.UnauthorizedException;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Handler to reduce code duplication, seeing as most handler classes reuse the same basic algorithm.
@@ -44,7 +45,12 @@ class HttpHandler {
         } catch (ForbiddenException fe) {
             response.status(403);
             response.body("{\"message\": \"" + fe.getMessage() + "\"}");
-        } catch (ServiceException | DataAccessException se) {
+        } catch (ServiceException |
+                 DataAccessException |
+                 NoSuchMethodException |
+                 InvocationTargetException |
+                 InstantiationException |
+                 IllegalAccessException se) {
             response.status(500);
             response.body("{\"message\": \"" + se.getMessage() + "\"}");
         }

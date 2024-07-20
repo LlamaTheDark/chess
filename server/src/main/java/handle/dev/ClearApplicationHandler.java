@@ -1,7 +1,7 @@
 package handle.dev;
 
 import exchange.dev.ClearApplicationRequest;
-import handle.HttpHandler;
+import handle.util.HttpHandler;
 import service.dev.ClearApplicationService;
 import spark.Request;
 import spark.Response;

@@ -1,7 +1,7 @@
 package handle.user;
 
 import exchange.user.LogoutRequest;
-import handle.HttpHandler;
+import handle.util.HttpHandler;
 import service.user.LogoutService;
 import spark.Request;
 import spark.Response;

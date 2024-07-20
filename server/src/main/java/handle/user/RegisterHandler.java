@@ -1,7 +1,7 @@
 package handle.user;
 
 import exchange.user.RegisterRequest;
-import handle.HttpHandler;
+import handle.util.HttpHandler;
 import service.user.RegisterService;
 import spark.Request;
 import spark.Response;

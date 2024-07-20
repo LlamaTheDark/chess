@@ -1,7 +1,7 @@
 package handle.game;
 
 import exchange.game.JoinGameRequest;
-import handle.HttpHandler;
+import handle.util.HttpHandler;
 import service.game.JoinGameService;
 import spark.Request;
 import spark.Response;

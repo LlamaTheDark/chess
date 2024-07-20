@@ -1,7 +1,7 @@
 package handle.game;
 
 import exchange.game.ListGamesRequest;
-import handle.HttpHandler;
+import handle.util.HttpHandler;
 import service.game.ListGamesService;
 import spark.Request;
 import spark.Response;
