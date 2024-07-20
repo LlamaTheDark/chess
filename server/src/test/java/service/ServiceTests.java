@@ -119,9 +119,6 @@ class ServiceTests {
     @DisplayName("Normal Create Game")
     public
     void normalCreateGame() throws ServiceException, DataAccessException {
-        CreateGameRequest request = new CreateGameRequest("testGame");
-        request.setAuthToken(goofballAuthToken);
-
         var response = new CreateGameService().serve(new CreateGameRequest("Test Game", goofballAuthToken));
         var expectedResponse = new CreateGameResponse(1);
 
