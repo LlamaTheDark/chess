@@ -3,6 +3,7 @@ package server;
 import handle.dev.ClearApplicationHandler;
 import handle.game.CreateGameHandler;
 import handle.game.JoinGameHandler;
+import handle.game.ListGamesHandler;
 import handle.user.LoginHandler;
 import handle.user.LogoutHandler;
 import handle.user.RegisterHandler;
@@ -35,6 +36,7 @@ public class Server {
     private void registerGameEndpoints() {
         Spark.post("/game", new CreateGameHandler());
         Spark.put("/game", new JoinGameHandler());
+        Spark.get("/game", new ListGamesHandler());
     }
     private void registerDevEndpoints() {
         Spark.delete("/db", new ClearApplicationHandler());

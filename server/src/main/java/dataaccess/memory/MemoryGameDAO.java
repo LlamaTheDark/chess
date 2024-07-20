@@ -1,13 +1,11 @@
 package dataaccess.memory;
 
-import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 public class MemoryGameDAO implements GameDAO {
     /**
@@ -27,8 +25,8 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public Collection<ChessGame> listGames() throws DataAccessException {
-        return List.of();
+    public Collection<GameData> listGames() throws DataAccessException {
+        return GAME.values();
     }
 
     @Override
