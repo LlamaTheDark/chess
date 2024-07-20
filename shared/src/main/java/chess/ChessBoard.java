@@ -1,29 +1,30 @@
 package chess;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-
 import chess.ChessGame.TeamColor;
 import chess.ChessPiece.PieceType;
+
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
- * Note: You can add to this class, but you may not alter
- * signature of the existing methods.
+ * Note: You can add to this class, but you may not alter signature of the existing methods.
  */
-public class ChessBoard {
+public
+class ChessBoard {
 
-/*
-########## STATIC ##########
- */
+    /*
+    ########## STATIC ##########
+     */
     private static final int BOARD_SIZE = 8;
 
     /**
-     * A Hashmap which maps chess positions to chess pieces. This is instantiated with the default starting positions for
-     * a standard game of chess.
+     * A Hashmap which maps chess positions to chess pieces. This is instantiated with the default starting positions
+     * for a standard game of chess.
      */
-    private static final LinkedHashMap<ChessPosition, ChessPiece> DEFAULT_BOARD = new LinkedHashMap<>(getBoardSize() * getBoardSize());
+    private static final LinkedHashMap<ChessPosition, ChessPiece> DEFAULT_BOARD =
+            new LinkedHashMap<>(getBoardSize() * getBoardSize());
 
     /*
     Instantiates the DEFAULT_BOARD map.
@@ -37,15 +38,15 @@ public class ChessBoard {
         DEFAULT_BOARD.put(new ChessPosition(1, 6), new ChessPiece(TeamColor.WHITE, PieceType.BISHOP));
         DEFAULT_BOARD.put(new ChessPosition(1, 7), new ChessPiece(TeamColor.WHITE, PieceType.KNIGHT));
         DEFAULT_BOARD.put(new ChessPosition(1, 8), new ChessPiece(TeamColor.WHITE, PieceType.ROOK));
-        for(int i = 1; i <= ChessBoard.getBoardSize(); i++){
+        for (int i = 1; i <= ChessBoard.getBoardSize(); i++) {
             DEFAULT_BOARD.put(new ChessPosition(2, i), new ChessPiece(TeamColor.WHITE, PieceType.PAWN));
         }
-        for(int i = 3; i <= 6; i++){
-            for(int j = 1; j <= ChessBoard.getBoardSize(); j++){
+        for (int i = 3; i <= 6; i++) {
+            for (int j = 1; j <= ChessBoard.getBoardSize(); j++) {
                 DEFAULT_BOARD.put(new ChessPosition(i, j), null);
             }
         }
-        for(int i = 1; i <= ChessBoard.getBoardSize(); i++){
+        for (int i = 1; i <= ChessBoard.getBoardSize(); i++) {
             DEFAULT_BOARD.put(new ChessPosition(7, i), new ChessPiece(TeamColor.BLACK, PieceType.PAWN));
         }
         DEFAULT_BOARD.put(new ChessPosition(8, 1), new ChessPiece(TeamColor.BLACK, PieceType.ROOK));
@@ -59,45 +60,55 @@ public class ChessBoard {
     }
 
     /**
-     * The length/width of the chess board.
-     */
-    public static int getBoardSize() {
-        return BOARD_SIZE;
-    }
-
-/*
-########## INSTANCE ##########
- */
-    /**
      * A HashMap which maps chess positions to chess pieces.
      */
     private LinkedHashMap<ChessPosition, ChessPiece> board = new LinkedHashMap<>(getBoardSize() * getBoardSize());
 
-    public ChessBoard() {
-        for(int row = 1; row <= getBoardSize(); row++){
-            for(int col = 1; col <= getBoardSize(); col++) {
+    /*
+    ########## INSTANCE ##########
+     */
+    public
+    ChessBoard() {
+        for (int row = 1; row <= getBoardSize(); row++) {
+            for (int col = 1; col <= getBoardSize(); col++) {
                 board.put(new ChessPosition(row, col), null);
             }
         }
     }
-    public ChessBoard(ChessBoard toCopy){
+
+    public
+    ChessBoard(ChessBoard toCopy) {
         this.board.putAll(toCopy.board);
     }
 
     /**
-     * Tests to see if a ChessPosition exists in the BOARD HashMap.
-     * @param position The position in question.
-     * @return Whether position is in the board.<br><code>true</code>: yes, position is in the board.<br><code>false</code>: no, position is not in the board.
+     * The length/width of the chess board.
      */
-    public boolean hasPosition(ChessPosition position) {
+    public static
+    int getBoardSize() {
+        return BOARD_SIZE;
+    }
+
+    /**
+     * Tests to see if a ChessPosition exists in the BOARD HashMap.
+     *
+     * @param position The position in question.
+     *
+     * @return Whether position is in the board.<br><code>true</code>: yes, position is in the
+     * board.<br><code>false</code>: no, position is not in the board.
+     */
+    public
+    boolean hasPosition(ChessPosition position) {
         return board.containsKey(position);
     }
 
     /**
      * Sets the board to the default starting board.
+     *
      * @see ChessBoard#DEFAULT_BOARD
      */
-    public void resetBoard() {
+    public
+    void resetBoard() {
         this.board.putAll(DEFAULT_BOARD);
     }
 
@@ -107,14 +118,15 @@ public class ChessBoard {
      * @param position where to add the piece to
      * @param piece    the piece to add
      */
-    public void addPiece(ChessPosition position, ChessPiece piece) {
+    public
+    void addPiece(ChessPosition position, ChessPiece piece) {
         /*
         Every valid position should exist upon instantiation, so we'll throw an illegal argument exception
         if we get one that's not already there.
          */
-        if(!board.containsKey(position)) throw new IllegalArgumentException(
+        if (!board.containsKey(position)) throw new IllegalArgumentException(
                 String.format("Chess position illegal. Suggested addition:\nRow: %d, Col: %d",
-                        position.getRow(), position.getColumn()));
+                              position.getRow(), position.getColumn()));
         board.put(position, piece);
     }
 
@@ -122,19 +134,28 @@ public class ChessBoard {
      * Gets a chess piece on the chessboard
      *
      * @param position The position to get the piece from
-     * @return Either the piece at the position, or null if no piece is at that
-     * position
+     *
+     * @return Either the piece at the position, or null if no piece is at that position
      */
-    public ChessPiece getPiece(ChessPosition position) {
+    public
+    ChessPiece getPiece(ChessPosition position) {
         return board.get(position);
     }
 
-    public Iterator<ChessPosition> positionIterator(){
+    public
+    Iterator<ChessPosition> positionIterator() {
         return board.keySet().iterator();
     }
 
     @Override
-    public boolean equals(Object o) {
+    public
+    int hashCode() {
+        return board.hashCode();
+    }
+
+    @Override
+    public
+    boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
@@ -142,20 +163,16 @@ public class ChessBoard {
     }
 
     @Override
-    public int hashCode() {
-        return board.hashCode();
-    }
-
-    @Override
-    public String toString() {
+    public
+    String toString() {
         StringBuilder sb = new StringBuilder();
-        for(int row = BOARD_SIZE; row >= 1; row--){
+        for (int row = BOARD_SIZE; row >= 1; row--) {
             sb.append("\n|");
-            for(int col = 1; col <= BOARD_SIZE; col++){
+            for (int col = 1; col <= BOARD_SIZE; col++) {
                 var piece = board.get(new ChessPosition(row, col));
-                if(piece == null){
+                if (piece == null) {
                     sb.append(" ");
-                }else {
+                } else {
                     sb.append(switch (piece.getPieceType()) {
                         case KING -> piece.getTeamColor() == TeamColor.WHITE ? "K" : "k";
                         case QUEEN -> piece.getTeamColor() == TeamColor.WHITE ? "Q" : "q";
@@ -168,10 +185,10 @@ public class ChessBoard {
                 sb.append("|");
             }
         }
-//        for (ChessPosition inst : board.keySet()) {
-//            sb.append(String.format("r:%s,c:%s => %s\n", inst.getRow(), inst.getColumn(),
-//                    board.get(inst) == null ? "null" : board.get(inst).getPieceType()));
-//        }
+        //        for (ChessPosition inst : board.keySet()) {
+        //            sb.append(String.format("r:%s,c:%s => %s\n", inst.getRow(), inst.getColumn(),
+        //                    board.get(inst) == null ? "null" : board.get(inst).getPieceType()));
+        //        }
 
         return sb.toString();
     }

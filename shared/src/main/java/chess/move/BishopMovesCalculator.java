@@ -7,15 +7,45 @@ import chess.ChessPosition;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class BishopMovesCalculator extends PieceMovesCalculator {
+public
+class BishopMovesCalculator extends PieceMovesCalculator {
     @Override
-    public Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position){
+    public
+    Collection<ChessMove> pieceMoves(ChessBoard chessBoard, ChessPosition position) {
         var possibleMoves = new HashSet<ChessMove>();
 
-        PieceMovesCalculator.addAttackRange(new int[]{ 1,  1}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
-        PieceMovesCalculator.addAttackRange(new int[]{-1,  1}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
-        PieceMovesCalculator.addAttackRange(new int[]{-1, -1}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
-        PieceMovesCalculator.addAttackRange(new int[]{ 1, -1}, possibleMoves, chessBoard, position, ChessBoard.getBoardSize()-1, true, true, false);
+        PieceMovesCalculator.addAttackRange(new int[]{1, 1},
+                                            possibleMoves,
+                                            chessBoard,
+                                            position,
+                                            ChessBoard.getBoardSize() - 1,
+                                            true,
+                                            true,
+                                            false);
+        PieceMovesCalculator.addAttackRange(new int[]{-1, 1},
+                                            possibleMoves,
+                                            chessBoard,
+                                            position,
+                                            ChessBoard.getBoardSize() - 1,
+                                            true,
+                                            true,
+                                            false);
+        PieceMovesCalculator.addAttackRange(new int[]{-1, -1},
+                                            possibleMoves,
+                                            chessBoard,
+                                            position,
+                                            ChessBoard.getBoardSize() - 1,
+                                            true,
+                                            true,
+                                            false);
+        PieceMovesCalculator.addAttackRange(new int[]{1, -1},
+                                            possibleMoves,
+                                            chessBoard,
+                                            position,
+                                            ChessBoard.getBoardSize() - 1,
+                                            true,
+                                            true,
+                                            false);
 
         return possibleMoves;
     }
