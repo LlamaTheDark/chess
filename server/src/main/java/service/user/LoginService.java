@@ -25,21 +25,13 @@ public class LoginService implements Service<LoginResponse, LoginRequest> {
             throw new UnauthorizedException("Error: unauthorized");
         }
 
-        var loggedInAuth = authDAO.getAuthByUsername(request.getUsername());
-        boolean alreadyLoggedIn = loggedInAuth != null;
+        String authToken = Authenticator.generateToken();
+        authDAO.createAuth(
+                new AuthData(authToken, request.getUsername())
+        );
 
-        if(alreadyLoggedIn){
-            response.setAuthToken(loggedInAuth.authToken());
-            response.setUsername(loggedInAuth.username());
-        }else {
-            String authToken = Authenticator.generateToken();
-            authDAO.createAuth(
-                    new AuthData(authToken, request.getUsername())
-            );
-
-            response.setAuthToken(authToken);
-            response.setUsername(request.getUsername());
-        }
+        response.setAuthToken(authToken);
+        response.setUsername(request.getUsername());
 
         return response;
     }
