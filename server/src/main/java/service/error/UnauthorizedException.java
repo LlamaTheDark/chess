@@ -1,5 +1,8 @@
 package service.error;
 
+/**
+ * Indicates that a request was made with insufficient credentials.
+ */
 public
 class UnauthorizedException extends ServiceException {
     public

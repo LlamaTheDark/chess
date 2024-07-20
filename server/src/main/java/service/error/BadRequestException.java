@@ -1,5 +1,8 @@
 package service.error;
 
+/**
+ * Indicates that the request had invalid information and could therefore not be used.
+ */
 public
 class BadRequestException extends ServiceException {
     public
