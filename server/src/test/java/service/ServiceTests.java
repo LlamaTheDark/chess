@@ -23,6 +23,7 @@ import service.game.ListGamesService;
 import service.user.LoginService;
 import service.user.LogoutService;
 import service.user.RegisterService;
+import service.util.Authenticator;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ServiceTests {
@@ -162,9 +163,35 @@ public class ServiceTests {
         );
     }
 
-    // CLEAR APPLICATION TESTS
+    // AUTHENTICATOR TESTS
     @Test
     @Order(13)
+    @DisplayName("Authenticate Logged-in User")
+    public void authenticateLoggedInUser() throws ServiceException, DataAccessException {
+        Assertions.assertDoesNotThrow( () -> {
+            Authenticator.authenticate(goofballAuthToken);
+        });
+    }
+
+    @Test
+    @Order(14)
+    @DisplayName("Reject Logged-out User")
+    public void rejectLoggedOutUser() throws ServiceException, DataAccessException {
+        Assertions.assertThrows(UnauthorizedException.class, () -> {
+            Authenticator.authenticate(ogltdAuthToken);
+        });
+    }
+
+    @Test
+    @Order(15)
+    @DisplayName("Generate Unique Tokens")
+    public void generateUniqueTokens() throws ServiceException, DataAccessException {
+        Assertions.assertNotEquals(Authenticator.generateToken(), Authenticator.generateToken());
+    }
+
+    // CLEAR APPLICATION TESTS
+    @Test
+    @Order(17)
     @DisplayName("Normal Clear Application")
     public void normalClearApplication() throws ServiceException, DataAccessException {
         Assertions.assertDoesNotThrow(
@@ -173,7 +200,7 @@ public class ServiceTests {
     }
 
     @Test
-    @Order(14)
+    @Order(18)
     @DisplayName("Clear Application Does Not Return Data")
     public void clearApplicationDoesNotReturnData() throws ServiceException, DataAccessException {
         var response = new ClearApplicationService().serve(new ClearApplicationRequest());
@@ -183,5 +210,4 @@ public class ServiceTests {
         Assertions.assertNotEquals(response.getMessage(), badResponse.getMessage());
     }
 
-    // AUTHENTICATOR TESTS
 }
