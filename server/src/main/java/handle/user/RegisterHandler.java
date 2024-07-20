@@ -13,7 +13,6 @@ class RegisterHandler implements Route {
     public
     Object handle(Request request, Response response) {
         HttpHandler.handleHttpRoute(request, RegisterRequest.class, new RegisterService(), response);
-
         return response.body();
     }
 }

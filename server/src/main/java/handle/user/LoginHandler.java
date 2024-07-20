@@ -13,7 +13,6 @@ class LoginHandler implements Route {
     public
     Object handle(Request request, Response response) {
         HttpHandler.handleHttpRoute(request, LoginRequest.class, new LoginService(), response);
-
         return response.body();
     }
 }
