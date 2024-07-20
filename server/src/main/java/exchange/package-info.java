@@ -1,4 +1,4 @@
 /**
- * Provides classes to model server requests and responses.
+ * Provides classes and interfaces to model server requests and responses.
  */
 package exchange;
