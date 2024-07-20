@@ -4,6 +4,7 @@ import dataaccess.DataAccessException;
 import exchange.game.CreateGameRequest;
 import exchange.game.CreateGameResponse;
 import exchange.game.JoinGameRequest;
+import exchange.game.ListGamesRequest;
 import exchange.user.LoginRequest;
 import exchange.user.LoginResponse;
 import exchange.user.LogoutRequest;
@@ -15,6 +16,7 @@ import service.error.ServiceException;
 import service.error.UnauthorizedException;
 import service.game.CreateGameService;
 import service.game.JoinGameService;
+import service.game.ListGamesService;
 import service.user.LoginService;
 import service.user.LogoutService;
 import service.user.RegisterService;
@@ -139,7 +141,23 @@ public class ServiceTests {
     }
 
     // LIST GAMES TESTS
+    @Test
+    @Order(11)
+    @DisplayName("Normal Request List of Games")
+    public void normalRequestListOfGames() throws ServiceException, DataAccessException {
+        Assertions.assertDoesNotThrow(
+                () -> { new ListGamesService().serve(new ListGamesRequest(goofballAuthToken)); }
+        );
+    }
 
+    @Test
+    @Order(12)
+    @DisplayName("Unauthorized List Games")
+    public void unauthorizedListGames() throws ServiceException, DataAccessException {
+        Assertions.assertThrows(UnauthorizedException.class,
+                () -> { new ListGamesService().serve(new ListGamesRequest(null)); }
+        );
+    }
 
     // CLEAR APPLICATION TESTS
 
