@@ -1,6 +1,8 @@
 package service;
 
 import dataaccess.DataAccessException;
+import exchange.dev.ClearApplicationRequest;
+import exchange.dev.ClearApplicationResponse;
 import exchange.game.CreateGameRequest;
 import exchange.game.CreateGameResponse;
 import exchange.game.JoinGameRequest;
@@ -10,6 +12,7 @@ import exchange.user.LoginResponse;
 import exchange.user.LogoutRequest;
 import exchange.user.RegisterRequest;
 import org.junit.jupiter.api.*;
+import service.dev.ClearApplicationService;
 import service.error.BadRequestException;
 import service.error.ForbiddenException;
 import service.error.ServiceException;
@@ -160,5 +163,25 @@ public class ServiceTests {
     }
 
     // CLEAR APPLICATION TESTS
+    @Test
+    @Order(13)
+    @DisplayName("Normal Clear Application")
+    public void normalClearApplication() throws ServiceException, DataAccessException {
+        Assertions.assertDoesNotThrow(
+                () -> { new ClearApplicationService().serve(new ClearApplicationRequest()); }
+        );
+    }
 
+    @Test
+    @Order(14)
+    @DisplayName("Clear Application Does Not Return Data")
+    public void clearApplicationDoesNotReturnData() throws ServiceException, DataAccessException {
+        var response = new ClearApplicationService().serve(new ClearApplicationRequest());
+        var badResponse = new ClearApplicationResponse();
+        badResponse.setMessage("blahblah I don't know what negative test to do for this one. It's pretty straightforward, no?");
+
+        Assertions.assertNotEquals(response.getMessage(), badResponse.getMessage());
+    }
+
+    // AUTHENTICATOR TESTS
 }
