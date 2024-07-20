@@ -16,4 +16,9 @@ class ListGamesResponse implements Response {
 
     public
     ListGamesResponse() {}
+
+    public
+    Collection<GameData> getGames() {
+        return this.games;
+    }
 }
