@@ -60,9 +60,7 @@ class ServiceTests {
         var response = new RegisterService().serve(firstRegisterRequest);
         goofballAuthToken = response.getAuthToken();
 
-        Assertions.assertThrows(ForbiddenException.class, () -> {
-            new RegisterService().serve(firstRegisterRequest);
-        });
+        Assertions.assertThrows(ForbiddenException.class, () -> new RegisterService().serve(firstRegisterRequest));
     }
 
     // LOGIN TESTS
@@ -83,9 +81,8 @@ class ServiceTests {
     @DisplayName("Bad Request Login Attempt")
     public
     void badRequestLoginAttempt() {
-        Assertions.assertThrows(BadRequestException.class, () -> {
-                                    new LoginService().serve(new LoginRequest(null, "beans123"));
-                                }
+        Assertions.assertThrows(BadRequestException.class,
+                                () -> new LoginService().serve(new LoginRequest(null, "beans123"))
         );
     }
 
@@ -107,9 +104,8 @@ class ServiceTests {
     @DisplayName("Logout User Who Is Not Logged In")
     public
     void logoutUserWhoIsNotLoggedIn() {
-        Assertions.assertThrows(UnauthorizedException.class, () -> {
-                                    new LogoutService().serve(new LogoutRequest(ogltdAuthToken));
-                                }
+        Assertions.assertThrows(UnauthorizedException.class,
+                                () -> new LogoutService().serve(new LogoutRequest(ogltdAuthToken))
         );
     }
 
@@ -130,9 +126,8 @@ class ServiceTests {
     @DisplayName("Create Game No AuthToken")
     public
     void createGameNoAuthToken() {
-        Assertions.assertThrows(UnauthorizedException.class, () -> {
-                                    new CreateGameService().serve(new CreateGameRequest("Test Game", null));
-                                }
+        Assertions.assertThrows(UnauthorizedException.class,
+                                () -> new CreateGameService().serve(new CreateGameRequest("Test Game", null))
         );
     }
 
@@ -154,9 +149,8 @@ class ServiceTests {
     @DisplayName("Try to Join Game on Taken Team")
     public
     void tryToJoinGameOnTakenTeam() {
-        Assertions.assertThrows(ForbiddenException.class, () -> {
-                                    new JoinGameService().serve(new JoinGameRequest("WHITE", 1, goofballAuthToken));
-                                }
+        Assertions.assertThrows(ForbiddenException.class,
+                                () -> new JoinGameService().serve(new JoinGameRequest("WHITE", 1, goofballAuthToken))
         );
     }
 
@@ -177,9 +171,8 @@ class ServiceTests {
     @DisplayName("Unauthorized List Games")
     public
     void unauthorizedListGames() {
-        Assertions.assertThrows(UnauthorizedException.class, () -> {
-                                    new ListGamesService().serve(new ListGamesRequest(null));
-                                }
+        Assertions.assertThrows(UnauthorizedException.class,
+                                () -> new ListGamesService().serve(new ListGamesRequest(null))
         );
     }
 
@@ -189,9 +182,7 @@ class ServiceTests {
     @DisplayName("Authenticate Logged-in User")
     public
     void authenticateLoggedInUser() {
-        Assertions.assertDoesNotThrow(() -> {
-            Authenticator.authenticate(goofballAuthToken);
-        });
+        Assertions.assertDoesNotThrow(() -> Authenticator.authenticate(goofballAuthToken));
     }
 
     @Test
@@ -199,9 +190,7 @@ class ServiceTests {
     @DisplayName("Reject Logged-out User")
     public
     void rejectLoggedOutUser() {
-        Assertions.assertThrows(UnauthorizedException.class, () -> {
-            Authenticator.authenticate(ogltdAuthToken);
-        });
+        Assertions.assertThrows(UnauthorizedException.class, () -> Authenticator.authenticate(ogltdAuthToken));
     }
 
     @Test
