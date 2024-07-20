@@ -5,11 +5,10 @@ import exchange.Request;
 public
 class LogoutRequest extends Request {
     public
-    LogoutRequest() {}
+    LogoutRequest(String authToken) {super(authToken);}
 
     public
-    LogoutRequest(String authToken) {
-        super(authToken);
-    }
+    LogoutRequest() {}
+
 }
 

@@ -4,9 +4,9 @@ import exchange.Request;
 
 public
 class RegisterRequest extends Request {
-    String username;
-    String password;
-    String email;
+    private String username;
+    private String password;
+    private String email;
 
     public
     RegisterRequest(String username, String password, String email) {

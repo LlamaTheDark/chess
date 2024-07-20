@@ -14,6 +14,9 @@ class LoginRequest extends Request {
     }
 
     public
+    LoginRequest() {}
+
+    public
     String getUsername() {return username;}
 
     public

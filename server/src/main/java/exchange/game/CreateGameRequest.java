@@ -7,13 +7,16 @@ class CreateGameRequest extends Request {
     String gameName;
 
     public
-    CreateGameRequest(String gameName) {
+    CreateGameRequest(String gameName, String authToken) {
+        super(authToken);
         this.gameName = gameName;
     }
 
     public
-    CreateGameRequest(String gameName, String authToken) {
-        super(authToken);
+    CreateGameRequest() {}
+
+    public
+    void setGameName(String gameName) {
         this.gameName = gameName;
     }
 
