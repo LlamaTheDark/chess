@@ -62,7 +62,7 @@ class ChessBoard {
     /**
      * A HashMap which maps chess positions to chess pieces.
      */
-    private LinkedHashMap<ChessPosition, ChessPiece> board = new LinkedHashMap<>(getBoardSize() * getBoardSize());
+    private final LinkedHashMap<ChessPosition, ChessPiece> board = new LinkedHashMap<>(getBoardSize() * getBoardSize());
 
     /*
     ########## INSTANCE ##########
