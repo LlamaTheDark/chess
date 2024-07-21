@@ -183,7 +183,4 @@ class FIDERuleBook implements ChessRuleBook {
     boolean isBoardValid(ChessBoard board) {
         return ChessBoard.getBoardSize() == 8;
     }
-
-    public
-    int getRegulationBoardSize() {return REGULATION_BOARD_SIZE;}
 }
