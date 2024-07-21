@@ -6,10 +6,6 @@ import model.UserData;
 
 import java.util.HashMap;
 
-/*
-TODO: Figure out when the heck you're supposed to throw those exceptions.
-*/
-
 /**
  * Implements the {@link UserDAO} interface using a local-memory database.
  */

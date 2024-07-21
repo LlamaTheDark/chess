@@ -13,7 +13,7 @@ import java.util.Collection;
 public
 class ChessGame {
 
-    private final ChessGame.GameState STATE;
+    private final ChessGame.GameState state;
     private final ChessRuleBook       ruleBook;
 
     public
@@ -23,7 +23,7 @@ class ChessGame {
 
     public
     ChessGame(ChessRuleBook ruleBook) {
-        STATE = new GameState(new ChessBoard(/* TODO: ruleBook.getRegulationBoardSize() */));
+        state = new GameState(new ChessBoard());
         this.ruleBook = ruleBook;
     }
 
@@ -31,7 +31,7 @@ class ChessGame {
      * @return Which team's turn it is
      */
     public
-    TeamColor getTeamTurn() {return STATE.teamTurn;}
+    TeamColor getTeamTurn() {return state.teamTurn;}
 
     /**
      * Set's which teams turn it is
@@ -39,7 +39,7 @@ class ChessGame {
      * @param team the team whose turn it is
      */
     public
-    void setTeamTurn(TeamColor team) {STATE.teamTurn = team;}
+    void setTeamTurn(TeamColor team) {state.teamTurn = team;}
 
     /**
      * @see ChessRuleBook#validMoves(ChessPosition, ChessBoard)
@@ -59,23 +59,23 @@ class ChessGame {
     public
     void makeMove(ChessMove move) throws InvalidMoveException {
         var validMoves = validMoves(move.getStartPosition());
-        if (validMoves == null) throw new InvalidMoveException();
+        if (validMoves == null) {throw new InvalidMoveException();}
 
-        var piece = STATE.board.getPiece(move.getStartPosition());
+        var piece = state.board.getPiece(move.getStartPosition());
 
-        if (!(piece.getTeamColor() == STATE.teamTurn)
-            || !validMoves.contains(move)) throw new InvalidMoveException();
+        if (!(piece.getTeamColor() == state.teamTurn)
+            || !validMoves.contains(move)) {throw new InvalidMoveException();}
 
-        STATE.board.addPiece(
+        state.board.addPiece(
                 move.getEndPosition(),
                 move.getPromotionPiece() != null
-                ? new ChessPiece(STATE.teamTurn, move.getPromotionPiece())
+                ? new ChessPiece(state.teamTurn, move.getPromotionPiece())
                 : piece
         );
-        STATE.board.addPiece(move.getStartPosition(), null);
+        state.board.addPiece(move.getStartPosition(), null);
 
         // Switch turns
-        this.setTeamTurn(STATE.teamTurn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
+        this.setTeamTurn(state.teamTurn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
     }
 
     /**
@@ -120,7 +120,7 @@ class ChessGame {
      * @return the chessboard
      */
     public
-    ChessBoard getBoard() {return STATE.board;}
+    ChessBoard getBoard() {return state.board;}
 
     /**
      * Sets this game's chessboard with a given board
@@ -129,7 +129,7 @@ class ChessGame {
      */
     public
     void setBoard(ChessBoard board) {
-        STATE.board = board;
+        state.board = board;
     }
 
     public

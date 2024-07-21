@@ -16,12 +16,12 @@ class CreateGameRequest extends Request {
     CreateGameRequest() {}
 
     public
-    void setGameName(String gameName) {
-        this.gameName = gameName;
+    String getGameName() {
+        return gameName;
     }
 
     public
-    String getGameName() {
-        return gameName;
+    void setGameName(String gameName) {
+        this.gameName = gameName;
     }
 }

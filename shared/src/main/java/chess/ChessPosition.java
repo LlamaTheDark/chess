@@ -12,26 +12,26 @@ class ChessPosition {
     /*
     ########## INSTANCE ##########
      */
-    private final int ROW;
-    private final int COL;
+    private final int row;
+    private final int col;
 
     public
     ChessPosition(int row, int col) {
-        this.ROW = row;
-        this.COL = col;
+        this.row = row;
+        this.col = col;
     }
 
     /**
      * @return which row this position is in 1 codes for the bottom row
      */
     public
-    int getRow() {return this.ROW;}
+    int getRow() {return this.row;}
 
     /**
      * @return which column this position is in 1 codes for the left row
      */
     public
-    int getColumn() {return this.COL;}
+    int getColumn() {return this.col;}
 
     @Override
     public
@@ -42,8 +42,8 @@ class ChessPosition {
     @Override
     public
     boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
         ChessPosition that = (ChessPosition) o;
         return getRow() == that.getRow() && getColumn() == that.getColumn();
     }

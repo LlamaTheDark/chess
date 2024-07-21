@@ -34,10 +34,10 @@ class FIDERuleBook implements ChessRuleBook {
         while (positions.hasNext()) {
             var position = positions.next();
             var piece = board.getPiece(position);
-            if (piece == null) continue;
-            if (piece.getTeamColor() != teamColor) continue;
+            if (piece == null) {continue;}
+            if (piece.getTeamColor() != teamColor) {continue;}
 
-            if (!validMoves(position, board).isEmpty()) return true;
+            if (!validMoves(position, board).isEmpty()) {return true;}
         }
         return false;
     }
@@ -61,8 +61,9 @@ class FIDERuleBook implements ChessRuleBook {
     EndState getEndState(ChessGame.TeamColor teamColor, ChessBoard board) {
         boolean moves = moves(teamColor, board), isInCheck = isInCheck(teamColor, board);
 
-        if (!moves && isInCheck) return EndState.CHECKMATE;
-        else if (!moves /* && !isInCheck */) return EndState.STALEMATE;
+        if (!moves && isInCheck) {return EndState.CHECKMATE;} else if (!moves /* && !isInCheck */) {
+            return EndState.STALEMATE;
+        }
         return null;
     }
 
@@ -87,7 +88,7 @@ class FIDERuleBook implements ChessRuleBook {
     @Override
     public
     Collection<ChessMove> validMoves(ChessPosition start, ChessBoard board) {
-        if (board.getPiece(start) == null) return null;
+        if (board.getPiece(start) == null) {return null;}
 
         var validMoves = new HashSet<ChessMove>();
         var moves = board.getPiece(start).pieceMoves(board, start);
@@ -105,7 +106,7 @@ class FIDERuleBook implements ChessRuleBook {
             );
             board.addPiece(move.getStartPosition(), null);
 
-            if (!isInCheck(startPiece.getTeamColor(), board)) validMoves.add(move);
+            if (!isInCheck(startPiece.getTeamColor(), board)) {validMoves.add(move);}
 
             // reverse the move
             board.addPiece(move.getStartPosition(), startPiece);
@@ -129,14 +130,14 @@ class FIDERuleBook implements ChessRuleBook {
         while (positions.hasNext()) {
             var position = positions.next();
             var piece = board.getPiece(position);
-            if (piece == null) continue;
-            if (piece.getTeamColor() == teamColor) continue;
+            if (piece == null) {continue;}
+            if (piece.getTeamColor() == teamColor) {continue;}
 
             for (var move : piece.pieceMoves(board, position)) {
                 var endPiece = board.getPiece(move.getEndPosition());
                 if (endPiece != null
                     && endPiece.getPieceType().equals(ChessPiece.PieceType.KING)
-                    && endPiece.getTeamColor().equals(teamColor)) return true;
+                    && endPiece.getTeamColor().equals(teamColor)) {return true;}
             }
         }
         return false;

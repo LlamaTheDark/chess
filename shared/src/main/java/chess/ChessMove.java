@@ -12,16 +12,16 @@ class ChessMove {
     /*
     ########## INSTANCE ##########
      */
-    private final ChessPosition        START_POSITION;
-    private final ChessPosition        END_POSITION;
-    private final ChessPiece.PieceType PROMOTION_PIECE;
+    private final ChessPosition        startPosition;
+    private final ChessPosition        endPosition;
+    private final ChessPiece.PieceType promotionPiece;
 
     public
     ChessMove(ChessPosition startPosition, ChessPosition endPosition,
               ChessPiece.PieceType promotionPiece) {
-        this.START_POSITION = startPosition;
-        this.END_POSITION = endPosition;
-        this.PROMOTION_PIECE = promotionPiece;
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+        this.promotionPiece = promotionPiece;
     }
 
     public
@@ -34,7 +34,7 @@ class ChessMove {
      */
     public
     ChessPosition getStartPosition() {
-        return START_POSITION;
+        return startPosition;
     }
 
     /**
@@ -42,7 +42,7 @@ class ChessMove {
      */
     public
     ChessPosition getEndPosition() {
-        return END_POSITION;
+        return endPosition;
     }
 
     /**
@@ -52,22 +52,22 @@ class ChessMove {
      */
     public
     ChessPiece.PieceType getPromotionPiece() {
-        return PROMOTION_PIECE;
+        return promotionPiece;
     }
 
     @Override
     public
     int hashCode() {
-        return Objects.hash(START_POSITION, END_POSITION, PROMOTION_PIECE);
+        return Objects.hash(startPosition, endPosition, promotionPiece);
     }
 
     @Override
     public
     boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(START_POSITION, chessMove.START_POSITION) &&
-               Objects.equals(END_POSITION, chessMove.END_POSITION) && PROMOTION_PIECE == chessMove.PROMOTION_PIECE;
+        return Objects.equals(startPosition, chessMove.startPosition) &&
+               Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
     }
 }

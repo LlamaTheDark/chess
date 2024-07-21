@@ -124,9 +124,11 @@ class ChessBoard {
         Every valid position should exist upon instantiation, so we'll throw an illegal argument exception
         if we get one that's not already there.
          */
-        if (!board.containsKey(position)) throw new IllegalArgumentException(
-                String.format("Chess position illegal. Suggested addition:\nRow: %d, Col: %d",
-                              position.getRow(), position.getColumn()));
+        if (!board.containsKey(position)) {
+            throw new IllegalArgumentException(
+                    String.format("Chess position illegal. Suggested addition:\nRow: %d, Col: %d",
+                                  position.getRow(), position.getColumn()));
+        }
         board.put(position, piece);
     }
 
@@ -156,8 +158,8 @@ class ChessBoard {
     @Override
     public
     boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
         ChessBoard that = (ChessBoard) o;
         return board.equals(that.board);
     }

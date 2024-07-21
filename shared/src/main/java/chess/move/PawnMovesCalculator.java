@@ -33,7 +33,7 @@ class PawnMovesCalculator extends PieceMovesCalculator {
             maxForwardLength = 1;
 
             // if this pawn is in his opponent's starting row, his next valid move will promote him.
-            if (position.getRow() == pawnData[2]) promotionPiece = true;
+            if (position.getRow() == pawnData[2]) {promotionPiece = true;}
         }
 
         // move forward

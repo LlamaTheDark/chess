@@ -60,7 +60,7 @@ class PieceMovesCalculator {
             var end = new ChessPosition(start.getRow() + offset[0], start.getColumn() + offset[1]);
 
             // if end position is not already in the board, it's invalid
-            if (!board.hasPosition(end)) break;
+            if (!board.hasPosition(end)) {break;}
 
             if (board.getPiece(end) != null) {
                 // is a valid move if it's not null, but it is an enemy (and this validation allows capturing)
@@ -70,7 +70,7 @@ class PieceMovesCalculator {
                 stop = true;
 
                 // is a valid move if it's null, unless otherwise specified
-            } else validMove = empty;
+            } else {validMove = empty;}
 
             if (validMove) {
                 // if the piece is a promotion piece, we need 4 separate moves added.
