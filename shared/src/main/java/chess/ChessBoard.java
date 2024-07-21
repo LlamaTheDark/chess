@@ -185,11 +185,6 @@ class ChessBoard {
                 sb.append("|");
             }
         }
-        //        for (ChessPosition inst : board.keySet()) {
-        //            sb.append(String.format("r:%s,c:%s => %s\n", inst.getRow(), inst.getColumn(),
-        //                    board.get(inst) == null ? "null" : board.get(inst).getPieceType()));
-        //        }
-
         return sb.toString();
     }
 }
