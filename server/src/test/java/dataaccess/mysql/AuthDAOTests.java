@@ -71,4 +71,10 @@ class AuthDAOTests {
 
         Assertions.assertNull(dao.getAuthByToken("wheeeeeeeeImanAuthTOken"));
     }
+
+    @Test
+    @DisplayName("+clear")
+    void clearTest() throws DataAccessException {
+        Assertions.assertDoesNotThrow(dao::clear);
+    }
 }
