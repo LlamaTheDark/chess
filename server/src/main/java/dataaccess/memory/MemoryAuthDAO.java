@@ -23,17 +23,6 @@ class MemoryAuthDAO implements AuthDAO {
         AUTH.put(authData.authToken(), authData);
     }
 
-    @Override
-    public
-    AuthData getAuthByUsername(String username) throws DataAccessException {
-        for (Map.Entry<String, AuthData> entry : AUTH.entrySet()) {
-            if (entry.getValue().username().equals(username)) {
-                return entry.getValue();
-            }
-        }
-        return null;
-    }
-
     public
     AuthData getAuthByToken(String authToken) throws DataAccessException {
         if (AUTH.containsKey(authToken)) {
