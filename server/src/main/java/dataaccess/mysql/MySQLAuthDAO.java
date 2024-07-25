@@ -67,7 +67,7 @@ class MySQLAuthDAO implements AuthDAO {
             }
             return null;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException(String.format("Error: failed to execute query %s", e.getMessage()));
         }
     }
 
