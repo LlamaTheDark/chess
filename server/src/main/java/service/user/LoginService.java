@@ -1,11 +1,13 @@
 package service.user;
 
 import dataaccess.DataAccessException;
-import dataaccess.memory.MemoryAuthDAO;
-import dataaccess.memory.MemoryUserDAO;
+import dataaccess.mysql.MySQLAuthDAO;
+import dataaccess.mysql.MySQLUserDAO;
 import exchange.user.LoginRequest;
 import exchange.user.LoginResponse;
 import model.AuthData;
+import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import service.Service;
 import service.error.BadRequestException;
 import service.error.ServiceException;
@@ -23,17 +25,17 @@ class LoginService implements Service<LoginResponse, LoginRequest> {
             throw new BadRequestException();
         }
 
+        // verify user
+        UserData requestedUser = new MySQLUserDAO().getUser(request.getUsername());
         boolean credentialsMatch =
-                new MemoryUserDAO().getUser(request.getUsername(), request.getPassword()) != null;
-
-        var authDAO = new MemoryAuthDAO();
+                requestedUser != null && BCrypt.checkpw(request.getPassword(), requestedUser.password());
 
         if (!credentialsMatch) {
             throw new UnauthorizedException();
         }
 
         String authToken = Authenticator.generateToken();
-        authDAO.createAuth(
+        new MySQLAuthDAO().createAuth(
                 new AuthData(authToken, request.getUsername())
         );
 
