@@ -13,7 +13,7 @@ class MySQLAuthDAO implements AuthDAO {
             """
             CREATE TABLE IF NOT EXISTS auth (
                 authToken VARCHAR(255) NOT NULL PRIMARY KEY,
-                username VARCHAR(255) NOT NULL,
+                username VARCHAR(255) NOT NULL
             )
             """
     };
@@ -50,9 +50,9 @@ class MySQLAuthDAO implements AuthDAO {
             try (
                     var statement = conn.prepareStatement(
                             """
-                            SELECT authToken, username FROM auth 
-                            WHERE authToken = ?
-                            """
+                             SELECT authToken, username FROM auth\s
+                             WHERE authToken = ?
+                            \s"""
                     )
             ) {
                 statement.setString(1, authToken);
