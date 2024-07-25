@@ -27,13 +27,13 @@ class UserDAOTests {
     }
 
     @Test
-    @DisplayName("Successfully Instantiate MySQLUserDAO Instance")
-    void instantiateMySQLUserDAO() {
+    @DisplayName("CONSTRUCTOR: Successfully Instantiate MySQLUserDAO Instance")
+    void testConstructor() {
         Assertions.assertDoesNotThrow(MySQLUserDAO::new);
     }
 
     @Test
-    @DisplayName("Add a user to the database")
+    @DisplayName("+createUser: Add a user to the database")
     void addUser() {
         Assertions.assertDoesNotThrow(() -> {
             new MySQLUserDAO().createUser(new UserData("beans", "poop", "beanspoop@gmail.com"));
@@ -41,7 +41,7 @@ class UserDAOTests {
     }
 
     @Test
-    @DisplayName("Add the same user twice")
+    @DisplayName("-createUser: Add the same user twice")
     void addSameUserTwice() throws DataAccessException {
         dao.createUser(new UserData("beans", "poop", "beanspoop@gmail.com"));
         Assertions.assertThrows(
@@ -53,7 +53,7 @@ class UserDAOTests {
     }
 
     @Test
-    @DisplayName("Get User From Database")
+    @DisplayName("+getUser: Get User From Database")
     void getUserFromDatabase() throws DataAccessException {
         var expectedUser = new UserData("beans", "poop", "beanspoop@gmail.com");
         dao.createUser(expectedUser);
@@ -65,7 +65,7 @@ class UserDAOTests {
     }
 
     @Test
-    @DisplayName("Request non-existent user")
+    @DisplayName("-getUser: Request non-existent user")
     void requestNullUsername() throws DataAccessException {
         var user = new UserData("beans", "poop", "beanspoop@gmail.com");
         dao.createUser(user);
@@ -77,7 +77,7 @@ class UserDAOTests {
     }
 
     @Test
-    @DisplayName("Clear Database")
+    @DisplayName("+clear: Clear Database")
     void clearDatabase() {
         Assertions.assertDoesNotThrow(() -> dao.clear());
     }

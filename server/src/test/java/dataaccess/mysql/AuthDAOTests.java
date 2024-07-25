@@ -28,7 +28,7 @@ class AuthDAOTests {
 
     @Test
     @DisplayName("CONSTRUCTOR: Successful Initialization")
-    void constructor() {
+    void testConstructor() {
         Assertions.assertDoesNotThrow(MySQLAuthDAO::new);
     }
 
