@@ -12,10 +12,10 @@ class MySQLUserDAO implements UserDAO {
     private final static String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS user (
-                `username` VARCHAR(255) NOT NULL PRIMARY KEY,
-                `password` VARCHAR(255) NOT NULL,
-                `email` VARCHAR(255) NOT NULL,
-            );
+                username VARCHAR(255) NOT NULL PRIMARY KEY,
+                password VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL
+            )
             """
     };
 
@@ -34,7 +34,10 @@ class MySQLUserDAO implements UserDAO {
     @Override
     public
     void createUser(UserData userData) throws DataAccessException {
-        DatabaseManager.executeUpdate("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+        DatabaseManager.executeUpdate("INSERT INTO user (username, password, email) VALUES (?, ?, ?)",
+                                      userData.username(),
+                                      userData.password(),
+                                      userData.email());
     }
 
     /**
@@ -55,6 +58,8 @@ class MySQLUserDAO implements UserDAO {
                             WHERE username = ?
                             """)
             ) {
+                statement.setString(1, username);
+
                 var resultSet = statement.executeQuery();
                 if (resultSet.next()) {
                     return new UserData(
