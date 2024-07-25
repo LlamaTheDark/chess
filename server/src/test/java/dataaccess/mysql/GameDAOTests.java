@@ -141,7 +141,7 @@ class GameDAOTests {
 
     @Test
     @DisplayName("-updateGame: try to update a game that doesn't exist")
-    void updateGameDoesNotExist() throws DataAccessException {
+    void updateGameDoesNotExist() {
         Assertions.assertThrows(DataAccessException.class, () -> dao.updateGame(gameData));
     }
 
