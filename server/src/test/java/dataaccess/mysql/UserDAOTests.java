@@ -44,10 +44,12 @@ class UserDAOTests {
     @DisplayName("Add the same user twice")
     void addSameUserTwice() throws DataAccessException {
         dao.createUser(new UserData("beans", "poop", "beanspoop@gmail.com"));
-        Assertions.assertThrows(DataAccessException.class,
-                                () -> dao.createUser(
-                                        new UserData("beans", "poop", "beanspoop@gmail.com")
-                                ));
+        Assertions.assertThrows(
+                DataAccessException.class,
+                () -> dao.createUser(
+                        new UserData("beans", "poop", "beanspoop@gmail.com")
+                )
+        );
     }
 
     @Test
@@ -72,5 +74,11 @@ class UserDAOTests {
         var response = dao.getUser(notUserUsername);
 
         Assertions.assertNull(response);
+    }
+
+    @Test
+    @DisplayName("Clear Database")
+    void clearDatabase() {
+        Assertions.assertDoesNotThrow(() -> dao.clear());
     }
 }
