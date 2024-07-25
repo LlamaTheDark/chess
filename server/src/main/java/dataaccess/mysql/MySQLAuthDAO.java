@@ -4,8 +4,25 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import model.AuthData;
 
+import java.sql.SQLException;
+
 public
 class MySQLAuthDAO implements AuthDAO {
+
+    private final static String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS auth (
+                authToken VARCHAR(255) NOT NULL PRIMARY KEY,
+                username VARCHAR(255) NOT NULL,
+            )
+            """
+    };
+
+    public
+    MySQLAuthDAO() throws DataAccessException {
+        DatabaseManager.configureDatabase(createStatements);
+    }
+
     /**
      * Stores the passed <code>AuthData</code> in the database.
      *
@@ -16,20 +33,7 @@ class MySQLAuthDAO implements AuthDAO {
     @Override
     public
     void createAuth(AuthData authData) throws DataAccessException {
-
-    }
-
-    /**
-     * @param username The username whose <code>AuthData</code> is desired.
-     *
-     * @return The first <code>AuthData</code> instance stored that has the specified username.
-     *
-     * @throws DataAccessException if there is a failure to access the data.
-     */
-    @Override
-    public
-    AuthData getAuthByUsername(String username) throws DataAccessException {
-        return null;
+        DatabaseManager.executeUpdate("INSERT INTO auth VALUES (?, ?)", authData.authToken(), authData.username());
     }
 
     /**
@@ -42,7 +46,29 @@ class MySQLAuthDAO implements AuthDAO {
     @Override
     public
     AuthData getAuthByToken(String authToken) throws DataAccessException {
-        return null;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (
+                    var statement = conn.prepareStatement(
+                            """
+                            SELECT authToken, username FROM auth 
+                            WHERE authToken = ?
+                            """
+                    )
+            ) {
+                statement.setString(1, authToken);
+
+                var resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    return new AuthData(
+                            resultSet.getString("authToken"),
+                            resultSet.getString("username")
+                    );
+                }
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -55,7 +81,7 @@ class MySQLAuthDAO implements AuthDAO {
     @Override
     public
     void deleteAuth(String auth) throws DataAccessException {
-
+        DatabaseManager.executeUpdate("DELETE FROM auth WHERE authToken = ?", auth);
     }
 
     /**
@@ -66,6 +92,6 @@ class MySQLAuthDAO implements AuthDAO {
     @Override
     public
     void clear() throws DataAccessException {
-
+        DatabaseManager.executeUpdate("TRUNCATE auth");
     }
 }
