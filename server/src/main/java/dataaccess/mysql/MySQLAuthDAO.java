@@ -92,6 +92,6 @@ class MySQLAuthDAO implements AuthDAO {
     @Override
     public
     void clear() throws DataAccessException {
-        DatabaseManager.executeUpdate("DELETE * FROM auth");
+        DatabaseManager.executeUpdate("DELETE FROM auth");
     }
 }

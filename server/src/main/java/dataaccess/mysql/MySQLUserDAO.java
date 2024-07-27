@@ -85,6 +85,6 @@ class MySQLUserDAO implements UserDAO {
     @Override
     public
     void clear() throws DataAccessException {
-        DatabaseManager.executeUpdate("DELETE * FROM user");
+        DatabaseManager.executeUpdate("DELETE FROM user");
     }
 }
