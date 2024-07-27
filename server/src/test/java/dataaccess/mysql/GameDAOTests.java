@@ -14,7 +14,7 @@ class GameDAOTests {
     static
     private final GameDAO dao;
 
-    private GameData gameData = new GameData(1, "", "", "", new ChessGame());
+    private GameData gameData = new GameData(1, null, null, "", new ChessGame());
 
     static {
         try {
@@ -22,6 +22,12 @@ class GameDAOTests {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @BeforeAll
+    static
+    void addUsers() throws DataAccessException {
+
     }
 
     @AfterEach
@@ -45,12 +51,11 @@ class GameDAOTests {
 
     @Test
     @Order(3)
-    @DisplayName("+createGame: add two games with the same name (different ID)")
+    @DisplayName("+createGame: add two games with the same name")
     void addTwoGames() throws DataAccessException {
         dao.createGame(gameData);
         Assertions.assertDoesNotThrow(
                 () -> dao.createGame(new GameData(
-                        2,
                         gameData.whiteUsername(),
                         gameData.blackUsername(),
                         gameData.gameName(),
@@ -61,10 +66,17 @@ class GameDAOTests {
 
     @Test
     @Order(4)
-    @DisplayName("-createGame: create a new game with non-existent username")
+    @DisplayName("-createGame: create a new game with bad username")
     void createGameSameID() throws DataAccessException {
-        dao.createGame(gameData);
-        Assertions.assertThrows(DataAccessException.class, () -> dao.createGame(gameData));
+        Assertions.assertThrows(
+                DataAccessException.class,
+                () -> dao.createGame(new GameData(
+                        "iDoNotExist",
+                        null,
+                        "weeIloveChess",
+                        gameData.game()
+                ))
+        );
     }
 
     @Test

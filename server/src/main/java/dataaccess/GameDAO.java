@@ -11,9 +11,11 @@ interface GameDAO {
      *
      * @param data The <code>GameData</code> instance to be stored.
      *
+     * @return The <code>GameData</code> instance that was created, which now contains the <code>gameID</code>.
+     *
      * @throws DataAccessException if there is a failure to access the data.
      */
-    void createGame(GameData data) throws DataAccessException;
+    GameData createGame(GameData data) throws DataAccessException;
 
     /**
      * @param id The game ID belonging to the desired <code>GameData</code> object.

@@ -2,12 +2,15 @@ package dataaccess.mysql;
 
 import chess.ChessGame;
 import dataaccess.DataAccessException;
+import handle.util.Serializer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+
+import static java.sql.Types.VARCHAR;
 
 public final
 class DatabaseManager {
@@ -106,11 +109,16 @@ class DatabaseManager {
             try (var statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof String p) {
-                        statement.setString(i + 1, p);
-                    } else if (param instanceof Integer p) {
-                        statement.setInt(i + 1, p);
-                    } else if (param instanceof ChessGame p) {statement.setString(i + 1, p.toString());}
+                    switch (param) {
+                        case null -> {
+                            statement.setNull(i + 1, VARCHAR);
+                        }
+                        case String p -> statement.setString(i + 1, p);
+                        case Integer p -> statement.setInt(i + 1, p);
+                        case ChessGame p -> statement.setString(i + 1, Serializer.serialize(p));
+                        default -> {
+                        }
+                    }
                 }
                 statement.executeUpdate();
 
