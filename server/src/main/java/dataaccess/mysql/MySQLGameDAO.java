@@ -182,6 +182,6 @@ class MySQLGameDAO implements GameDAO {
     @Override
     public
     void clear() throws DataAccessException {
-        DatabaseManager.executeUpdate("TRUNCATE game");
+        DatabaseManager.executeUpdate("DELETE * FROM game");
     }
 }

@@ -34,10 +34,12 @@ class MySQLUserDAO implements UserDAO {
     @Override
     public
     void createUser(UserData userData) throws DataAccessException {
-        DatabaseManager.executeUpdate("INSERT INTO user (username, password, email) VALUES (?, ?, ?)",
-                                      userData.username(),
-                                      userData.password(),
-                                      userData.email());
+        DatabaseManager.executeUpdate(
+                "INSERT INTO user (username, password, email) VALUES (?, ?, ?)",
+                userData.username(),
+                userData.password(),
+                userData.email()
+        );
     }
 
     /**
@@ -83,6 +85,6 @@ class MySQLUserDAO implements UserDAO {
     @Override
     public
     void clear() throws DataAccessException {
-        DatabaseManager.executeUpdate("TRUNCATE user");
+        DatabaseManager.executeUpdate("DELETE * FROM user");
     }
 }
