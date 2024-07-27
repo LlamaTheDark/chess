@@ -32,19 +32,19 @@ class MemoryGameDAO implements GameDAO {
 
     @Override
     public
-    GameData getGame(int id) throws DataAccessException {
+    GameData getGame(int id) {
         return GAME.get(id);
     }
 
     @Override
     public
-    Collection<GameData> listGames() throws DataAccessException {
+    Collection<GameData> listGames() {
         return GAME.values();
     }
 
     @Override
     public
-    void updateGame(GameData data) throws DataAccessException {
+    void updateGame(GameData data) {
         GAME.put(data.gameID(), new GameData(
                 data.gameID(), data.whiteUsername(), data.blackUsername(), data.gameName(), data.game()
         ));

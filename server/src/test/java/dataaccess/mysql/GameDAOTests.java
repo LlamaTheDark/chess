@@ -79,7 +79,7 @@ class GameDAOTests {
     @Test
     @Order(4)
     @DisplayName("-createGame: create a new game with bad username")
-    void createGameSameID() throws DataAccessException {
+    void createGameSameID() {
         Assertions.assertThrows(
                 DataAccessException.class,
                 () -> dao.createGame(new GameData(
@@ -156,7 +156,6 @@ class GameDAOTests {
     @DisplayName("+updateGame: successfully update game")
     void updateGameTest() throws DataAccessException {
         dao.createGame(gameData);
-        var game = gameData.game();
         var updatedGame = new GameData(
                 gameData.gameID(),
                 "largebananafriend",
