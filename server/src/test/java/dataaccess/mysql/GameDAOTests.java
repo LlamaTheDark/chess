@@ -4,6 +4,7 @@ import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
+import model.UserData;
 import org.junit.jupiter.api.*;
 
 import java.util.HashSet;
@@ -14,10 +15,11 @@ class GameDAOTests {
     static
     private final GameDAO dao;
 
-    private GameData gameData = new GameData(1, null, null, "", new ChessGame());
+    private GameData gameData = new GameData(1, null, null, "very nice game", new ChessGame());
 
     static {
         try {
+            new MySQLUserDAO();
             dao = new MySQLGameDAO();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -27,12 +29,22 @@ class GameDAOTests {
     @BeforeAll
     static
     void addUsers() throws DataAccessException {
-
+        dao.clear();
+        new MySQLUserDAO().clear();
+        MySQLUserDAO userDAO = new MySQLUserDAO();
+        userDAO.createUser(new UserData("largebananafriend", "goodtrustyolhash", "goosee@goosee.com"));
     }
 
     @AfterEach
     void clearUserTable() throws DataAccessException {
         dao.clear();
+    }
+
+    @AfterAll
+    static
+    void clearUsers() throws DataAccessException {
+        dao.clear();
+        new MySQLUserDAO().clear();
     }
 
     @Test
@@ -100,7 +112,7 @@ class GameDAOTests {
     void getGameWithInvalidID() throws DataAccessException {
         dao.createGame(gameData);
 
-        Assertions.assertThrows(DataAccessException.class, () -> dao.getGame(1235));
+        Assertions.assertNull(dao.getGame(1235));
     }
 
     @Test
@@ -136,7 +148,7 @@ class GameDAOTests {
     @Order(8)
     @DisplayName("-listGames: Get games when there are no games")
     void listNoGames() throws DataAccessException {
-        Assertions.assertNull(dao.listGames());
+        Assertions.assertEquals(new HashSet<>(), dao.listGames());
     }
 
     @Test
@@ -159,9 +171,12 @@ class GameDAOTests {
 
     @Test
     @Order(10)
-    @DisplayName("-updateGame: try to update a game that doesn't exist")
-    void updateGameDoesNotExist() {
-        Assertions.assertThrows(DataAccessException.class, () -> dao.updateGame(gameData));
+    @DisplayName("-updateGame: try to update a game with an incorrect username")
+    void updateGameDoesNotExist() throws DataAccessException {
+        dao.createGame(gameData);
+        Assertions.assertThrows(DataAccessException.class, () -> dao.updateGame(
+                new GameData(1, "iDoNotExistshehe", null, "good game", new ChessGame())
+        ));
     }
 
     @Test

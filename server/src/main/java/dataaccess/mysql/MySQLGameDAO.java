@@ -183,5 +183,9 @@ class MySQLGameDAO implements GameDAO {
     public
     void clear() throws DataAccessException {
         DatabaseManager.executeUpdate("DELETE FROM game");
+        DatabaseManager.executeUpdate("""
+                                      ALTER TABLE game
+                                      AUTO_INCREMENT = 1;
+                                      """);
     }
 }
