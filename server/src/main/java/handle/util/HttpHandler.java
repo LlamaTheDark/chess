@@ -1,6 +1,7 @@
 package handle.util;
 
 import dataaccess.DataAccessException;
+import serial.Serializer;
 import service.Service;
 import service.error.BadRequestException;
 import service.error.ForbiddenException;

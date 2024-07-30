@@ -2,7 +2,7 @@ package dataaccess.mysql;
 
 import chess.ChessGame;
 import dataaccess.DataAccessException;
-import handle.util.Serializer;
+import serial.Serializer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
