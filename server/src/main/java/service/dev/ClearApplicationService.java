@@ -1,9 +1,9 @@
 package service.dev;
 
 import dataaccess.DataAccessException;
-import dataaccess.memory.MemoryAuthDAO;
-import dataaccess.memory.MemoryGameDAO;
-import dataaccess.memory.MemoryUserDAO;
+import dataaccess.mysql.MySQLAuthDAO;
+import dataaccess.mysql.MySQLGameDAO;
+import dataaccess.mysql.MySQLUserDAO;
 import exchange.dev.ClearApplicationRequest;
 import exchange.dev.ClearApplicationResponse;
 import service.Service;
@@ -15,13 +15,13 @@ class ClearApplicationService implements Service<ClearApplicationResponse, Clear
     ClearApplicationResponse serve(ClearApplicationRequest request) throws DataAccessException {
         ClearApplicationResponse response = new ClearApplicationResponse();
 
-        MemoryAuthDAO auth = new MemoryAuthDAO();
-        MemoryUserDAO user = new MemoryUserDAO();
-        MemoryGameDAO game = new MemoryGameDAO();
+        var auth = new MySQLAuthDAO();
+        var user = new MySQLUserDAO();
+        var game = new MySQLGameDAO();
 
+        game.clear();
         auth.clear();
         user.clear();
-        game.clear();
 
         return response;
     }

@@ -1,7 +1,7 @@
 package service.game;
 
 import dataaccess.DataAccessException;
-import dataaccess.memory.MemoryGameDAO;
+import dataaccess.mysql.MySQLGameDAO;
 import exchange.game.ListGamesRequest;
 import exchange.game.ListGamesResponse;
 import service.Service;
@@ -16,6 +16,6 @@ class ListGamesService implements Service<ListGamesResponse, ListGamesRequest> {
         // unauthenticated checks
         Authenticator.authenticate(request.getAuthToken());
 
-        return new ListGamesResponse(new MemoryGameDAO().listGames());
+        return new ListGamesResponse(new MySQLGameDAO().listGames());
     }
 }

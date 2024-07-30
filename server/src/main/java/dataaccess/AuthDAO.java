@@ -15,15 +15,6 @@ interface AuthDAO {
     void createAuth(AuthData authData) throws DataAccessException;
 
     /**
-     * @param username The username whose <code>AuthData</code> is desired.
-     *
-     * @return The first <code>AuthData</code> instance stored that has the specified username.
-     *
-     * @throws DataAccessException if there is a failure to access the data.
-     */
-    AuthData getAuthByUsername(String username) throws DataAccessException;
-
-    /**
      * @param authToken The authToken whose <code>AuthData</code> is desired.
      *
      * @return The first <code>AuthData</code> instance stored that has the specified authorization token.

@@ -1,6 +1,10 @@
-package handle.util;
+package serial;
 
+import chess.rule.ChessRuleBook;
+import chess.rule.FIDERuleBook;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -9,7 +13,13 @@ import java.lang.reflect.InvocationTargetException;
  */
 public
 class Serializer {
-    static Gson gson = new Gson();
+    static Gson gson = new GsonBuilder().enableComplexMapKeySerialization()
+                                        .registerTypeAdapter(
+                                                ChessRuleBook.class,
+                                                (JsonDeserializer<ChessRuleBook>)
+                                                        (jsonElement, type, context) -> new FIDERuleBook()
+                                        )
+                                        .create();
 
     /**
      * Serializes an object.
@@ -21,6 +31,11 @@ class Serializer {
     static public
     String serialize(Object obj) {
         return gson.toJson(obj);
+    }
+
+    static public
+    String serialize(Object obj, Gson customGson) {
+        return customGson.toJson(obj, obj.getClass());
     }
 
     /**

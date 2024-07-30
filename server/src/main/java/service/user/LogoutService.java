@@ -1,7 +1,7 @@
 package service.user;
 
 import dataaccess.DataAccessException;
-import dataaccess.memory.MemoryAuthDAO;
+import dataaccess.mysql.MySQLAuthDAO;
 import exchange.user.LogoutRequest;
 import exchange.user.LogoutResponse;
 import service.Service;
@@ -15,7 +15,7 @@ class LogoutService implements Service<LogoutResponse, LogoutRequest> {
     LogoutResponse serve(LogoutRequest request) throws DataAccessException, ServiceException {
         Authenticator.authenticate(request.getAuthToken());
 
-        new MemoryAuthDAO().deleteAuth(request.getAuthToken());
+        new MySQLAuthDAO().deleteAuth(request.getAuthToken());
         return new LogoutResponse();
     }
 }

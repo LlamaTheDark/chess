@@ -1,8 +1,8 @@
 package service.game;
 
 import dataaccess.DataAccessException;
-import dataaccess.memory.MemoryAuthDAO;
-import dataaccess.memory.MemoryGameDAO;
+import dataaccess.mysql.MySQLAuthDAO;
+import dataaccess.mysql.MySQLGameDAO;
 import exchange.game.JoinGameRequest;
 import exchange.game.JoinGameResponse;
 import model.GameData;
@@ -20,7 +20,7 @@ class JoinGameService implements Service<JoinGameResponse, JoinGameRequest> {
         // unauthenticated checks
         Authenticator.authenticate(request.getAuthToken());
 
-        var gameDAO = new MemoryGameDAO();
+        var gameDAO = new MySQLGameDAO();
         var requestedGame = gameDAO.getGame(request.getGameID());
 
         // bad request checks
@@ -43,12 +43,14 @@ class JoinGameService implements Service<JoinGameResponse, JoinGameRequest> {
         }
 
         // join the game
-        var playerUsername = new MemoryAuthDAO().getAuthByToken(request.getAuthToken()).username();
+        var playerUsername = new MySQLAuthDAO().getAuthByToken(request.getAuthToken()).username();
         gameDAO.updateGame(switch (playerColor) {
             case WHITE -> new GameData(requestedGame.gameID(), playerUsername, requestedGame.blackUsername(),
-                                       requestedGame.gameName(), requestedGame.game());
+                                       requestedGame.gameName(), requestedGame.game()
+            );
             case BLACK -> new GameData(requestedGame.gameID(), requestedGame.whiteUsername(), playerUsername,
-                                       requestedGame.gameName(), requestedGame.game());
+                                       requestedGame.gameName(), requestedGame.game()
+            );
         });
 
         return new JoinGameResponse();

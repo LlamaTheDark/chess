@@ -4,6 +4,7 @@ import chess.rule.ChessRuleBook;
 import chess.rule.FIDERuleBook;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -154,5 +155,36 @@ class ChessGame {
             this.board = board;
             this.board.resetBoard();
         }
+
+        @Override
+        public
+        boolean equals(Object o) {
+            if (this == o) {return true;}
+            if (o == null || getClass() != o.getClass()) {return false;}
+            GameState gameState = (GameState) o;
+            return teamTurn == gameState.teamTurn && Objects.equals(board, gameState.board);
+        }
+
+        @Override
+        public
+        int hashCode() {
+            return Objects.hash(teamTurn, board);
+        }
+    }
+
+    @Override
+    public
+    boolean equals(Object o) {
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
+        ChessGame chessGame = (ChessGame) o;
+        return chessGame.getRuleBook().getClass() == getRuleBook().getClass()
+               && Objects.equals(chessGame.state, state);
+    }
+
+    @Override
+    public
+    int hashCode() {
+        return Objects.hash(state, getRuleBook());
     }
 }
