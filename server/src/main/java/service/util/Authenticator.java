@@ -2,7 +2,7 @@ package service.util;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import dataaccess.memory.MemoryAuthDAO;
+import dataaccess.mysql.MySQLAuthDAO;
 import service.error.UnauthorizedException;
 
 import java.util.UUID;
@@ -26,7 +26,7 @@ class Authenticator {
         if (authToken == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        AuthDAO authDAO = new MemoryAuthDAO();
+        AuthDAO authDAO = new MySQLAuthDAO();
         if (authDAO.getAuthByToken(authToken) == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }

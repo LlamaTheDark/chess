@@ -1,7 +1,7 @@
 package service.user;
 
 import dataaccess.DataAccessException;
-import dataaccess.memory.MemoryUserDAO;
+import dataaccess.mysql.MySQLUserDAO;
 import exchange.user.LoginRequest;
 import exchange.user.RegisterRequest;
 import exchange.user.RegisterResponse;
@@ -18,7 +18,7 @@ class RegisterService implements Service<RegisterResponse, RegisterRequest> {
     public
     RegisterResponse serve(RegisterRequest request) throws DataAccessException, ServiceException {
 
-        var userDAO = new MemoryUserDAO();
+        var userDAO = new MySQLUserDAO();
         if (userDAO.getUser(request.getUsername()) != null) {
             throw new ForbiddenException("Error: already taken");
         }
