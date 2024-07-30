@@ -11,11 +11,11 @@ import org.junit.jupiter.api.Test;
 public
 class AuthDAOTests {
     static
-    private final AuthDAO dao;
+    private final AuthDAO DAO;
 
     static {
         try {
-            dao = new MySQLAuthDAO();
+            DAO = new MySQLAuthDAO();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -23,7 +23,7 @@ class AuthDAOTests {
 
     @AfterEach
     void clearUserTable() throws DataAccessException {
-        dao.clear();
+        DAO.clear();
     }
 
     @Test
@@ -35,7 +35,7 @@ class AuthDAOTests {
     @Test
     @DisplayName("+createAuth: Successfully add AuthData to table")
     void addAuthData() {
-        Assertions.assertDoesNotThrow(() -> dao.createAuth(new AuthData(
+        Assertions.assertDoesNotThrow(() -> DAO.createAuth(new AuthData(
                 "wheeeeeeeeeImanAuthTOken",
                 "gooseboy"
         )));
@@ -45,18 +45,18 @@ class AuthDAOTests {
     @DisplayName("-createAuth: Attempt to add the same auth twice")
     void addAuthTwice() throws DataAccessException {
         var authData = new AuthData("wheeeeeeeeImanAuthTOken", "gooseboy");
-        dao.createAuth(authData);
-        Assertions.assertThrows(DataAccessException.class, () -> dao.createAuth(authData));
+        DAO.createAuth(authData);
+        Assertions.assertThrows(DataAccessException.class, () -> DAO.createAuth(authData));
     }
 
     @Test
     @DisplayName("+getAuthByToken: Get an auth from the table")
     void getAuthByToken() throws DataAccessException {
         var expectedAuthData = new AuthData("wheeeeeeeeImanAuthTOken", "gooseboy");
-        dao.createAuth(expectedAuthData);
+        DAO.createAuth(expectedAuthData);
 
-        Assertions.assertDoesNotThrow(() -> dao.getAuthByToken("wheeeeeeeeImanAuthTOken"));
-        var actualData = dao.getAuthByToken("wheeeeeeeeImanAuthTOken");
+        Assertions.assertDoesNotThrow(() -> DAO.getAuthByToken("wheeeeeeeeImanAuthTOken"));
+        var actualData = DAO.getAuthByToken("wheeeeeeeeImanAuthTOken");
 
         Assertions.assertEquals(expectedAuthData.authToken(), actualData.authToken());
         Assertions.assertEquals(expectedAuthData.username(), actualData.username());
@@ -66,15 +66,15 @@ class AuthDAOTests {
     @DisplayName("+deleteAuth: Delete an auth from the table")
     void deleteAuth() throws DataAccessException {
         var authData = new AuthData("wheeeeeeeeImanAuthTOken", "gooseboy");
-        dao.createAuth(authData);
-        Assertions.assertDoesNotThrow(() -> dao.deleteAuth("wheeeeeeeeImanAuthTOken"));
+        DAO.createAuth(authData);
+        Assertions.assertDoesNotThrow(() -> DAO.deleteAuth("wheeeeeeeeImanAuthTOken"));
 
-        Assertions.assertNull(dao.getAuthByToken("wheeeeeeeeImanAuthTOken"));
+        Assertions.assertNull(DAO.getAuthByToken("wheeeeeeeeImanAuthTOken"));
     }
 
     @Test
     @DisplayName("+clear")
-    void clearTest() throws DataAccessException {
-        Assertions.assertDoesNotThrow(dao::clear);
+    void clearTest() {
+        Assertions.assertDoesNotThrow(DAO::clear);
     }
 }

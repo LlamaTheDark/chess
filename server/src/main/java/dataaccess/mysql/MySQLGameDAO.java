@@ -14,7 +14,7 @@ import java.util.HashSet;
 public
 class MySQLGameDAO implements GameDAO {
 
-    private final static String[] createStatements = {
+    private final static String[] CREATE_STATEMENTS = {
             """
             CREATE TABLE IF NOT EXISTS game (
                 gameID INT NOT NULL AUTO_INCREMENT,
@@ -31,7 +31,7 @@ class MySQLGameDAO implements GameDAO {
 
     public
     MySQLGameDAO() throws DataAccessException {
-        DatabaseManager.configureDatabase(createStatements);
+        DatabaseManager.configureDatabase(CREATE_STATEMENTS);
     }
 
 

@@ -13,14 +13,14 @@ import java.util.HashSet;
 public
 class GameDAOTests {
     static
-    private final GameDAO dao;
+    private final GameDAO DAO;
 
     private GameData gameData = new GameData(1, null, null, "very nice game", new ChessGame());
 
     static {
         try {
             new MySQLUserDAO();
-            dao = new MySQLGameDAO();
+            DAO = new MySQLGameDAO();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -29,7 +29,7 @@ class GameDAOTests {
     @BeforeAll
     static
     void addUsers() throws DataAccessException {
-        dao.clear();
+        DAO.clear();
         new MySQLUserDAO().clear();
         MySQLUserDAO userDAO = new MySQLUserDAO();
         userDAO.createUser(new UserData("largebananafriend", "goodtrustyolhash", "goosee@goosee.com"));
@@ -37,13 +37,13 @@ class GameDAOTests {
 
     @AfterEach
     void clearUserTable() throws DataAccessException {
-        dao.clear();
+        DAO.clear();
     }
 
     @AfterAll
     static
     void clearUsers() throws DataAccessException {
-        dao.clear();
+        DAO.clear();
         new MySQLUserDAO().clear();
     }
 
@@ -58,16 +58,16 @@ class GameDAOTests {
     @Order(2)
     @DisplayName("+createGame: add a new game to the database")
     void addGame() {
-        Assertions.assertDoesNotThrow(() -> dao.createGame(gameData));
+        Assertions.assertDoesNotThrow(() -> DAO.createGame(gameData));
     }
 
     @Test
     @Order(3)
     @DisplayName("+createGame: add two games with the same name")
     void addTwoGames() throws DataAccessException {
-        dao.createGame(gameData);
+        DAO.createGame(gameData);
         Assertions.assertDoesNotThrow(
-                () -> dao.createGame(new GameData(
+                () -> DAO.createGame(new GameData(
                         gameData.whiteUsername(),
                         gameData.blackUsername(),
                         gameData.gameName(),
@@ -82,7 +82,7 @@ class GameDAOTests {
     void createGameSameID() {
         Assertions.assertThrows(
                 DataAccessException.class,
-                () -> dao.createGame(new GameData(
+                () -> DAO.createGame(new GameData(
                         "iDoNotExist",
                         null,
                         "weeIloveChess",
@@ -95,9 +95,9 @@ class GameDAOTests {
     @Order(5)
     @DisplayName("+getGame: Successfully get a game by its reference id")
     void getGameWithID() throws DataAccessException {
-        dao.createGame(gameData);
-        Assertions.assertDoesNotThrow(() -> dao.getGame(gameData.gameID()));
-        var actualGame = dao.getGame(gameData.gameID());
+        DAO.createGame(gameData);
+        Assertions.assertDoesNotThrow(() -> DAO.getGame(gameData.gameID()));
+        var actualGame = DAO.getGame(gameData.gameID());
 
         Assertions.assertEquals(gameData.gameID(), actualGame.gameID());
         Assertions.assertEquals(gameData.whiteUsername(), actualGame.whiteUsername());
@@ -110,9 +110,9 @@ class GameDAOTests {
     @Order(6)
     @DisplayName("-getGame: Get game with an invalid ID")
     void getGameWithInvalidID() throws DataAccessException {
-        dao.createGame(gameData);
+        DAO.createGame(gameData);
 
-        Assertions.assertNull(dao.getGame(1235));
+        Assertions.assertNull(DAO.getGame(1235));
     }
 
     @Test
@@ -129,8 +129,8 @@ class GameDAOTests {
                 gameData.game()
         ));
 
-        dao.createGame(gameData);
-        dao.createGame(new GameData(
+        DAO.createGame(gameData);
+        DAO.createGame(new GameData(
                 2,
                 gameData.whiteUsername(),
                 gameData.blackUsername(),
@@ -138,8 +138,8 @@ class GameDAOTests {
                 gameData.game()
         ));
 
-        Assertions.assertDoesNotThrow(dao::listGames);
-        var actualGames = dao.listGames();
+        Assertions.assertDoesNotThrow(DAO::listGames);
+        var actualGames = DAO.listGames();
 
         Assertions.assertEquals(actualGames, expectedGames);
     }
@@ -148,14 +148,14 @@ class GameDAOTests {
     @Order(8)
     @DisplayName("-listGames: Get games when there are no games")
     void listNoGames() throws DataAccessException {
-        Assertions.assertEquals(new HashSet<>(), dao.listGames());
+        Assertions.assertEquals(new HashSet<>(), DAO.listGames());
     }
 
     @Test
     @Order(9)
     @DisplayName("+updateGame: successfully update game")
     void updateGameTest() throws DataAccessException {
-        dao.createGame(gameData);
+        DAO.createGame(gameData);
         var updatedGame = new GameData(
                 gameData.gameID(),
                 "largebananafriend",
@@ -164,16 +164,16 @@ class GameDAOTests {
                 gameData.game()
         );
 
-        Assertions.assertDoesNotThrow(() -> dao.updateGame(updatedGame));
-        Assertions.assertEquals(updatedGame, dao.getGame(updatedGame.gameID()));
+        Assertions.assertDoesNotThrow(() -> DAO.updateGame(updatedGame));
+        Assertions.assertEquals(updatedGame, DAO.getGame(updatedGame.gameID()));
     }
 
     @Test
     @Order(10)
     @DisplayName("-updateGame: try to update a game with an incorrect username")
     void updateGameDoesNotExist() throws DataAccessException {
-        dao.createGame(gameData);
-        Assertions.assertThrows(DataAccessException.class, () -> dao.updateGame(
+        DAO.createGame(gameData);
+        Assertions.assertThrows(DataAccessException.class, () -> DAO.updateGame(
                 new GameData(1, "iDoNotExistshehe", null, "good game", new ChessGame())
         ));
     }
@@ -182,6 +182,6 @@ class GameDAOTests {
     @Order(11)
     @DisplayName("+clear")
     void clearTest() {
-        Assertions.assertDoesNotThrow(dao::clear);
+        Assertions.assertDoesNotThrow(DAO::clear);
     }
 }

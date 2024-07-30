@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public
 class MySQLUserDAO implements UserDAO {
 
-    private final static String[] createStatements = {
+    private final static String[] CREATE_STATEMENTS = {
             """
             CREATE TABLE IF NOT EXISTS user (
                 username VARCHAR(255) NOT NULL PRIMARY KEY,
@@ -21,7 +21,7 @@ class MySQLUserDAO implements UserDAO {
 
     public
     MySQLUserDAO() throws DataAccessException {
-        DatabaseManager.configureDatabase(createStatements);
+        DatabaseManager.configureDatabase(CREATE_STATEMENTS);
     }
 
     /**

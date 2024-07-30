@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public
 class MySQLAuthDAO implements AuthDAO {
 
-    private final static String[] createStatements = {
+    private final static String[] CREATE_STATEMENTS = {
             """
             CREATE TABLE IF NOT EXISTS auth (
                 authToken VARCHAR(255) NOT NULL PRIMARY KEY,
@@ -20,7 +20,7 @@ class MySQLAuthDAO implements AuthDAO {
 
     public
     MySQLAuthDAO() throws DataAccessException {
-        DatabaseManager.configureDatabase(createStatements);
+        DatabaseManager.configureDatabase(CREATE_STATEMENTS);
     }
 
     /**
