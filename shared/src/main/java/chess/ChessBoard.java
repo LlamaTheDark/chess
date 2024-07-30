@@ -26,6 +26,53 @@ class ChessBoard {
     private static final LinkedHashMap<ChessPosition, ChessPiece> DEFAULT_BOARD =
             new LinkedHashMap<>(getBoardSize() * getBoardSize());
 
+    private static final ChessPiece[][]                           DEFAULT_BOARD_ARR = {
+            {
+                    new ChessPiece(TeamColor.WHITE, PieceType.ROOK),
+                    new ChessPiece(TeamColor.WHITE, PieceType.KNIGHT),
+                    new ChessPiece(TeamColor.WHITE, PieceType.BISHOP),
+                    new ChessPiece(TeamColor.WHITE, PieceType.QUEEN),
+                    new ChessPiece(TeamColor.WHITE, PieceType.KING),
+                    new ChessPiece(TeamColor.WHITE, PieceType.BISHOP),
+                    new ChessPiece(TeamColor.WHITE, PieceType.KNIGHT),
+                    new ChessPiece(TeamColor.WHITE, PieceType.ROOK)
+            },
+            {
+                    new ChessPiece(TeamColor.WHITE, PieceType.PAWN),
+                    new ChessPiece(TeamColor.WHITE, PieceType.PAWN),
+                    new ChessPiece(TeamColor.WHITE, PieceType.PAWN),
+                    new ChessPiece(TeamColor.WHITE, PieceType.PAWN),
+                    new ChessPiece(TeamColor.WHITE, PieceType.PAWN),
+                    new ChessPiece(TeamColor.WHITE, PieceType.PAWN),
+                    new ChessPiece(TeamColor.WHITE, PieceType.PAWN),
+                    new ChessPiece(TeamColor.WHITE, PieceType.PAWN)
+            },
+            {null, null, null, null, null, null, null, null},
+            {null, null, null, null, null, null, null, null},
+            {null, null, null, null, null, null, null, null},
+            {null, null, null, null, null, null, null, null},
+            {
+                    new ChessPiece(TeamColor.BLACK, PieceType.PAWN),
+                    new ChessPiece(TeamColor.BLACK, PieceType.PAWN),
+                    new ChessPiece(TeamColor.BLACK, PieceType.PAWN),
+                    new ChessPiece(TeamColor.BLACK, PieceType.PAWN),
+                    new ChessPiece(TeamColor.BLACK, PieceType.PAWN),
+                    new ChessPiece(TeamColor.BLACK, PieceType.PAWN),
+                    new ChessPiece(TeamColor.BLACK, PieceType.PAWN),
+                    new ChessPiece(TeamColor.BLACK, PieceType.PAWN)
+            },
+            {
+                    new ChessPiece(TeamColor.BLACK, PieceType.ROOK),
+                    new ChessPiece(TeamColor.BLACK, PieceType.KNIGHT),
+                    new ChessPiece(TeamColor.BLACK, PieceType.BISHOP),
+                    new ChessPiece(TeamColor.BLACK, PieceType.QUEEN),
+                    new ChessPiece(TeamColor.BLACK, PieceType.KING),
+                    new ChessPiece(TeamColor.BLACK, PieceType.BISHOP),
+                    new ChessPiece(TeamColor.BLACK, PieceType.KNIGHT),
+                    new ChessPiece(TeamColor.BLACK, PieceType.ROOK)
+            }
+    };
+
     /*
     Instantiates the DEFAULT_BOARD map.
      */
@@ -127,7 +174,8 @@ class ChessBoard {
         if (!board.containsKey(position)) {
             throw new IllegalArgumentException(
                     String.format("Chess position illegal. Suggested addition:\nRow: %d, Col: %d",
-                                  position.getRow(), position.getColumn()));
+                                  position.getRow(), position.getColumn()
+                    ));
         }
         board.put(position, piece);
     }
