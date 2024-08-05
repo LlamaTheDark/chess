@@ -89,6 +89,7 @@ class GamePlayUI {
                     } else {
                         System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
                     }
+                    System.out.print(EscapeSequences.SET_TEXT_BOLD);
                     System.out.print(switch (pieceAtLocation.getPieceType()) {
                         case KING -> " K ";
                         case QUEEN -> " Q ";

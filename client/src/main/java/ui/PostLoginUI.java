@@ -120,8 +120,6 @@ class PostLoginUI {
                     );
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println(e.getMessage());
                 System.out.println("Failed to list games.");
             }
         }
@@ -134,14 +132,11 @@ class PostLoginUI {
             } catch (Exception e) {
                 System.out.println("Failed to log in.");
             }
-            System.out.println("handle play game...");
         }
 
         private
         void handleObserveGame() {
-            /*
-            TODO: ???
-             */
+            GamePlayUI.observe();
         }
     }
 
