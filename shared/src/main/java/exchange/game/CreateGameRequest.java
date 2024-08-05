@@ -13,7 +13,9 @@ class CreateGameRequest extends Request {
     }
 
     public
-    CreateGameRequest() {}
+    CreateGameRequest(String gameName) {
+        this.gameName = gameName;
+    }
 
     public
     String getGameName() {

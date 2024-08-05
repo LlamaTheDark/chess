@@ -13,6 +13,7 @@ class CreateGameHandler implements Route {
     public
     Object handle(Request request, Response response) throws Exception {
         HttpHandler.handleHttpRoute(request, CreateGameRequest.class, new CreateGameService(), response);
+        System.out.println("CreateGameHandler called");
         return response.body();
     }
 }

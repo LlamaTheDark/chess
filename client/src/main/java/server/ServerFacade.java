@@ -1,6 +1,5 @@
 package server;
 
-import com.google.gson.Gson;
 import exchange.game.*;
 import exchange.user.*;
 import serial.Serializer;
@@ -37,8 +36,8 @@ class ServerFacade {
         /*
         WRITE REQUEST BODY
          */
-        if (!body.isEmpty()) {
-            http.setDoOutput(true);
+        if (!body.isEmpty() && method.equals("POST")) {
+            http.setDoOutput(true); // implicitly sets request method to "POST"
             try (var writer = http.getOutputStream()) {
                 writer.write(body.getBytes());
             }
@@ -61,8 +60,10 @@ class ServerFacade {
             Object response = "";
             try (InputStream respBody = http.getInputStream()) {
                 var inputStreamReader = new InputStreamReader(respBody);
-                response = new Gson().fromJson(inputStreamReader, clazz);
+                response = Serializer.deserialize(inputStreamReader, clazz);
             }
+
+            http.disconnect();
 
             return response;
         } else {
@@ -92,14 +93,18 @@ class ServerFacade {
     }
 
     public
-    CreateGameResponse createGame(CreateGameRequest createGameRequest) throws Exception {
-        return (CreateGameResponse) makeRequest("/login", "GET", "", CreateGameResponse.class);
+    CreateGameResponse createGame(CreateGameRequest request) throws Exception {
+        return (CreateGameResponse) makeRequest(
+                "/game",
+                "POST",
+                Serializer.serialize(request),
+                CreateGameResponse.class
+        );
     }
 
     public
-    ListGamesResponse listGames(ListGamesRequest listGamesRequest) throws Exception {
-
-        return (ListGamesResponse) makeRequest("/login", "GET", "", ListGamesResponse.class);
+    ListGamesResponse listGames(ListGamesRequest request) throws Exception {
+        return (ListGamesResponse) makeRequest("/game", "GET", Serializer.serialize(request), ListGamesResponse.class);
     }
 
     public

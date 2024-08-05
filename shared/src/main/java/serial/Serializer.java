@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -44,6 +45,18 @@ class Serializer {
      */
     static public
     <T> T deserialize(String obj, Class<T> clazz)
+    throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        var deserialized = gson.fromJson(obj, clazz);
+
+        if (deserialized == null) {
+            deserialized = clazz.getDeclaredConstructor().newInstance();
+        }
+
+        return deserialized;
+    }
+
+    static public
+    <T> T deserialize(InputStreamReader obj, Class<T> clazz)
     throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         var deserialized = gson.fromJson(obj, clazz);
 

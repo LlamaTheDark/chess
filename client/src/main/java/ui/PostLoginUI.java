@@ -53,7 +53,7 @@ class PostLoginUI {
                 switch (command) {
                     case HELP -> handler.handleHelp();
                     case LOGOUT -> handler.handleLogout();
-                    case CREATE_GAME -> handler.handleCreateGame();
+                    case CREATE_GAME -> handler.handleCreateGame(in.next());
                     case LIST_GAMES -> handler.handleListGames();
                     case PLAY_GAME -> handler.handlePlayGame();
                     case OBSERVE_GAME -> handler.handleObserveGame();
@@ -95,25 +95,35 @@ class PostLoginUI {
         }
 
         private
-        void handleCreateGame() {
+        void handleCreateGame(String gameName) {
             var serverFacade = new ServerFacade();
             try {
-                serverFacade.createGame(new CreateGameRequest());
+                var response = serverFacade.createGame(new CreateGameRequest(gameName));
+                System.out.printf("Created game '%s' with ID %d\n", gameName, response.getGameID());
             } catch (Exception e) {
-                System.out.println("Failed to log in.");
+                System.out.println("Failed to create game.");
             }
-            System.out.println("handle create game...");
         }
 
         private
         void handleListGames() {
             var serverFacade = new ServerFacade();
             try {
-                serverFacade.listGames(new ListGamesRequest());
+                var listGamesResponse = serverFacade.listGames(new ListGamesRequest());
+                for (var game : listGamesResponse.getGames()) {
+                    System.out.printf(
+                            "\t[ID: %d] %s | WHITE: %s | BLACK: %s%n",
+                            game.gameID(),
+                            game.gameName(),
+                            game.whiteUsername(),
+                            game.blackUsername()
+                    );
+                }
             } catch (Exception e) {
-                System.out.println("Failed to log in.");
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+                System.out.println("Failed to list games.");
             }
-            System.out.println("handle list games...");
         }
 
         private
