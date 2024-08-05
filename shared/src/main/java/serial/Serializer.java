@@ -33,11 +33,6 @@ class Serializer {
         return gson.toJson(obj);
     }
 
-    static public
-    String serialize(Object obj, Gson customGson) {
-        return customGson.toJson(obj, obj.getClass());
-    }
-
     /**
      * Deserializes an object.
      *
