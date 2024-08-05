@@ -3,6 +3,7 @@ package server;
 import exchange.game.*;
 import exchange.user.*;
 import serial.Serializer;
+import ui.GamePlayUI;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -109,8 +110,13 @@ class ServerFacade {
 
     public
     JoinGameResponse joinGame(JoinGameRequest joinGameRequest) throws Exception {
+        GamePlayUI.play();
+        return null;
+    }
 
-        return (JoinGameResponse) makeRequest("/login", "GET", "", JoinGameResponse.class);
+    public
+    void observeGame(int gameID) {
+        GamePlayUI.observe();
     }
 }
 
