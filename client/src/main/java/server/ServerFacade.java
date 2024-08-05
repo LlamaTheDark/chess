@@ -5,12 +5,10 @@ import exchange.game.*;
 import exchange.user.*;
 import serial.Serializer;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 public
 class ServerFacade {
@@ -27,7 +25,7 @@ class ServerFacade {
     }
 
     <T> Object makeRequest(String endpoint, String method, String body, Class<T> clazz)
-    throws URISyntaxException, IOException {
+    throws Exception {
         /*
         PREPARE REQUEST
          */
@@ -68,7 +66,7 @@ class ServerFacade {
 
             return response;
         } else {
-            return null;
+            throw new Exception("aaaaah");
         }
     }
 
@@ -76,12 +74,12 @@ class ServerFacade {
     Pre-login requests
      */
     public
-    LoginResponse login(LoginRequest request) throws URISyntaxException, IOException {
+    LoginResponse login(LoginRequest request) throws Exception {
         return (LoginResponse) makeRequest("/session", "POST", Serializer.serialize(request), LoginResponse.class);
     }
 
     public
-    RegisterResponse register(RegisterRequest request) throws URISyntaxException, IOException {
+    RegisterResponse register(RegisterRequest request) throws Exception {
         return (RegisterResponse) makeRequest("/user", "POST", Serializer.serialize(request), RegisterResponse.class);
     }
 
@@ -89,29 +87,23 @@ class ServerFacade {
     Post-login requests
      */
     public
-    LogoutResponse logout(LogoutRequest request) throws URISyntaxException, IOException {
+    LogoutResponse logout(LogoutRequest request) throws Exception {
         return (LogoutResponse) makeRequest("/session", "DELETE", Serializer.serialize(request), LogoutResponse.class);
     }
 
     public
-    CreateGameResponse createGame(CreateGameRequest createGameRequest) throws URISyntaxException, IOException {
-
-        return (CreateGameResponse) makeRequest(
-                "/login",
-                "GET",
-                "",
-                CreateGameResponse.class
-        );
+    CreateGameResponse createGame(CreateGameRequest createGameRequest) throws Exception {
+        return (CreateGameResponse) makeRequest("/login", "GET", "", CreateGameResponse.class);
     }
 
     public
-    ListGamesResponse listGames(ListGamesRequest listGamesRequest) throws URISyntaxException, IOException {
+    ListGamesResponse listGames(ListGamesRequest listGamesRequest) throws Exception {
 
         return (ListGamesResponse) makeRequest("/login", "GET", "", ListGamesResponse.class);
     }
 
     public
-    JoinGameResponse joinGame(JoinGameRequest joinGameRequest) throws URISyntaxException, IOException {
+    JoinGameResponse joinGame(JoinGameRequest joinGameRequest) throws Exception {
 
         return (JoinGameResponse) makeRequest("/login", "GET", "", JoinGameResponse.class);
     }

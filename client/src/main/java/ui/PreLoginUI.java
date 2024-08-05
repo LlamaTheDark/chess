@@ -87,7 +87,8 @@ class PreLoginUI {
         void handleRegister(String username, String password, String email) {
             var serverFacade = new ServerFacade();
             try {
-                serverFacade.register(new RegisterRequest(username, password, email));
+                var response = serverFacade.register(new RegisterRequest(username, password, email));
+                SessionHandler.authToken = response.getAuthToken();
                 new PostLoginUI().start();
             } catch (Exception e) {
                 System.out.println("Failed to register.");
