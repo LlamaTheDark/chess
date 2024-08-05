@@ -1,6 +1,9 @@
 package ui;
 
 import exception.UnknownCommandException;
+import exchange.user.LoginRequest;
+import exchange.user.RegisterRequest;
+import server.ServerFacade;
 
 import java.util.Scanner;
 
@@ -41,8 +44,8 @@ class PreLoginUI {
 
                 switch (command) {
                     case HELP -> handler.handleHelp();
-                    case LOGIN -> handler.handleLogin(in.nextLine().split(" "));
-                    case REGISTER -> handler.handleRegister(in.nextLine().split(" "));
+                    case LOGIN -> handler.handleLogin(in.next(), in.next());
+                    case REGISTER -> handler.handleRegister(in.next(), in.next(), in.next());
                 }
             } catch (UnknownCommandException e) {
                 in.nextLine();
@@ -68,15 +71,27 @@ class PreLoginUI {
         }
 
         private
-        void handleLogin(String[] args) {
+        void handleLogin(String username, String password) {
             System.out.println("handle login...");
-            System.out.println("SUCCESS!");
-            new PostLoginUI().start();
+            var serverFacade = new ServerFacade();
+            try {
+                serverFacade.login(new LoginRequest(username, password));
+                new PostLoginUI().start();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
 
         private
-        void handleRegister(String[] args) {
-            System.out.println("handle register...");
+        void handleRegister(String username, String password, String email) {
+            var serverFacade = new ServerFacade();
+            try {
+                serverFacade.register(new RegisterRequest(username, password, email));
+                new PostLoginUI().start();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
