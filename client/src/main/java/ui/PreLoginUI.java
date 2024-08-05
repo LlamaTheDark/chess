@@ -4,6 +4,7 @@ import exception.UnknownCommandException;
 import exchange.user.LoginRequest;
 import exchange.user.RegisterRequest;
 import server.ServerFacade;
+import server.SessionHandler;
 
 import java.util.Scanner;
 
@@ -72,13 +73,13 @@ class PreLoginUI {
 
         private
         void handleLogin(String username, String password) {
-            System.out.println("handle login...");
             var serverFacade = new ServerFacade();
             try {
-                serverFacade.login(new LoginRequest(username, password));
+                var response = serverFacade.login(new LoginRequest(username, password));
+                SessionHandler.authToken = response.getAuthToken();
                 new PostLoginUI().start();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("Failed to log in.");
             }
         }
 
@@ -89,10 +90,8 @@ class PreLoginUI {
                 serverFacade.register(new RegisterRequest(username, password, email));
                 new PostLoginUI().start();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
-                e.printStackTrace();
+                System.out.println("Failed to register.");
             }
         }
     }
-
 }

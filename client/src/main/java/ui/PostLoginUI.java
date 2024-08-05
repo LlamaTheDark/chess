@@ -1,6 +1,12 @@
 package ui;
 
 import exception.UnknownCommandException;
+import exchange.game.CreateGameRequest;
+import exchange.game.JoinGameRequest;
+import exchange.game.ListGamesRequest;
+import exchange.user.LogoutRequest;
+import server.ServerFacade;
+import server.SessionHandler;
 
 import java.util.Scanner;
 
@@ -47,10 +53,10 @@ class PostLoginUI {
                 switch (command) {
                     case HELP -> handler.handleHelp();
                     case LOGOUT -> handler.handleLogout();
-                    case CREATE_GAME -> handler.handleCreateGame(in.nextLine().split(" "));
+                    case CREATE_GAME -> handler.handleCreateGame();
                     case LIST_GAMES -> handler.handleListGames();
-                    case PLAY_GAME -> handler.handlePlayGame(in.nextLine().split(" "));
-                    case OBSERVE_GAME -> handler.handleObserveGame(in.nextLine().split(" "));
+                    case PLAY_GAME -> handler.handlePlayGame();
+                    case OBSERVE_GAME -> handler.handleObserveGame();
                 }
             } catch (UnknownCommandException e) {
                 in.nextLine();
@@ -79,27 +85,53 @@ class PostLoginUI {
 
         private
         void handleLogout() {
-            System.out.println("handle logout...");
+            var serverFacade = new ServerFacade();
+            try {
+                serverFacade.logout(new LogoutRequest());
+                SessionHandler.authToken = "";
+            } catch (Exception e) {
+                System.out.println("Failed to log out.");
+            }
         }
 
         private
-        void handleCreateGame(String[] args) {
+        void handleCreateGame() {
+            var serverFacade = new ServerFacade();
+            try {
+                serverFacade.createGame(new CreateGameRequest());
+            } catch (Exception e) {
+                System.out.println("Failed to log in.");
+            }
             System.out.println("handle create game...");
         }
 
         private
         void handleListGames() {
+            var serverFacade = new ServerFacade();
+            try {
+                serverFacade.listGames(new ListGamesRequest());
+            } catch (Exception e) {
+                System.out.println("Failed to log in.");
+            }
             System.out.println("handle list games...");
         }
 
         private
-        void handlePlayGame(String[] args) {
+        void handlePlayGame() {
+            var serverFacade = new ServerFacade();
+            try {
+                serverFacade.joinGame(new JoinGameRequest());
+            } catch (Exception e) {
+                System.out.println("Failed to log in.");
+            }
             System.out.println("handle play game...");
         }
 
         private
-        void handleObserveGame(String[] args) {
-            System.out.println("handle observe game...");
+        void handleObserveGame() {
+            /*
+            TODO: ???
+             */
         }
     }
 

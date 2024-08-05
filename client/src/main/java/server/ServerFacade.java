@@ -1,9 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import exchange.game.CreateGameResponse;
-import exchange.game.JoinGameResponse;
-import exchange.game.ListGamesResponse;
+import exchange.game.*;
 import exchange.user.*;
 import serial.Serializer;
 
@@ -36,6 +34,7 @@ class ServerFacade {
         URI uri = new URI(hostUrl + endpoint);
         var http = (HttpURLConnection) uri.toURL().openConnection();
         http.setRequestMethod(method);
+        http.setRequestProperty("Authorization", SessionHandler.authToken);
 
         /*
         WRITE REQUEST BODY
@@ -90,12 +89,12 @@ class ServerFacade {
     Post-login requests
      */
     public
-    LogoutResponse logout() throws URISyntaxException, IOException {
-        return (LogoutResponse) makeRequest("/login", "GET", "", LogoutResponse.class);
+    LogoutResponse logout(LogoutRequest request) throws URISyntaxException, IOException {
+        return (LogoutResponse) makeRequest("/session", "DELETE", Serializer.serialize(request), LogoutResponse.class);
     }
 
     public
-    CreateGameResponse createGame() throws URISyntaxException, IOException {
+    CreateGameResponse createGame(CreateGameRequest createGameRequest) throws URISyntaxException, IOException {
 
         return (CreateGameResponse) makeRequest(
                 "/login",
@@ -106,13 +105,13 @@ class ServerFacade {
     }
 
     public
-    ListGamesResponse listGames() throws URISyntaxException, IOException {
+    ListGamesResponse listGames(ListGamesRequest listGamesRequest) throws URISyntaxException, IOException {
 
         return (ListGamesResponse) makeRequest("/login", "GET", "", ListGamesResponse.class);
     }
 
     public
-    JoinGameResponse joinGame() throws URISyntaxException, IOException {
+    JoinGameResponse joinGame(JoinGameRequest joinGameRequest) throws URISyntaxException, IOException {
 
         return (JoinGameResponse) makeRequest("/login", "GET", "", JoinGameResponse.class);
     }
