@@ -252,8 +252,8 @@ class FIDERuleBook implements ChessRuleBook {
      * value {@code true}). In other words, under the reference equality equivalence relation, each equivalence class
      * only has a single element.
      * @apiNote It is generally necessary to override the {@link #hashCode() hashCode} method whenever this method is
-     * overridden, so as to maintain the general contract for the {@code hashCode} method, which states that equal
-     * objects must have equal hash codes.
+     * overridden, to maintain the general contract for the {@code hashCode} method, which states that equal objects
+     * must have equal hash codes.
      * @see #hashCode()
      * @see HashMap
      */

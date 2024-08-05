@@ -124,9 +124,5 @@ class GamePlayUI {
             }
             System.out.println();
         }
-
-        void printCornerSquare() {
-
-        }
     }
 }
