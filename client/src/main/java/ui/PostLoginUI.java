@@ -110,10 +110,13 @@ class PostLoginUI {
             var serverFacade = new ServerFacade();
             try {
                 var listGamesResponse = serverFacade.listGames(new ListGamesRequest());
-                for (var game : listGamesResponse.getGames()) {
+                SessionHandler.setGameListMemory(listGamesResponse.getGames());
+
+                int enumerator = 1;
+                for (var game : SessionHandler.games) {
                     System.out.printf(
-                            "\t[ID: %d] %s | WHITE: %s | BLACK: %s%n",
-                            game.gameID(),
+                            "\t(%d) %s \t| WHITE: %s \t| BLACK: %s%n",
+                            enumerator++,
                             game.gameName(),
                             game.whiteUsername(),
                             game.blackUsername()
