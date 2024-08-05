@@ -34,10 +34,6 @@ class GamePlayUI {
     class BoardPrinter {
         static ChessGame.TeamColor nextSquareBackground = WHITE;
 
-        /*
-        TODO: streamline changing themes with some variables or a properties file to read the colors
-         */
-
         static
         void printBoard(ChessBoard board, int row, int col, int endCol) {
             if (row == 0 || row == 9) {

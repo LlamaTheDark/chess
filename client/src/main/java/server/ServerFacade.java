@@ -12,16 +12,19 @@ import java.net.URI;
 
 public
 class ServerFacade {
-    String hostUrl;
+    private String hostUrl;
+    private int    port;
 
     public
-    ServerFacade(String url) {
-        this.hostUrl = url;
+    ServerFacade(String url, int port) {
+        hostUrl = url;
+        this.port = port;
     }
+
 
     public
     ServerFacade() {
-        this("http://localhost:8080");
+        this("http://localhost", 8080);
     }
 
     <T> Object makeRequest(String endpoint, String method, String body, Class<T> clazz)
@@ -29,7 +32,7 @@ class ServerFacade {
         /*
         PREPARE REQUEST
          */
-        URI uri = new URI(hostUrl + endpoint);
+        URI uri = new URI(hostUrl + ":" + port + endpoint);
         var http = (HttpURLConnection) uri.toURL().openConnection();
         http.setRequestMethod(method);
         http.setRequestProperty("Authorization", SessionHandler.authToken);
@@ -54,9 +57,6 @@ class ServerFacade {
          */
         var statusCode = http.getResponseCode();
 
-        /*
-        TODO: allow program to print an error message based on the status code (unauthorized, bad request, etc.)
-         */
         if (statusCode == 200) {
             Object response = "";
             try (InputStream respBody = http.getInputStream()) {
@@ -115,7 +115,7 @@ class ServerFacade {
     }
 
     public
-    void observeGame(int gameID) {
+    void observeGame() {
         GamePlayUI.observe();
     }
 }

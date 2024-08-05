@@ -18,14 +18,16 @@ public
 class ServerFacadeTests {
 
     private static Server       server;
-    private static ServerFacade sf = new ServerFacade();
+    private static ServerFacade sf;
 
     @BeforeAll
     public static
     void init() {
         server = new Server();
-        var port = server.run(8080);
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+
+        sf = new ServerFacade("http://localhost", port);
     }
 
     @AfterAll

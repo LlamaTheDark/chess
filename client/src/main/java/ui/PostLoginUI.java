@@ -139,7 +139,8 @@ class PostLoginUI {
 
         private
         void handleObserveGame() {
-            GamePlayUI.observe();
+            var serverFacade = new ServerFacade();
+            serverFacade.observeGame();
         }
     }
 
