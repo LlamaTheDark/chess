@@ -58,7 +58,7 @@ class ServerFacade {
         var statusCode = http.getResponseCode();
 
         if (statusCode == 200) {
-            Object response = "";
+            Object response;
             try (InputStream respBody = http.getInputStream()) {
                 var inputStreamReader = new InputStreamReader(respBody);
                 response = Serializer.deserialize(inputStreamReader, clazz);
