@@ -1,6 +1,7 @@
 package client;
 
 import exchange.game.CreateGameRequest;
+import exchange.game.JoinGameRequest;
 import exchange.game.ListGamesRequest;
 import exchange.user.LoginRequest;
 import exchange.user.LogoutRequest;
@@ -109,6 +110,21 @@ class ServerFacadeTests {
     void listGamesN() {
         SessionHandler.authToken = "";
         assertThrows(Exception.class, () -> {sf.listGames(new ListGamesRequest());});
+    }
+
+    @Test
+    @Order(11)
+    public
+    void observeGameP() throws Exception {
+        SessionHandler.authToken = sf.login(new LoginRequest("new_user", "password")).getAuthToken();
+        assertDoesNotThrow(() -> {sf.joinGame(new JoinGameRequest("WHITE", 1));});
+    }
+
+    @Test
+    @Order(12)
+    public
+    void observeGameN() {
+        assertThrows(Exception.class, () -> {sf.joinGame(new JoinGameRequest("NOTACOLOR", 123456));});
     }
 
 }

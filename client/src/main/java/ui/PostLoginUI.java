@@ -128,12 +128,12 @@ class PostLoginUI {
         }
 
         private
-        void handlePlayGame() {
+        void handlePlayGame() { // change this to handleJoinGame
             var serverFacade = new ServerFacade();
             try {
-                serverFacade.joinGame(new JoinGameRequest());
+                serverFacade.joinGame(new JoinGameRequest("WHITE", 1));
             } catch (Exception e) {
-                System.out.println("Failed to log in.");
+                System.out.println("Failed to join game");
             }
         }
 

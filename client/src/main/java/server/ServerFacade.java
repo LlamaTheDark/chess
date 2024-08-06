@@ -40,7 +40,7 @@ class ServerFacade {
         /*
         WRITE REQUEST BODY
          */
-        if (!body.isEmpty() && method.equals("POST")) {
+        if (!body.isEmpty() && (method.equals("POST") || method.equals("PUT") || method.equals("DELETE"))) {
             http.setDoOutput(true); // implicitly sets request method to "POST"
             try (var writer = http.getOutputStream()) {
                 writer.write(body.getBytes());
@@ -109,7 +109,8 @@ class ServerFacade {
     }
 
     public
-    JoinGameResponse joinGame(JoinGameRequest joinGameRequest) throws Exception {
+    JoinGameResponse joinGame(JoinGameRequest request) throws Exception {
+        makeRequest("/game", "PUT", Serializer.serialize(request), JoinGameResponse.class);
         GamePlayUI.play();
         return null;
     }

@@ -19,6 +19,12 @@ class JoinGameRequest extends Request {
     JoinGameRequest() {}
 
     public
+    JoinGameRequest(String color, int id) {
+        playerColor = color;
+        gameID = id;
+    }
+
+    public
     String getPlayerColor() {
         return playerColor;
     }
