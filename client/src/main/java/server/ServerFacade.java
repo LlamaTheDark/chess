@@ -1,7 +1,7 @@
 package server;
 
-import exchange.game.*;
-import exchange.user.*;
+import exchange.halfduplex.game.*;
+import exchange.halfduplex.user.*;
 import serial.Serializer;
 import ui.GamePlayUI;
 import ui.exception.BadParametersException;

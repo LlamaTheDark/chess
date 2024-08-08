@@ -1,6 +1,6 @@
 package handle.user;
 
-import exchange.user.LogoutRequest;
+import exchange.halfduplex.user.LogoutRequest;
 import handle.util.HttpHandler;
 import service.user.LogoutService;
 import spark.Request;

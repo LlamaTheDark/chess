@@ -1,4 +1,4 @@
-package websocket.commands;
+package exchange.fullduplex.websocket.commands;
 
 import java.util.Objects;
 

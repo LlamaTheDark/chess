@@ -1,4 +1,4 @@
-package exchange;
+package exchange.halfduplex;
 
 /**
  * Models a request made to the server.

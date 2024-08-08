@@ -1,8 +1,8 @@
 package service;
 
 import dataaccess.DataAccessException;
-import exchange.Request;
-import exchange.Response;
+import exchange.halfduplex.Request;
+import exchange.halfduplex.Response;
 import service.exception.ServiceException;
 
 public

@@ -1,6 +1,6 @@
 package handle.game;
 
-import exchange.game.ListGamesRequest;
+import exchange.halfduplex.game.ListGamesRequest;
 import handle.util.HttpHandler;
 import service.game.ListGamesService;
 import spark.Request;
