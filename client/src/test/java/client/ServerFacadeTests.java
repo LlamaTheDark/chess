@@ -1,11 +1,11 @@
 package client;
 
-import exchange.halfduplex.game.CreateGameRequest;
-import exchange.halfduplex.game.JoinGameRequest;
-import exchange.halfduplex.game.ListGamesRequest;
-import exchange.halfduplex.user.LoginRequest;
-import exchange.halfduplex.user.LogoutRequest;
-import exchange.halfduplex.user.RegisterRequest;
+import exchange.game.CreateGameRequest;
+import exchange.game.JoinGameRequest;
+import exchange.game.ListGamesRequest;
+import exchange.user.LoginRequest;
+import exchange.user.LogoutRequest;
+import exchange.user.RegisterRequest;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;

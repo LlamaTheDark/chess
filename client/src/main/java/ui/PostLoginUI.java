@@ -1,9 +1,9 @@
 package ui;
 
-import exchange.halfduplex.game.CreateGameRequest;
-import exchange.halfduplex.game.JoinGameRequest;
-import exchange.halfduplex.game.ListGamesRequest;
-import exchange.halfduplex.user.LogoutRequest;
+import exchange.game.CreateGameRequest;
+import exchange.game.JoinGameRequest;
+import exchange.game.ListGamesRequest;
+import exchange.user.LogoutRequest;
 import server.ServerFacade;
 import server.SessionHandler;
 import ui.exception.ForbiddenException;

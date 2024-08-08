@@ -1,7 +1,7 @@
 package ui;
 
-import exchange.halfduplex.user.LoginRequest;
-import exchange.halfduplex.user.RegisterRequest;
+import exchange.user.LoginRequest;
+import exchange.user.RegisterRequest;
 import server.ServerFacade;
 import server.SessionHandler;
 import ui.exception.UIException;

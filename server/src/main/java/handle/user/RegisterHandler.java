@@ -1,6 +1,6 @@
 package handle.user;
 
-import exchange.halfduplex.user.RegisterRequest;
+import exchange.user.RegisterRequest;
 import handle.util.HttpHandler;
 import service.user.RegisterService;
 import spark.Request;

@@ -1,6 +1,6 @@
 package handle.dev;
 
-import exchange.halfduplex.dev.ClearApplicationRequest;
+import exchange.dev.ClearApplicationRequest;
 import handle.util.HttpHandler;
 import service.dev.ClearApplicationService;
 import spark.Request;
