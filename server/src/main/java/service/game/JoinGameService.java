@@ -34,6 +34,7 @@ class JoinGameService implements Service<JoinGameResponse, JoinGameRequest> {
             default -> throw new BadRequestException();
         };
 
+
         // forbidden checks
         if (switch (playerColor) {
             case WHITE -> requestedGame.whiteUsername() != null;
@@ -42,8 +43,10 @@ class JoinGameService implements Service<JoinGameResponse, JoinGameRequest> {
             throw new ForbiddenException("Error: already taken");
         }
 
-        // join the game
+        // get player username by authData
         var playerUsername = new MySQLAuthDAO().getAuthByToken(request.getAuthToken()).username();
+
+        // join the game
         gameDAO.updateGame(switch (playerColor) {
             case WHITE -> new GameData(requestedGame.gameID(), playerUsername, requestedGame.blackUsername(),
                                        requestedGame.gameName(), requestedGame.game()

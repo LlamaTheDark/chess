@@ -111,8 +111,7 @@ class ServerFacade {
     public
     JoinGameResponse joinGame(JoinGameRequest request) throws Exception {
         GamePlayUI.play();
-        makeRequest("/game", "PUT", Serializer.serialize(request), JoinGameResponse.class);
-        return null;
+        return (JoinGameResponse) makeRequest("/game", "PUT", Serializer.serialize(request), JoinGameResponse.class);
     }
 
     public

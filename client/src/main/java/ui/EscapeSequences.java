@@ -52,6 +52,8 @@ class EscapeSequences {
 
     public static final String DARK_GREEN = "22m";
 
+    public static final String SET_SCREEN_MODE_80X25_COLOR = UNICODE_ESCAPE + "[=3h";
+
     public static final String WHITE_KING   = " ♔ ";
     public static final String WHITE_QUEEN  = " ♕ ";
     public static final String WHITE_BISHOP = " ♗ ";

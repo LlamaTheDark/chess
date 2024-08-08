@@ -22,7 +22,7 @@ class PostLoginUI {
         LOGOUT,
         CREATE_GAME,
         LIST_GAMES,
-        PLAY_GAME,
+        JOIN_GAME,
         OBSERVE_GAME,
         NONE
     }
@@ -45,7 +45,7 @@ class PostLoginUI {
                     case "logout", "l" -> PostLoginCommand.LOGOUT;
                     case "create", "c" -> PostLoginCommand.CREATE_GAME;
                     case "list", "li" -> PostLoginCommand.LIST_GAMES;
-                    case "join", "j", "play", "p" -> PostLoginCommand.PLAY_GAME;
+                    case "join", "j", "play", "p" -> PostLoginCommand.JOIN_GAME;
                     case "observe", "o" -> PostLoginCommand.OBSERVE_GAME;
                     default -> throw new UnknownCommandException();
                 };
@@ -55,7 +55,7 @@ class PostLoginUI {
                     case LOGOUT -> handler.handleLogout();
                     case CREATE_GAME -> handler.handleCreateGame(in.next());
                     case LIST_GAMES -> handler.handleListGames();
-                    case PLAY_GAME -> handler.handlePlayGame();
+                    case JOIN_GAME -> handler.handleJoinGame(in.next(), in.next());
                     case OBSERVE_GAME -> handler.handleObserveGame();
                 }
             } catch (UnknownCommandException e) {
@@ -99,7 +99,7 @@ class PostLoginUI {
             var serverFacade = new ServerFacade();
             try {
                 var response = serverFacade.createGame(new CreateGameRequest(gameName));
-                System.out.printf("Created game '%s' with ID %d\n", gameName, response.getGameID());
+                System.out.printf("Created game '%s'\n", gameName);
             } catch (Exception e) {
                 System.out.println("Failed to create game.");
             }
@@ -112,11 +112,12 @@ class PostLoginUI {
                 var listGamesResponse = serverFacade.listGames(new ListGamesRequest());
                 SessionHandler.setGameListMemory(listGamesResponse.getGames());
 
-                int enumerator = 1;
-                for (var game : SessionHandler.games) {
+
+                for (int i = 0; i < SessionHandler.games.size(); i++) {
+                    var game = SessionHandler.games.get(i);
                     System.out.printf(
                             "\t(%d) %s \t| WHITE: %s \t| BLACK: %s%n",
-                            enumerator++,
+                            i + 1,
                             game.gameName(),
                             game.whiteUsername(),
                             game.blackUsername()
@@ -128,10 +129,14 @@ class PostLoginUI {
         }
 
         private
-        void handlePlayGame() { // change this to handleJoinGame
+        void handleJoinGame(String playerColor, String indexInList) { // change this to handleJoinGame
             var serverFacade = new ServerFacade();
             try {
-                serverFacade.joinGame(new JoinGameRequest("WHITE", 1));
+                int index = Integer.parseInt(indexInList);
+                serverFacade.joinGame(new JoinGameRequest(
+                        playerColor,
+                        SessionHandler.getGameIDFromIndex(index)
+                ));
             } catch (Exception e) {
                 System.out.println("Failed to join game");
             }

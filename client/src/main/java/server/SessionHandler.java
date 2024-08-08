@@ -15,4 +15,12 @@ class SessionHandler {
         games.clear();
         games.addAll(listedGames);
     }
+
+    public static
+    int getGameIDFromIndex(int index) {
+        if (index > games.size()) {
+            throw new IllegalArgumentException();
+        }
+        return games.get(index - 1).gameID();
+    }
 }
