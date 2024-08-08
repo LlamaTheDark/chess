@@ -1,4 +1,4 @@
-package service.error;
+package service.exception;
 
 /**
  * Indicates that the request had invalid information and could therefore not be used.

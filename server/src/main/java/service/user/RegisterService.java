@@ -8,9 +8,9 @@ import exchange.user.RegisterResponse;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import service.Service;
-import service.error.BadRequestException;
-import service.error.ForbiddenException;
-import service.error.ServiceException;
+import service.exception.BadRequestException;
+import service.exception.ForbiddenException;
+import service.exception.ServiceException;
 
 public
 class RegisterService implements Service<RegisterResponse, RegisterRequest> {

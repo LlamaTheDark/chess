@@ -7,9 +7,9 @@ import exchange.game.JoinGameRequest;
 import exchange.game.JoinGameResponse;
 import model.GameData;
 import service.Service;
-import service.error.BadRequestException;
-import service.error.ForbiddenException;
-import service.error.ServiceException;
+import service.exception.BadRequestException;
+import service.exception.ForbiddenException;
+import service.exception.ServiceException;
 import service.util.Authenticator;
 
 public

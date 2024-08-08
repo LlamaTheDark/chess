@@ -3,10 +3,10 @@ package handle.util;
 import dataaccess.DataAccessException;
 import serial.Serializer;
 import service.Service;
-import service.error.BadRequestException;
-import service.error.ForbiddenException;
-import service.error.ServiceException;
-import service.error.UnauthorizedException;
+import service.exception.BadRequestException;
+import service.exception.ForbiddenException;
+import service.exception.ServiceException;
+import service.exception.UnauthorizedException;
 
 import java.lang.reflect.InvocationTargetException;
 

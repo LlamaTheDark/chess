@@ -3,7 +3,7 @@ package service.util;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.mysql.MySQLAuthDAO;
-import service.error.UnauthorizedException;
+import service.exception.UnauthorizedException;
 
 import java.util.UUID;
 

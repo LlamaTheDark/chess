@@ -1,4 +1,4 @@
-package service.error;
+package service.exception;
 
 /**
  * Indicates that a request was made with insufficient credentials.

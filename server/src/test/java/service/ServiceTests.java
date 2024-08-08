@@ -12,10 +12,10 @@ import exchange.user.LogoutRequest;
 import exchange.user.RegisterRequest;
 import org.junit.jupiter.api.*;
 import service.dev.ClearApplicationService;
-import service.error.BadRequestException;
-import service.error.ForbiddenException;
-import service.error.ServiceException;
-import service.error.UnauthorizedException;
+import service.exception.BadRequestException;
+import service.exception.ForbiddenException;
+import service.exception.ServiceException;
+import service.exception.UnauthorizedException;
 import service.game.CreateGameService;
 import service.game.JoinGameService;
 import service.game.ListGamesService;
@@ -81,8 +81,9 @@ class ServiceTests {
     @DisplayName("Bad Request Login Attempt")
     public
     void badRequestLoginAttempt() {
-        Assertions.assertThrows(BadRequestException.class,
-                                () -> new LoginService().serve(new LoginRequest(null, "beans123"))
+        Assertions.assertThrows(
+                BadRequestException.class,
+                () -> new LoginService().serve(new LoginRequest(null, "beans123"))
         );
     }
 
@@ -104,8 +105,9 @@ class ServiceTests {
     @DisplayName("Logout User Who Is Not Logged In")
     public
     void logoutUserWhoIsNotLoggedIn() {
-        Assertions.assertThrows(UnauthorizedException.class,
-                                () -> new LogoutService().serve(new LogoutRequest(ogltdAuthToken))
+        Assertions.assertThrows(
+                UnauthorizedException.class,
+                () -> new LogoutService().serve(new LogoutRequest(ogltdAuthToken))
         );
     }
 
@@ -126,8 +128,9 @@ class ServiceTests {
     @DisplayName("Create Game No AuthToken")
     public
     void createGameNoAuthToken() {
-        Assertions.assertThrows(UnauthorizedException.class,
-                                () -> new CreateGameService().serve(new CreateGameRequest("Test Game", null))
+        Assertions.assertThrows(
+                UnauthorizedException.class,
+                () -> new CreateGameService().serve(new CreateGameRequest("Test Game", null))
         );
     }
 
@@ -149,8 +152,9 @@ class ServiceTests {
     @DisplayName("Try to Join Game on Taken Team")
     public
     void tryToJoinGameOnTakenTeam() {
-        Assertions.assertThrows(ForbiddenException.class,
-                                () -> new JoinGameService().serve(new JoinGameRequest("WHITE", 1, goofballAuthToken))
+        Assertions.assertThrows(
+                ForbiddenException.class,
+                () -> new JoinGameService().serve(new JoinGameRequest("WHITE", 1, goofballAuthToken))
         );
     }
 
@@ -171,8 +175,9 @@ class ServiceTests {
     @DisplayName("Unauthorized List Games")
     public
     void unauthorizedListGames() {
-        Assertions.assertThrows(UnauthorizedException.class,
-                                () -> new ListGamesService().serve(new ListGamesRequest(null))
+        Assertions.assertThrows(
+                UnauthorizedException.class,
+                () -> new ListGamesService().serve(new ListGamesRequest(null))
         );
     }
 

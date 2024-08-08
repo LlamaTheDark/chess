@@ -9,9 +9,9 @@ import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import service.Service;
-import service.error.BadRequestException;
-import service.error.ServiceException;
-import service.error.UnauthorizedException;
+import service.exception.BadRequestException;
+import service.exception.ServiceException;
+import service.exception.UnauthorizedException;
 import service.util.Authenticator;
 
 public

@@ -1,4 +1,4 @@
-package service.error;
+package service.exception;
 
 /**
  * Indicates that a request was made to perform an action that is not allowed. In this case, the identity of the

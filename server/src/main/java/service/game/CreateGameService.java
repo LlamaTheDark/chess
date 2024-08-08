@@ -7,8 +7,8 @@ import exchange.game.CreateGameRequest;
 import exchange.game.CreateGameResponse;
 import model.GameData;
 import service.Service;
-import service.error.BadRequestException;
-import service.error.ServiceException;
+import service.exception.BadRequestException;
+import service.exception.ServiceException;
 import service.util.Authenticator;
 
 public

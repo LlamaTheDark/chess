@@ -5,7 +5,7 @@ import dataaccess.mysql.MySQLAuthDAO;
 import exchange.user.LogoutRequest;
 import exchange.user.LogoutResponse;
 import service.Service;
-import service.error.ServiceException;
+import service.exception.ServiceException;
 import service.util.Authenticator;
 
 public
