@@ -1,12 +1,14 @@
 package ui;
 
-import exception.UnknownCommandException;
 import exchange.game.CreateGameRequest;
 import exchange.game.JoinGameRequest;
 import exchange.game.ListGamesRequest;
 import exchange.user.LogoutRequest;
 import server.ServerFacade;
 import server.SessionHandler;
+import ui.exception.ForbiddenException;
+import ui.exception.UIException;
+import ui.exception.UnknownCommandException;
 
 import java.util.Scanner;
 
@@ -56,7 +58,7 @@ class PostLoginUI {
                     case CREATE_GAME -> handler.handleCreateGame(in.next());
                     case LIST_GAMES -> handler.handleListGames();
                     case JOIN_GAME -> handler.handleJoinGame(in.next(), in.next());
-                    case OBSERVE_GAME -> handler.handleObserveGame();
+                    case OBSERVE_GAME -> handler.handleObserveGame(in.next());
                 }
             } catch (UnknownCommandException e) {
                 in.nextLine();
@@ -76,7 +78,7 @@ class PostLoginUI {
             System.out.println("""
                                \tcreate <NAME> - create a new game
                                \tlist - list all games
-                               \tjoin <ID> [WHITE|BLACK] - join a game as the WHITE or BLACK team
+                               \tjoin <GAME NUMBER> [WHITE|BLACK] - join a game as the WHITE or BLACK team
                                \tobserve <ID> observe a game
                                \tlogout - return to start screen
                                \thelp - display list of possible commands
@@ -89,8 +91,8 @@ class PostLoginUI {
             try {
                 serverFacade.logout(new LogoutRequest());
                 SessionHandler.authToken = "";
-            } catch (Exception e) {
-                System.out.println("Failed to log out.");
+            } catch (UIException e) {
+                System.out.println("Failed to log out: " + e.getMessage());
             }
         }
 
@@ -100,8 +102,8 @@ class PostLoginUI {
             try {
                 var response = serverFacade.createGame(new CreateGameRequest(gameName));
                 System.out.printf("Created game '%s'\n", gameName);
-            } catch (Exception e) {
-                System.out.println("Failed to create game.");
+            } catch (UIException e) {
+                System.out.println("Failed to create game: " + e.getMessage());
             }
         }
 
@@ -111,25 +113,29 @@ class PostLoginUI {
             try {
                 var listGamesResponse = serverFacade.listGames(new ListGamesRequest());
                 SessionHandler.setGameListMemory(listGamesResponse.getGames());
-
-
-                for (int i = 0; i < SessionHandler.games.size(); i++) {
-                    var game = SessionHandler.games.get(i);
-                    System.out.printf(
-                            "\t(%d) %s \t| WHITE: %s \t| BLACK: %s%n",
-                            i + 1,
-                            game.gameName(),
-                            game.whiteUsername(),
-                            game.blackUsername()
-                    );
+                if (SessionHandler.games.isEmpty()) {
+                    System.out.println(
+                            "\tThere are no active games at this time. Type 'create <GAMENAME>' to create one!");
+                } else {
+                    System.out.println("\tActive games: " + SessionHandler.games.size());
+                    for (int i = 0; i < SessionHandler.games.size(); i++) {
+                        var game = SessionHandler.games.get(i);
+                        System.out.printf(
+                                "\t\t(%d) %s \t| WHITE: %s \t| BLACK: %s%n",
+                                i + 1,
+                                game.gameName(),
+                                game.whiteUsername(),
+                                game.blackUsername()
+                        );
+                    }
                 }
-            } catch (Exception e) {
-                System.out.println("Failed to list games.");
+            } catch (UIException e) {
+                System.out.println("Failed to list games: " + e.getMessage());
             }
         }
 
         private
-        void handleJoinGame(String playerColor, String indexInList) { // change this to handleJoinGame
+        void handleJoinGame(String indexInList, String playerColor) { // change this to handleJoinGame
             var serverFacade = new ServerFacade();
             try {
                 int index = Integer.parseInt(indexInList);
@@ -137,15 +143,27 @@ class PostLoginUI {
                         playerColor,
                         SessionHandler.getGameIDFromIndex(index)
                 ));
-            } catch (Exception e) {
-                System.out.println("Failed to join game");
+            } catch (ForbiddenException e) {
+                System.out.println("Failed to join game: the requested player color is taken.");
+            } catch (NumberFormatException e) {
+                System.out.println(
+                        "Failed to join game: your first parameter is not a number.\nSyntax: join <GAME NUMBER> " +
+                        "[WHITE|BLACK]");
+            } catch (UIException e) {
+                System.out.println("Failed to join game: " + e.getMessage());
             }
         }
 
         private
-        void handleObserveGame() {
-            var serverFacade = new ServerFacade();
-            serverFacade.observeGame();
+        void handleObserveGame(String gameIndexInList) {
+            try {
+                var serverFacade = new ServerFacade();
+                serverFacade.observeGame();
+            } catch (NumberFormatException e) {
+                System.out.println(
+                        "Failed to join game: your first parameter is not a number.\nSyntax: join <GAME NUMBER> " +
+                        "[WHITE|BLACK]");
+            }
         }
     }
 

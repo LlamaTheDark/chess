@@ -1,10 +1,11 @@
 package ui;
 
-import exception.UnknownCommandException;
 import exchange.user.LoginRequest;
 import exchange.user.RegisterRequest;
 import server.ServerFacade;
 import server.SessionHandler;
+import ui.exception.UIException;
+import ui.exception.UnknownCommandException;
 
 import java.util.Scanner;
 
@@ -78,8 +79,8 @@ class PreLoginUI {
                 var response = serverFacade.login(new LoginRequest(username, password));
                 SessionHandler.authToken = response.getAuthToken();
                 new PostLoginUI().start();
-            } catch (Exception e) {
-                System.out.println("Failed to log in.");
+            } catch (UIException e) {
+                System.out.println("Failed to log in: " + e.getMessage());
             }
         }
 
@@ -91,7 +92,7 @@ class PreLoginUI {
                 SessionHandler.authToken = response.getAuthToken();
                 new PostLoginUI().start();
             } catch (Exception e) {
-                System.out.println("Failed to register.");
+                System.out.println("Failed to register: " + e.getMessage());
             }
         }
     }

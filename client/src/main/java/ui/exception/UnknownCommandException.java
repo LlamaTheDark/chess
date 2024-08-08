@@ -1,4 +1,4 @@
-package exception;
+package ui.exception;
 
 public
 class UnknownCommandException extends Exception {

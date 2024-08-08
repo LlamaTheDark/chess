@@ -4,11 +4,18 @@ import exchange.game.*;
 import exchange.user.*;
 import serial.Serializer;
 import ui.GamePlayUI;
+import ui.exception.BadParametersException;
+import ui.exception.ForbiddenException;
+import ui.exception.UIException;
+import ui.exception.UnauthorizedException;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 public
 class ServerFacade {
@@ -28,47 +35,63 @@ class ServerFacade {
     }
 
     <T> Object makeRequest(String endpoint, String method, String body, Class<T> clazz)
-    throws Exception {
+    throws UIException {
         /*
         PREPARE REQUEST
          */
-        URI uri = new URI(hostUrl + ":" + port + endpoint);
-        var http = (HttpURLConnection) uri.toURL().openConnection();
-        http.setRequestMethod(method);
-        http.setRequestProperty("Authorization", SessionHandler.authToken);
+        URI uri = null;
+        try {
+            uri = new URI(hostUrl + ":" + port + endpoint);
+            var http = (HttpURLConnection) uri.toURL().openConnection();
+            http.setRequestMethod(method);
+            http.setRequestProperty("Authorization", SessionHandler.authToken);
 
         /*
         WRITE REQUEST BODY
          */
-        if (!body.isEmpty() && (method.equals("POST") || method.equals("PUT") || method.equals("DELETE"))) {
-            http.setDoOutput(true); // implicitly sets request method to "POST"
-            try (var writer = http.getOutputStream()) {
-                writer.write(body.getBytes());
+            if (!body.isEmpty() && (method.equals("POST") || method.equals("PUT") || method.equals("DELETE"))) {
+                http.setDoOutput(true); // implicitly sets request method to "POST"
+                try (var writer = http.getOutputStream()) {
+                    writer.write(body.getBytes());
+                }
             }
-        }
 
         /*
         SEND REQUEST
          */
-        http.connect();
+            http.connect();
 
         /*
         RECEIVE AND PARSE RESPONSE
          */
-        var statusCode = http.getResponseCode();
+            var statusCode = http.getResponseCode();
 
-        if (statusCode == 200) {
-            Object response;
-            try (InputStream respBody = http.getInputStream()) {
-                var inputStreamReader = new InputStreamReader(respBody);
-                response = Serializer.deserialize(inputStreamReader, clazz);
+            if (statusCode == 200) {
+                Object response;
+                try (InputStream respBody = http.getInputStream()) {
+                    var inputStreamReader = new InputStreamReader(respBody);
+                    response = Serializer.deserialize(inputStreamReader, clazz);
+                }
+
+                http.disconnect();
+
+                return response;
+            } else if (statusCode == 400) {
+                throw new BadParametersException();
+            } else if (statusCode == 401) {
+                throw new UnauthorizedException();
+            } else if (statusCode == 403) {
+                throw new ForbiddenException();
+            } else {
+                throw new UIException("something has gone terribly wrong.");
             }
-
-            http.disconnect();
-
-            return response;
-        } else {
-            throw new Exception("aaaaah");
+        } catch (URISyntaxException |
+                 IOException |
+                 NoSuchMethodException |
+                 InvocationTargetException |
+                 InstantiationException |
+                 IllegalAccessException e) {
+            throw new UIException("failed to connect to server!");
         }
     }
 
@@ -76,12 +99,12 @@ class ServerFacade {
     Pre-login requests
      */
     public
-    LoginResponse login(LoginRequest request) throws Exception {
+    LoginResponse login(LoginRequest request) throws UIException {
         return (LoginResponse) makeRequest("/session", "POST", Serializer.serialize(request), LoginResponse.class);
     }
 
     public
-    RegisterResponse register(RegisterRequest request) throws Exception {
+    RegisterResponse register(RegisterRequest request) throws UIException {
         return (RegisterResponse) makeRequest("/user", "POST", Serializer.serialize(request), RegisterResponse.class);
     }
 
@@ -89,12 +112,12 @@ class ServerFacade {
     Post-login requests
      */
     public
-    LogoutResponse logout(LogoutRequest request) throws Exception {
+    LogoutResponse logout(LogoutRequest request) throws UIException {
         return (LogoutResponse) makeRequest("/session", "DELETE", Serializer.serialize(request), LogoutResponse.class);
     }
 
     public
-    CreateGameResponse createGame(CreateGameRequest request) throws Exception {
+    CreateGameResponse createGame(CreateGameRequest request) throws UIException {
         return (CreateGameResponse) makeRequest(
                 "/game",
                 "POST",
@@ -104,12 +127,12 @@ class ServerFacade {
     }
 
     public
-    ListGamesResponse listGames(ListGamesRequest request) throws Exception {
+    ListGamesResponse listGames(ListGamesRequest request) throws UIException {
         return (ListGamesResponse) makeRequest("/game", "GET", Serializer.serialize(request), ListGamesResponse.class);
     }
 
     public
-    JoinGameResponse joinGame(JoinGameRequest request) throws Exception {
+    JoinGameResponse joinGame(JoinGameRequest request) throws UIException {
         GamePlayUI.play();
         return (JoinGameResponse) makeRequest("/game", "PUT", Serializer.serialize(request), JoinGameResponse.class);
     }
