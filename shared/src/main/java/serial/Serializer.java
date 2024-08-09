@@ -23,13 +23,14 @@ import java.lang.reflect.InvocationTargetException;
  */
 public
 class Serializer {
-    static Gson gson = new GsonBuilder()
+    private static Gson gameGson = new GsonBuilder()
             .enableComplexMapKeySerialization()
             .registerTypeAdapter(
                     ChessRuleBook.class,
                     (JsonDeserializer<ChessRuleBook>)
                             (jsonElement, type, context) -> new FIDERuleBook()
-            )
+            ).create();
+    static         Gson gson     = new GsonBuilder()
             .registerTypeAdapter(
                     UserGameCommand.class,
                     (JsonDeserializer<UserGameCommand>)
@@ -68,7 +69,7 @@ class Serializer {
                                     return switch (serverMessageType) {
                                         case LOAD_GAME -> new LoadGameMessage(
                                                 serverMessageType,
-                                                new Gson().fromJson(jsonObject.get("game"), ChessGame.class)
+                                                gameGson.fromJson(jsonObject.get("game"), ChessGame.class)
                                         );
                                         case ERROR -> new ErrorMessage(
                                                 serverMessageType,
@@ -84,6 +85,7 @@ class Serializer {
                                 }
                             }
             )
+            .registerTypeAdapter(ChessGame.class, gameGson.getAdapter(ChessGame.class))
             .create();
 
 
