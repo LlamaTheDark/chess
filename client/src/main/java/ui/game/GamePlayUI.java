@@ -1,14 +1,15 @@
-package ui;
+package ui.game;
 
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPosition;
+import ui.EscapeSequences;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 
 public
-class GamePlayUI {
+class GamePlayUI implements GameHandler {
     public static
     void observe() {
         printBoard(WHITE);
@@ -29,6 +30,7 @@ class GamePlayUI {
         BoardPrinter.printBoard(board, perspective);
 
     }
+
 
     static
     class BoardPrinter {
@@ -120,5 +122,17 @@ class GamePlayUI {
             }
             System.out.println();
         }
+    }
+
+    @Override
+    public
+    void updateGame(ChessGame game) {
+
+    }
+
+    @Override
+    public
+    void printMessage(String message) {
+
     }
 }

@@ -3,11 +3,11 @@ package server;
 import exchange.game.*;
 import exchange.user.*;
 import serial.Serializer;
-import ui.GamePlayUI;
 import ui.exception.BadParametersException;
 import ui.exception.ForbiddenException;
 import ui.exception.UIException;
 import ui.exception.UnauthorizedException;
+import ui.game.GamePlayUI;
 
 import java.io.IOException;
 import java.io.InputStream;
