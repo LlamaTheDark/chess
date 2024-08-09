@@ -33,6 +33,27 @@ class Authenticator {
     }
 
     /**
+     * Authenticates an authorization token, returning the username associated with the token
+     *
+     * @return the username associated with the authorization token.
+     *
+     * @throws DataAccessException   if there is an error on the database side.
+     * @throws UnauthorizedException if the token is unauthorized.
+     */
+    public static
+    String getUsername(String authToken) throws DataAccessException, UnauthorizedException {
+        if (authToken == null) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        var authData = new MySQLAuthDAO().getAuthByToken(authToken);
+        if (authData == null) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+
+        return authData.username();
+    }
+
+    /**
      * @return A <a href="https://en.wikipedia.org/wiki/Universally_unique_identifier">Universally Unique Identifier</a>
      * in <code>String</code> format.
      */

@@ -43,7 +43,6 @@ interface GameDAO {
      */
     void updateGame(GameData game) throws DataAccessException;
 
-
     /**
      * Empties the game database. There will be no data in the database after this function is run.
      *
