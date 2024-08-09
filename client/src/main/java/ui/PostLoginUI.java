@@ -9,7 +9,12 @@ import server.SessionHandler;
 import ui.exception.ForbiddenException;
 import ui.exception.UIException;
 import ui.exception.UnknownCommandException;
+import ui.game.GamePlayUI;
+import websocket.WebSocketFacade;
+import websocket.commands.ConnectCommand;
+import websocket.commands.UserGameCommand;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public
@@ -139,9 +144,18 @@ class PostLoginUI {
             var serverFacade = new ServerFacade();
             try {
                 int index = Integer.parseInt(indexInList);
+                int gameID = SessionHandler.getGameIDFromIndex(index);
                 serverFacade.joinGame(new JoinGameRequest(
                         playerColor,
-                        SessionHandler.getGameIDFromIndex(index)
+                        gameID
+                ));
+
+
+                WebSocketFacade webSocketFacade = new WebSocketFacade("ws://localhost:8080/ws", new GamePlayUI());
+                webSocketFacade.connect(new ConnectCommand(
+                        UserGameCommand.CommandType.CONNECT,
+                        SessionHandler.authToken,
+                        gameID
                 ));
             } catch (ForbiddenException e) {
                 System.out.println("Failed to join game: the requested player color is taken.");
@@ -149,7 +163,7 @@ class PostLoginUI {
                 System.out.println(
                         "Failed to join game: your first parameter is not a number.\nSyntax: join <GAME NUMBER> " +
                         "[WHITE|BLACK]");
-            } catch (UIException e) {
+            } catch (UIException | IOException e) {
                 System.out.println("Failed to join game: " + e.getMessage());
             }
         }

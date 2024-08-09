@@ -1,6 +1,7 @@
 package websocket;
 
 
+import serial.Serializer;
 import ui.exception.UIException;
 import ui.game.GameHandler;
 import websocket.commands.ConnectCommand;
@@ -18,9 +19,6 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
     Session     session;
     GameHandler gameHandler;
 
-    /*
-    TODO: this is a terrible exception to throw, don't leave it like this.
-     */
     public
     WebSocketFacade(String url, GameHandler gameHandler) throws UIException {
         try {
@@ -34,6 +32,9 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
             this.session.addMessageHandler(this);
         } catch (DeploymentException | IOException | URISyntaxException e) {
             throw new UIException(e.getMessage());
+            /*
+            TODO: this is a terrible exception to throw, don't leave it like this.
+             */
         }
     }
 
@@ -51,7 +52,9 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
 
     // outgoing messages
     public
-    void connect(ConnectCommand command) {}
+    void connect(ConnectCommand command) throws IOException {
+        this.session.getBasicRemote().sendText(Serializer.serialize(command));
+    }
 
     public
     void makeMove(MakeMoveCommand command) {}
@@ -70,7 +73,8 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
 
     @Override
     public
-    void onMessage(String s) {
+    void onMessage(String message) {
+        System.out.println(message);
         /*
         1. parse message
         2. call game handler to process the message

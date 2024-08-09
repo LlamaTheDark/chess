@@ -25,13 +25,13 @@ class Server {
 
         Spark.staticFiles.location("web");
 
+        // Register upgrading to websocket protocol
+        Spark.webSocket("/ws", webSocketHandler);
+
         // Register your endpoints and handle exceptions here.
         registerUserEndpoints();
         registerGameEndpoints();
         registerDevEndpoints();
-
-        // Register upgrading to websocket protocol
-        Spark.webSocket("/ws", webSocketHandler);
 
         //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
