@@ -8,9 +8,14 @@ import websocket.commands.ConnectCommand;
 import websocket.commands.LeaveGameCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.ResignGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -74,7 +79,28 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
     @Override
     public
     void onMessage(String message) {
-        System.out.println(message);
+        try {
+            ServerMessage messageObject = Serializer.deserialize(message, ServerMessage.class);
+            switch (messageObject.getServerMessageType()) {
+                case LOAD_GAME -> {
+                    LoadGameMessage loadGameMessage = (LoadGameMessage) messageObject;
+                    gameHandler.updateGame(loadGameMessage.getGame());
+                }
+                case ERROR -> {
+                    ErrorMessage errorMessage = (ErrorMessage) messageObject;
+                    System.err.println(errorMessage.getErrorMessage());
+                }
+                case NOTIFICATION -> {
+                    NotificationMessage notificationMessage = (NotificationMessage) messageObject;
+                    System.out.println(notificationMessage.getMessage());
+                }
+            }
+        } catch (NoSuchMethodException |
+                 InvocationTargetException |
+                 InstantiationException |
+                 IllegalAccessException e) {
+            throw new RuntimeException(e); // TODO: improve this
+        }
         /*
         1. parse message
         2. call game handler to process the message
