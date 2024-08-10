@@ -17,10 +17,10 @@ class SessionHandler {
     }
 
     public static
-    int getGameIDFromIndex(int index) {
+    GameData getGameDataFromIndex(int index) {
         if (index > games.size()) {
             throw new IllegalArgumentException();
         }
-        return games.get(index - 1).gameID();
+        return games.get(index - 1);
     }
 }

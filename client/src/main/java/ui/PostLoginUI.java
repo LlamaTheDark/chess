@@ -1,15 +1,18 @@
 package ui;
 
+import chess.ChessGame;
 import exchange.game.CreateGameRequest;
 import exchange.game.JoinGameRequest;
 import exchange.game.ListGamesRequest;
 import exchange.user.LogoutRequest;
+import model.GameData;
 import server.ServerFacade;
 import server.SessionHandler;
 import ui.exception.ForbiddenException;
 import ui.exception.UIException;
 import ui.exception.UnknownCommandException;
-import ui.game.GamePlayUI;
+import ui.game.GameHandler;
+import ui.game.GameplayHandler;
 import websocket.WebSocketFacade;
 import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
@@ -144,19 +147,22 @@ class PostLoginUI {
             var serverFacade = new ServerFacade();
             try {
                 int index = Integer.parseInt(indexInList);
-                int gameID = SessionHandler.getGameIDFromIndex(index);
+                GameData gameData = SessionHandler.getGameDataFromIndex(index);
                 serverFacade.joinGame(new JoinGameRequest(
                         playerColor,
-                        gameID
+                        gameData.gameID()
                 ));
 
-
-                WebSocketFacade webSocketFacade = new WebSocketFacade("ws://localhost:8080/ws", new GamePlayUI());
+                GameHandler handler =
+                        new GameplayHandler(ChessGame.TeamColor.valueOf(playerColor), gameData.gameName());
+                WebSocketFacade webSocketFacade = new WebSocketFacade("ws://localhost:8080/ws", handler);
                 webSocketFacade.connect(new ConnectCommand(
                         UserGameCommand.CommandType.CONNECT,
                         SessionHandler.authToken,
-                        gameID
+                        gameData.gameID()
                 ));
+                handler.start();
+
             } catch (ForbiddenException e) {
                 System.out.println("Failed to join game: the requested player color is taken.");
             } catch (NumberFormatException e) {

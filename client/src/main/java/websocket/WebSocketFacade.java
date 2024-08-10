@@ -92,7 +92,7 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
                 }
                 case NOTIFICATION -> {
                     NotificationMessage notificationMessage = (NotificationMessage) messageObject;
-                    System.out.println(notificationMessage.getMessage());
+                    gameHandler.printMessage(notificationMessage.getMessage());
                 }
             }
         } catch (NoSuchMethodException |

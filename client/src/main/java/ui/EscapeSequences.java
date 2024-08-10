@@ -68,6 +68,9 @@ class EscapeSequences {
     public static final String BLACK_PAWN   = " ♟ ";
     public static final String EMPTY        = " \u2003 ";
 
+    public static final String SAVE_CURSOR_LOCATION = UNICODE_ESCAPE + "[s";
+    public static final String LOAD_CURSOR_LOCATION = UNICODE_ESCAPE + "[u";
+
     public static
     String moveCursorToLocation(int row, int col) {return UNICODE_ESCAPE + "[" + row + ";" + col + "H";}
 }

@@ -7,48 +7,26 @@ import ui.EscapeSequences;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static chess.ChessGame.TeamColor.WHITE;
 
 public
-class GamePlayUI implements GameHandler {
-    private ChessGame game;
-
-    public static
-    void main(String[] args) throws InterruptedException {
-        System.out.print(EscapeSequences.ERASE_SCREEN);
-        new BoardPrinter().printBoardBackground(WHITE);
-        new BoardPrinter().printNotificationsBackground();
-
-        String[] messages = {"poop boy has joined the game",
-                             "goofus goofus has moved!",
-                             "wackus is dead",
-                             "don't forget to bring a towel",
-                             "so many notifications",
-                             "what will happen when there's more than 5?",
-                             "I guess we'll find tou",
-                             "this is fun haha",
-                             "I like this",
-                             "I honestly thought it would be harder"
-        };
-
-        for (var message : messages) {
-            new BoardPrinter().printMessageToLog(message, "");
-            Thread.sleep(new Random().nextInt(500, 2000));
-        }
-
-
-        System.out.print(EscapeSequences.moveCursorToLocation(12, 1));
-    }
+class GameplayUI {
+    private final BoardPrinter        printer = new BoardPrinter();
+    private       ChessGame.TeamColor teamColor;
 
     public
-    GamePlayUI() {}
+    GameplayUI(ChessGame.TeamColor color, String gameName) {
+        teamColor = color;
+        System.out.print(EscapeSequences.ERASE_SCREEN);
+        printer.printNotificationsBackground();
+        printer.printChessBoardBackground(teamColor);
+        printer.printChessGameInformation(gameName, color);
+    }
 
     private static
     void printBoard(ChessBoard board, ChessGame.TeamColor perspective) {
         board.resetBoard();
-
 
     }
 
@@ -62,7 +40,7 @@ class GamePlayUI implements GameHandler {
      * The notification coordinates are rows 2 through 11, columns 31 through 60. The first and last columns, as well as
      * the first and last rows, are padding.
      */
-    static
+    public static
     class BoardPrinter {
         private static final ArrayList<String> recentNotifications       = new ArrayList<>();
         private static       int               longestNotificationLength = 0;
@@ -73,6 +51,39 @@ class GamePlayUI implements GameHandler {
             System.out.print(EscapeSequences.RESET_TEXT_BOLD_FAINT);
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+        }
+
+        private static final
+        class BoardConstants {
+            public static final int CHESS_BOARD_SQUARE_WIDTH  = 3;
+            public static final int CHESS_BOARD_SQUARE_HEIGHT = 1;
+
+            public static final int MAX_NOTIFICATIONS         = 9;
+            public static final int NOTIFICATIONS_PADDING_ROW = 1;
+
+            // Gameplay View Section Positions
+            public static final int CHESS_INFORMATION_HEIGHT = 3;
+            public static final int CHESS_INFORMATION_ROW    = 2;
+            public static final int CHESS_INFORMATION_COL    = 4;
+
+            public static final int CHESS_BOARD_PADDING_ROW = 1;
+            public static final int CHESS_BOARD_PADDING_COL = 3;
+            public static final int CHESS_BOARD_HEIGHT      = 10;
+            public static final int CHESS_BOARD_WIDTH       = 10 * 3;
+
+            public static final int NOTIFICATIONS_START_ROW = NOTIFICATIONS_PADDING_ROW + CHESS_INFORMATION_HEIGHT + 1;
+            public static final int NOTIFICATIONS_START_COL =
+                    (CHESS_BOARD_PADDING_COL * 2) + CHESS_BOARD_WIDTH + 1;
+            public static final int NOTIFICATIONS_HEIGHT    = 10;
+            public static final int NOTIFICATIONS_TITLE_COL =
+                    (CHESS_BOARD_PADDING_COL * 2) + CHESS_BOARD_WIDTH + 3;
+            public static final int NOTIFICATIONS_LIST_ROW  = NOTIFICATIONS_START_ROW + 1;
+            public static final int NOTIFICATIONS_LIST_COL  = NOTIFICATIONS_TITLE_COL + 1;
+
+            public static final int GAMEPLAY_PROMPT_ROW    =
+                    CHESS_INFORMATION_HEIGHT + CHESS_BOARD_HEIGHT + (CHESS_BOARD_PADDING_ROW * 2) + 1;
+            public static final int PROMPT_RESPONSE_ROW    = GAMEPLAY_PROMPT_ROW + 1;
+            public static final int PROMPT_RESPONSE_HEIGHT = 13;
         }
 
         /**
@@ -86,10 +97,13 @@ class GamePlayUI implements GameHandler {
          * @param escapeSequences any number of escape sequences to be run before the text is printed.
          */
         private
-        void paintToBoard(String s, int row, int col, String... escapeSequences) {
-            assert s.length() <= 3;
+        void printToChessBoard(String s, int row, int col, String... escapeSequences) {
+            assert s.length() <= BoardConstants.CHESS_BOARD_SQUARE_WIDTH;
             // move the cursor to the specified position
-            System.out.print(EscapeSequences.moveCursorToLocation(row + 2, ((col + 1) * 3) + 1));
+            System.out.print(EscapeSequences.moveCursorToLocation(
+                    row + BoardConstants.CHESS_BOARD_PADDING_ROW + BoardConstants.CHESS_INFORMATION_HEIGHT + 1,
+                    ((col + 1) * BoardConstants.CHESS_BOARD_SQUARE_WIDTH) + 1
+            ));
 
             // print escape sequences
             for (var escapeSequence : escapeSequences) {
@@ -103,12 +117,22 @@ class GamePlayUI implements GameHandler {
             resetColorsAndWeight();
         }
 
-        private
+        public
+        void printChessGameInformation(String gameName, ChessGame.TeamColor color) {
+            System.out.print(EscapeSequences.moveCursorToLocation(
+                    BoardConstants.CHESS_INFORMATION_ROW,
+                    BoardConstants.CHESS_INFORMATION_COL
+            ));
+            System.out.printf("Game Name: %s | Your color: %s", gameName, color);
+        }
+
+        public
         void printMessageToLog(String message, String... escapeSequences) {
+            System.out.print(EscapeSequences.SAVE_CURSOR_LOCATION);
             recentNotifications.add(message);
             recentNotificationTimes.add(LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss a")));
             if (message.length() > longestNotificationLength) {longestNotificationLength = message.length();}
-            if (recentNotifications.size() > 9) {
+            if (recentNotifications.size() > BoardConstants.MAX_NOTIFICATIONS) {
                 // TODO: turn this and your specific screen coords into static final variables
                 recentNotifications.removeFirst();
                 recentNotificationTimes.removeFirst();
@@ -120,7 +144,8 @@ class GamePlayUI implements GameHandler {
 
             for (int i = 0; i < recentNotifications.size(); i++) {
                 var notification = recentNotifications.get(i);
-                System.out.print(EscapeSequences.moveCursorToLocation(i + 3, (13 * 3) + 1));
+                System.out.print(EscapeSequences.moveCursorToLocation(
+                        i + BoardConstants.NOTIFICATIONS_LIST_ROW, BoardConstants.NOTIFICATIONS_LIST_COL));
 
                 // print notification
                 System.out.printf("[%s] %s", recentNotificationTimes.get(i), notification);
@@ -131,20 +156,26 @@ class GamePlayUI implements GameHandler {
             }
 
             resetColorsAndWeight();
+            System.out.print(EscapeSequences.LOAD_CURSOR_LOCATION);
         }
 
         public
         void printNotificationsBackground() {
-            for (int row = 2; row <= 11; row++) {
+            for (int row = BoardConstants.NOTIFICATIONS_START_ROW;
+                 row <= BoardConstants.NOTIFICATIONS_START_ROW + BoardConstants.NOTIFICATIONS_HEIGHT - 1;
+                 row++) {
                 // move to appropriate location
-                System.out.print(EscapeSequences.moveCursorToLocation(row, (13 * 3) - 2));
+                System.out.print(EscapeSequences.moveCursorToLocation(row, BoardConstants.NOTIFICATIONS_START_COL));
 
                 // print character
                 System.out.print("|");
             }
 
             // move to title location
-            System.out.print(EscapeSequences.moveCursorToLocation(2, 13 * 3));
+            System.out.print(EscapeSequences.moveCursorToLocation(
+                    BoardConstants.NOTIFICATIONS_START_ROW,
+                    BoardConstants.NOTIFICATIONS_TITLE_COL
+            ));
 
             // print "NOTIFICATIONS:"
             System.out.print(EscapeSequences.SET_TEXT_BOLD);
@@ -158,7 +189,7 @@ class GamePlayUI implements GameHandler {
         }
 
         public
-        void printBoardBackground(ChessGame.TeamColor colorOnBottom) {
+        void printChessBoardBackground(ChessGame.TeamColor colorOnBottom) {
             int rowStart, colStart;
             int rowMax, colMax;
             int rowInc, colInc;
@@ -175,7 +206,7 @@ class GamePlayUI implements GameHandler {
                 rowMax = 9;
                 rowInc = +1;
 
-                colStart = 0;
+                colStart = 9;
                 colMax = 0;
                 colInc = -1;
             }
@@ -186,7 +217,7 @@ class GamePlayUI implements GameHandler {
                         handleColumnLabels(row, col);
                     } else if (col == 0 || col == 9) {
                         // handle row labels
-                        paintToBoard(
+                        printToChessBoard(
                                 String.format(" %d ", row),
                                 row,
                                 col,
@@ -196,20 +227,56 @@ class GamePlayUI implements GameHandler {
                     } else {
                         if (isWhiteSquare(row, col)) {
                             // white
-                            paintToBoard("   ", row, col, EscapeSequences.SET_BG_COLOR_LIGHT_BROWN);
+                            printToChessBoard("   ", row, col, EscapeSequences.SET_BG_COLOR_LIGHT_BROWN);
                         } else {
                             // black
-                            paintToBoard("   ", row, col, EscapeSequences.SET_BG_COLOR_DARK_BROWN);
+                            printToChessBoard("   ", row, col, EscapeSequences.SET_BG_COLOR_DARK_BROWN);
                         }
                     }
                 }
             }
         }
 
+        public
+        void printCommandPrompt(String s, String... escapeSequences) {
+            for (var escapeSequence : escapeSequences) {
+                System.out.print(escapeSequence);
+            }
+
+            System.out.print(EscapeSequences.moveCursorToLocation(BoardConstants.GAMEPLAY_PROMPT_ROW, 1));
+            System.out.print(EscapeSequences.ERASE_LINE);
+
+            System.out.print(s);
+
+            resetColorsAndWeight();
+        }
+
+        public
+        void printCommandResponse(String s, String... escapeSequences) {
+            for (var escapeSequence : escapeSequences) {
+                System.out.print(escapeSequence);
+            }
+
+            // clear the response space
+            for (int i = 0; i < BoardConstants.PROMPT_RESPONSE_HEIGHT; i++) {
+                System.out.print(EscapeSequences.moveCursorToLocation(BoardConstants.PROMPT_RESPONSE_ROW + i, 1));
+                System.out.print(EscapeSequences.ERASE_LINE);
+            }
+
+            // move to response row
+            System.out.print(EscapeSequences.moveCursorToLocation(BoardConstants.PROMPT_RESPONSE_ROW, 1));
+
+            // print the response
+            System.out.print(s);
+
+            resetColorsAndWeight();
+        }
+
+
         private
         void handleColumnLabels(int row, int col) {
             if (col == 0 || col == 9) {
-                paintToBoard(
+                printToChessBoard(
                         "   ",
                         row,
                         col,
@@ -217,7 +284,7 @@ class GamePlayUI implements GameHandler {
                         EscapeSequences.SET_TEXT_COLOR_YELLOW
                 );
             } else {
-                paintToBoard(
+                printToChessBoard(
                         switch (col) {
                             case 1 -> " a ";
                             case 2 -> " b ";
@@ -241,18 +308,12 @@ class GamePlayUI implements GameHandler {
         boolean isWhiteSquare(int row, int col) {
             return (row % 2 == 0 && col % 2 == 0) || (row % 2 == 1 && col % 2 == 1);
         }
-
     }
 
-    @Override
     public
-    void updateGame(ChessGame game) {
-        printBoard(game.getBoard(), WHITE);
+    BoardPrinter getPrinter() {
+        return printer;
     }
 
-    @Override
-    public
-    void printMessage(String message) {
 
-    }
 }
