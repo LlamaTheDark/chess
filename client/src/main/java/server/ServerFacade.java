@@ -7,7 +7,6 @@ import ui.exception.BadParametersException;
 import ui.exception.ForbiddenException;
 import ui.exception.UIException;
 import ui.exception.UnauthorizedException;
-import ui.game.GamePlayUI;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -133,13 +132,11 @@ class ServerFacade {
 
     public
     JoinGameResponse joinGame(JoinGameRequest request) throws UIException {
-        GamePlayUI.play();
         return (JoinGameResponse) makeRequest("/game", "PUT", Serializer.serialize(request), JoinGameResponse.class);
     }
 
     public
     void observeGame() {
-        GamePlayUI.observe();
     }
 }
 
