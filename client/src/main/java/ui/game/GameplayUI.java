@@ -2,6 +2,7 @@ package ui.game;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPosition;
 import ui.EscapeSequences;
 
 import java.time.LocalTime;
@@ -13,14 +14,14 @@ import static chess.ChessGame.TeamColor.WHITE;
 public
 class GameplayUI {
     private final BoardPrinter        printer = new BoardPrinter();
-    private       ChessGame.TeamColor teamColor;
+    private final ChessGame.TeamColor teamColor;
 
     public
     GameplayUI(ChessGame.TeamColor color, String gameName) {
         teamColor = color;
         System.out.print(EscapeSequences.ERASE_SCREEN);
         printer.printNotificationsBackground();
-        printer.printChessBoardBackground(teamColor);
+        printer.printChessBoardBackground();
         printer.printChessGameInformation(gameName, color);
     }
 
@@ -40,7 +41,7 @@ class GameplayUI {
      * The notification coordinates are rows 2 through 11, columns 31 through 60. The first and last columns, as well as
      * the first and last rows, are padding.
      */
-    public static
+    public
     class BoardPrinter {
         private static final ArrayList<String> recentNotifications       = new ArrayList<>();
         private static       int               longestNotificationLength = 0;
@@ -189,11 +190,11 @@ class GameplayUI {
         }
 
         public
-        void printChessBoardBackground(ChessGame.TeamColor colorOnBottom) {
+        void printChessBoardBackground() {
             int rowStart, colStart;
             int rowMax, colMax;
             int rowInc, colInc;
-            if (colorOnBottom == WHITE) {
+            if (teamColor == WHITE) {
                 rowStart = 9;
                 rowMax = 0;
                 rowInc = -1;
@@ -238,6 +239,59 @@ class GameplayUI {
         }
 
         public
+        void printChessBoard(ChessBoard board) {
+            int rowStart, colStart;
+            int rowMax, colMax;
+            int rowInc, colInc;
+            if (teamColor == WHITE) {
+                rowStart = 8;
+                rowMax = 1;
+                rowInc = -1;
+
+                colStart = 1;
+                colMax = 8;
+                colInc = +1;
+            } else {
+                rowStart = 1;
+                rowMax = 8;
+                rowInc = +1;
+
+                colStart = 8;
+                colMax = 1;
+                colInc = -1;
+            }
+
+            for (int row = rowStart; row != rowMax + rowInc; row += rowInc) {
+                for (int col = colStart; col != colMax + colInc; col += colInc) {
+                    var pieceAtLocation = board.getPiece(new ChessPosition(
+                            row,
+                            col
+                    ));
+
+                    var backgroundColor = (isWhiteSquare(row, col))
+                                          ? EscapeSequences.SET_BG_COLOR_LIGHT_BROWN
+                                          : EscapeSequences.SET_BG_COLOR_DARK_BROWN;
+
+                    if (pieceAtLocation == null) {
+                        printToChessBoard("   ", row, col, backgroundColor);
+                    } else {
+                        var textColor = (pieceAtLocation.getTeamColor() == WHITE)
+                                        ? EscapeSequences.SET_TEXT_COLOR_WHITE
+                                        : EscapeSequences.SET_TEXT_COLOR_BLACK;
+                        printToChessBoard(
+                                String.format(" %s ", pieceAtLocation),
+                                row,
+                                col,
+                                backgroundColor,
+                                textColor,
+                                EscapeSequences.SET_TEXT_BOLD
+                        );
+                    }
+                }
+            }
+        }
+
+        public
         void printCommandPrompt(String s, String... escapeSequences) {
             for (var escapeSequence : escapeSequences) {
                 System.out.print(escapeSequence);
@@ -271,7 +325,6 @@ class GameplayUI {
 
             resetColorsAndWeight();
         }
-
 
         private
         void handleColumnLabels(int row, int col) {
