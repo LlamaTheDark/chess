@@ -107,6 +107,7 @@ class WebSocketHandler {
 
     private
     void makeMove(MakeMoveCommand command, Session session) throws DataAccessException {
+        System.out.println("WebSocketHandler.makeMove");
         // 1. get game
         var gameData = wsService.getGameDataFromID(command.getGameID());
 
