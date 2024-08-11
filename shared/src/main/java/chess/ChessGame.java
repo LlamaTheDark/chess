@@ -60,12 +60,12 @@ class ChessGame {
     public
     void makeMove(ChessMove move) throws InvalidMoveException {
         var validMoves = validMoves(move.getStartPosition());
-        if (validMoves == null) {throw new InvalidMoveException();}
+        if (validMoves == null) {throw new InvalidMoveException("You have no valid moves.");}
 
         var piece = state.board.getPiece(move.getStartPosition());
 
         if (!(piece.getTeamColor() == state.teamTurn)
-            || !validMoves.contains(move)) {throw new InvalidMoveException();}
+            || !validMoves.contains(move)) {throw new InvalidMoveException("It's not your turn!");}
 
         state.board.addPiece(
                 move.getEndPosition(),
