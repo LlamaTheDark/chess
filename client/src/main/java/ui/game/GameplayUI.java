@@ -21,9 +21,6 @@ class GameplayUI {
     GameplayUI(ChessGame.TeamColor color, String gameName) {
         teamColor = color;
         System.out.print(EscapeSequences.ERASE_SCREEN);
-        //        printer.printNotificationsBackground();
-        //        printer.printChessGameInformation(gameName, color);
-        //        printer.printCommandResponse(" type 'help' for a list of commands", EscapeSequences.SET_TEXT_ITALIC);
     }
 
     /**
@@ -49,7 +46,7 @@ class GameplayUI {
             System.out.print(EscapeSequences.RESET_TEXT_ITALIC);
         }
 
-        private static final
+        public static final
         class BoardConstants {
             public static final int CHESS_BOARD_SQUARE_WIDTH  = 3;
             public static final int CHESS_BOARD_SQUARE_HEIGHT = 1;
@@ -81,8 +78,19 @@ class GameplayUI {
 
             public static final int GAMEPLAY_PROMPT_ROW    =
                     CHESS_INFORMATION_HEIGHT + CHESS_BOARD_HEIGHT + (CHESS_BOARD_PADDING_ROW * 2) + 1;
-            public static final int PROMPT_RESPONSE_ROW    = GAMEPLAY_PROMPT_ROW + 1;
+            public static final int PROMPT_RESPONSE_ROW    = GAMEPLAY_PROMPT_ROW + 2;
             public static final int PROMPT_RESPONSE_HEIGHT = 13;
+
+            // colors
+            public static final String WHITE_BG_COLOR = EscapeSequences.SET_BG_COLOR_LIGHT_BROWN;
+            public static final String BLACK_BG_COLOR = EscapeSequences.SET_BG_COLOR_DARK_BROWN;
+
+            public static final String WHITE_BG_COLOR_HL = EscapeSequences.SET_BG_COLOR_GREEN;
+            public static final String BLACK_BG_COLOR_HL = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
+            public static final String ROOT_HIGHLIGHT    = EscapeSequences.SET_BG_COLOR_BLUE;
+
+            public static final String CAPTURE_PIECE_COLOR = EscapeSequences.SET_TEXT_COLOR_RED;
+            public static final String MOVE_PIECE_COLOR    = EscapeSequences.SET_TEXT_COLOR_DARK_BLUE;
         }
 
         /**
@@ -117,12 +125,71 @@ class GameplayUI {
         }
 
         public synchronized
-        void printChessGameInformation(String gameName, ChessGame.TeamColor color) {
+        void highlightChessSquare(ChessPosition position, ChessBoard board, boolean isRoot) {
+            var pieceAtPosition = board.getPiece(position);
+            String pieceToPrint = (pieceAtPosition == null) ? "   " : String.format(" %s ", pieceAtPosition);
+            int row = (teamColor == WHITE)
+                      ? BoardConstants.CHESS_BOARD_INNER_HEIGHT + 1 - position.getRow()
+                      : position.getRow();
+            int col = (teamColor == WHITE)
+                      ? position.getColumn()
+                      : BoardConstants.CHESS_BOARD_INNER_WIDTH + 1 - position.getColumn();
+
+            String highlightColor;
+            String textColor;
+            if (isRoot) {
+                highlightColor = BoardConstants.ROOT_HIGHLIGHT;
+                textColor = BoardConstants.MOVE_PIECE_COLOR;
+            } else {
+                highlightColor =
+                        (isWhiteSquare(row, col)) ? BoardConstants.WHITE_BG_COLOR_HL : BoardConstants.BLACK_BG_COLOR_HL;
+                textColor = BoardConstants.CAPTURE_PIECE_COLOR;
+            }
+
+            printToChessBoard(
+                    pieceToPrint,
+                    row,
+                    col,
+                    highlightColor,
+                    textColor
+            );
+        }
+
+        public synchronized
+        void printChessGameInformation(String gameName,
+                                       ChessGame.TeamColor teamColor,
+                                       ChessGame.TeamColor turnColor,
+                                       String opponentUsername) {
+
+            for (int i = 0; i < 2; i++) {
+                System.out.print(EscapeSequences.moveCursorToLocation(
+                        BoardConstants.CHESS_INFORMATION_ROW + i,
+                        BoardConstants.CHESS_INFORMATION_COL
+                ));
+                System.out.println(EscapeSequences.ERASE_LINE);
+            }
+
+
             System.out.print(EscapeSequences.moveCursorToLocation(
                     BoardConstants.CHESS_INFORMATION_ROW,
                     BoardConstants.CHESS_INFORMATION_COL
             ));
-            System.out.printf("Game Name: %s | Your color: %s", gameName, color);
+            System.out.printf(
+                    "Game Name: %s | Your Color: %s | Opponent's Username: %s",
+                    gameName,
+                    teamColor,
+                    opponentUsername
+            );
+            System.out.println();
+            for (int i = 0; i < BoardConstants.CHESS_INFORMATION_COL - 1; i++) {
+                System.out.print(" ");
+            }
+            System.out.printf(
+                    "It is team %s%s%s's turn",
+                    EscapeSequences.SET_TEXT_BOLD,
+                    turnColor,
+                    EscapeSequences.RESET_TEXT_BOLD_FAINT
+            );
         }
 
         public synchronized
@@ -208,10 +275,10 @@ class GameplayUI {
                     } else {
                         if (isWhiteSquare(row, col)) {
                             // white
-                            printToChessBoard("   ", row, col, EscapeSequences.SET_BG_COLOR_LIGHT_BROWN);
+                            printToChessBoard("   ", row, col, BoardConstants.WHITE_BG_COLOR);
                         } else {
                             // black
-                            printToChessBoard("   ", row, col, EscapeSequences.SET_BG_COLOR_DARK_BROWN);
+                            printToChessBoard("   ", row, col, BoardConstants.BLACK_BG_COLOR);
                         }
                     }
                 }
@@ -272,15 +339,15 @@ class GameplayUI {
 
             // clear the response space
             for (int i = 0; i < BoardConstants.PROMPT_RESPONSE_HEIGHT; i++) {
-                System.out.print(EscapeSequences.moveCursorToLocation(BoardConstants.PROMPT_RESPONSE_ROW + i, 1));
+                System.out.print(EscapeSequences.moveCursorToLocation(BoardConstants.GAMEPLAY_PROMPT_ROW + 1 + i, 1));
                 System.out.print(EscapeSequences.ERASE_LINE);
             }
 
             // move to response row
-            System.out.print(EscapeSequences.moveCursorToLocation(BoardConstants.PROMPT_RESPONSE_ROW, 1));
+            System.out.print(EscapeSequences.moveCursorToLocation(BoardConstants.PROMPT_RESPONSE_ROW, 3));
 
             // print the response
-            System.out.print(s);
+            System.out.print(s.replace("\n", "\n   "));
 
             resetEscapeSequences();
         }
