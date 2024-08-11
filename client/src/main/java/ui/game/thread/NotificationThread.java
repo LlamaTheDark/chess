@@ -1,5 +1,6 @@
 package ui.game.thread;
 
+import ui.EscapeSequences;
 import ui.game.GameplayUI;
 
 public
@@ -15,6 +16,8 @@ class NotificationThread extends Thread {
 
     public
     void run() {
+        System.out.print(EscapeSequences.SAVE_CURSOR_LOCATION);
         ui.getPrinter().printMessageToLog(message);
+        System.out.print(EscapeSequences.LOAD_CURSOR_LOCATION);
     }
 }
