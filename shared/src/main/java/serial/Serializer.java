@@ -49,7 +49,12 @@ class Serializer {
                                                 gameID,
                                                 new Gson().fromJson(jsonObject.get("move"), ChessMove.class)
                                         );
-                                        case LEAVE -> new LeaveGameCommand(commandType, authToken, gameID);
+                                        case LEAVE -> new LeaveGameCommand(
+                                                commandType,
+                                                authToken,
+                                                gameID,
+                                                ChessGame.TeamColor.valueOf(jsonObject.get("teamColor").getAsString())
+                                        );
                                         case RESIGN -> new ResignGameCommand(commandType, authToken, gameID);
                                     };
                                 } else {

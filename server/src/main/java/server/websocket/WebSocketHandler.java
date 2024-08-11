@@ -1,7 +1,9 @@
 package server.websocket;
 
+import chess.ChessGame;
 import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import serial.Serializer;
@@ -37,7 +39,9 @@ class WebSocketHandler {
 
     @OnWebSocketError
     public
-    void onError(Throwable throwable) {}
+    void onError(Throwable throwable) {
+        System.out.println(throwable.getMessage());
+    }
 
     @OnWebSocketMessage
     public
@@ -55,7 +59,8 @@ class WebSocketHandler {
                  InvocationTargetException |
                  InstantiationException |
                  IllegalAccessException |
-                 DataAccessException e) {
+                 DataAccessException |
+                 InvalidMoveException e) {
             sendMessage(
                     session,
                     new ErrorMessage(
@@ -131,7 +136,44 @@ class WebSocketHandler {
     }
 
     private
-    void leaveGame(LeaveGameCommand command, Session session) {}
+    void leaveGame(LeaveGameCommand command, Session session) throws DataAccessException, InvalidMoveException {
+        // 1. get game
+        var gameData = wsService.getGameDataFromID(command.getGameID());
+
+        // 2. update game to not include user anymore
+        GameData newGameData;
+        if (command.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            newGameData = new GameData(
+                    gameData.gameID(),
+                    null,
+                    gameData.blackUsername(),
+                    gameData.gameName(),
+                    gameData.game()
+            );
+        } else {
+            newGameData = new GameData(
+                    gameData.gameID(),
+                    gameData.whiteUsername(),
+                    null,
+                    gameData.gameName(),
+                    gameData.game()
+            );
+        }
+
+        wsService.updateGame(newGameData);
+
+        // 3. remove session from game
+        wsSessionManager.removeSessionFromGame(gameData.gameID(), session);
+
+        // 4. broadcast message to all in the game
+        broadcastMessage(
+                gameData.gameID(),
+                new NotificationMessage(
+                        ServerMessageType.NOTIFICATION,
+                        String.format("%s has left the game.", wsSessionManager.getUsername(session))
+                )
+        );
+    }
 
     private
     void resignGame(ResignGameCommand command, Session session) {}

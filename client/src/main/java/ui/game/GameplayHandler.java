@@ -12,6 +12,7 @@ import websocket.WebSocketFacade;
 import websocket.commands.LeaveGameCommand;
 import websocket.commands.UserGameCommand;
 
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -81,7 +82,7 @@ class GameplayHandler extends Thread implements GameHandler {
                     case RESIGN_GAME -> handler.handleResignGame();
                     case HIGHLIGHT_LEGAL_MOVES -> handler.handleHighlightLegalMoves();
                 }
-            } catch (UnknownCommandException e) {
+            } catch (UnknownCommandException | IOException e) {
                 in.nextLine();
                 gameplayUI.getPrinter().printCommandResponse(e.getMessage());
             }
@@ -126,11 +127,12 @@ class GameplayHandler extends Thread implements GameHandler {
             threadManager.execute(new UpdateGameThread(gameplayUI, gameData.game().getBoard()));
         }
 
-        void handleLeaveGame() {
+        void handleLeaveGame() throws IOException {
             wsFacade.leaveGame(new LeaveGameCommand(
                     UserGameCommand.CommandType.LEAVE,
                     SessionHandler.authToken,
-                    gameData.gameID()
+                    gameData.gameID(),
+                    teamColor
             ));
         }
 

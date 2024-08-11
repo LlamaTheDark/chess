@@ -65,7 +65,9 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
     void makeMove(MakeMoveCommand command) {}
 
     public
-    void leaveGame(LeaveGameCommand command) {}
+    void leaveGame(LeaveGameCommand command) throws IOException {
+        this.session.getBasicRemote().sendText(Serializer.serialize(command));
+    }
 
     public
     void resignGame(ResignGameCommand command) {}
