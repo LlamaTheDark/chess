@@ -154,7 +154,7 @@ class PostLoginUI {
                 ));
 
                 GameHandler handler =
-                        new GameplayHandler(ChessGame.TeamColor.valueOf(playerColor), gameData.gameName());
+                        new GameplayHandler(ChessGame.TeamColor.valueOf(playerColor), gameData);
                 WebSocketFacade webSocketFacade = new WebSocketFacade("ws://localhost:8080/ws", handler);
                 webSocketFacade.connect(new ConnectCommand(
                         UserGameCommand.CommandType.CONNECT,
