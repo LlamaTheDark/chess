@@ -78,7 +78,7 @@ class Serializer {
                                         );
                                         case ERROR -> new ErrorMessage(
                                                 serverMessageType,
-                                                jsonObject.get("message").getAsString()
+                                                jsonObject.get("errorMessage").getAsString()
                                         );
                                         case NOTIFICATION -> new NotificationMessage(
                                                 serverMessageType,
