@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 public
 class GameplayHandler extends Thread implements GameHandler {
     private final GameplayUI gameplayUI;
-    private final GameData gameData;
+    private       GameData gameData;
     private final ChessGame.TeamColor teamColor;
     private       WebSocketFacade wsFacade;
 
@@ -113,7 +113,13 @@ class GameplayHandler extends Thread implements GameHandler {
     @Override
     public
     void updateGame(ChessGame game) {
-        this.gameData.game().setBoard(game.getBoard());
+        this.gameData = new GameData(
+                gameData.gameID(),
+                gameData.whiteUsername(),
+                gameData.blackUsername(),
+                gameData.gameName(),
+                game
+        );
         threadManager.execute(new UpdateGameThread(this.gameplayUI, game.getBoard()));
         threadManager.execute(new UpdateGameInformationThread(teamColor, gameData, gameplayUI.getPrinter()));
     }
