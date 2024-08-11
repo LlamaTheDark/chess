@@ -18,11 +18,18 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public
 class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
     Session     session;
     GameHandler gameHandler;
+
+    private final
+    ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     public
     WebSocketFacade(String url, GameHandler gameHandler) throws UIException {
@@ -45,11 +52,15 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
 
     @Override
     public
-    void onOpen(Session session, EndpointConfig endpointConfig) {}
+    void onOpen(Session session, EndpointConfig endpointConfig) {
+        scheduler.scheduleAtFixedRate(() -> sendPing(session), 0, 4, TimeUnit.MINUTES);
+    }
 
     @Override
     public
-    void onClose(Session session, CloseReason closeReason) {}
+    void onClose(Session session, CloseReason closeReason) {
+        scheduler.shutdown();
+    }
 
     @Override
     public
@@ -58,24 +69,27 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
     // outgoing messages
     public
     void connect(ConnectCommand command) throws IOException {
-        this.session.getBasicRemote().sendText(Serializer.serialize(command));
+        sendMessage(Serializer.serialize(command));
     }
 
     public
-    void makeMove(MakeMoveCommand command) {}
+    void makeMove(MakeMoveCommand command) throws IOException {
+        sendMessage(Serializer.serialize(command));
+    }
 
     public
     void leaveGame(LeaveGameCommand command) throws IOException {
-        this.session.getBasicRemote().sendText(Serializer.serialize(command));
+        sendMessage(Serializer.serialize(command));
     }
 
     public
     void resignGame(ResignGameCommand command) {}
 
     private
-    void sendMessage(String message) {
+    void sendMessage(String message) throws IOException {
         // 1. Create command message
         // 2. Send message to server
+        this.session.getBasicRemote().sendText(message);
     }
 
     @Override
@@ -90,11 +104,11 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
                 }
                 case ERROR -> {
                     ErrorMessage errorMessage = (ErrorMessage) messageObject;
-                    System.err.println(errorMessage.getErrorMessage());
+                    gameHandler.printMessage(errorMessage.getErrorMessage(), true);
                 }
                 case NOTIFICATION -> {
                     NotificationMessage notificationMessage = (NotificationMessage) messageObject;
-                    gameHandler.printMessage(notificationMessage.getMessage());
+                    gameHandler.printMessage(notificationMessage.getMessage(), false);
                 }
             }
         } catch (NoSuchMethodException |
@@ -108,5 +122,16 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
         1. parse message
         2. call game handler to process the message
          */
+    }
+
+    private
+    void sendPing(Session session) {
+        try {
+            if (session.isOpen()) {
+                session.getAsyncRemote().sendPing(ByteBuffer.wrap(new byte[]{4, 2}));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
