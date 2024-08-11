@@ -136,6 +136,9 @@ class ChessGame {
     public
     ChessRuleBook getRuleBook() {return ruleBook;}
 
+    public
+    boolean isGameOver() {return state.gameOver;}
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -147,6 +150,7 @@ class ChessGame {
 
     private static
     class GameState {
+        boolean    gameOver = false;
         TeamColor  teamTurn = TeamColor.WHITE;
         ChessBoard board;
 
