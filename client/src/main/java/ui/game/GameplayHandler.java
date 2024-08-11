@@ -1,6 +1,7 @@
 package ui.game;
 
 import chess.ChessGame;
+import model.GameData;
 import ui.EscapeSequences;
 import ui.exception.UnknownCommandException;
 import ui.game.thread.NotificationThread;
@@ -14,12 +15,15 @@ public
 class GameplayHandler implements GameHandler {
     private final ExecutorService threadPool = Executors.newFixedThreadPool(1);
     private final GameplayUI      gameplayUI;
-    private       ChessGame       game;
+    private final ChessGame       game;
+    private final String          gameName; // TODO: turn this into a local variable in the constructor?
 
     private static final String GAMEPLAY_PROMPT = "CHESS_COMMAND >>> ";
 
     public
-    GameplayHandler(ChessGame.TeamColor teamColor, String gameName) {
+    GameplayHandler(ChessGame.TeamColor teamColor, GameData gameData) {
+        this.game = gameData.game();
+        this.gameName = gameData.gameName();
         gameplayUI = new GameplayUI(teamColor, gameName);
     }
 
@@ -55,12 +59,12 @@ class GameplayHandler implements GameHandler {
                 };
 
                 switch (command) {
-                    case HELP -> {handler.handleHelp();}
-                    case REDRAW_CHESS_BOARD -> {handler.handleRedrawChessBoard();}
-                    case LEAVE_GAME -> {handler.handleLeaveGame();}
-                    case MAKE_MOVE -> {handler.handleMakeMove();}
-                    case RESIGN_GAME -> {handler.handleResignGame();}
-                    case HIGHLIGHT_LEGAL_MOVES -> {handler.handleHighlightLegalMoves();}
+                    case HELP -> handler.handleHelp();
+                    case REDRAW_CHESS_BOARD -> handler.handleRedrawChessBoard();
+                    case LEAVE_GAME -> handler.handleLeaveGame();
+                    case MAKE_MOVE -> handler.handleMakeMove();
+                    case RESIGN_GAME -> handler.handleResignGame();
+                    case HIGHLIGHT_LEGAL_MOVES -> handler.handleHighlightLegalMoves();
                 }
             } catch (UnknownCommandException e) {
                 in.nextLine();
@@ -73,9 +77,12 @@ class GameplayHandler implements GameHandler {
 
     @Override
     public
-    void updateGame(ChessGame game) {
-        this.game = game;
-        threadPool.submit(new UpdateGameThread(this.gameplayUI));
+    void updateGame(ChessGame game) throws InterruptedException {
+        this.game.setBoard(game.getBoard());
+        var updateGameThread = new UpdateGameThread(this.gameplayUI, game.getBoard());
+        updateGameThread.start();
+        updateGameThread.join();
+
     }
 
     @Override
@@ -102,7 +109,7 @@ class GameplayHandler implements GameHandler {
         }
 
         void handleRedrawChessBoard() {
-
+            threadPool.submit(new UpdateGameThread(gameplayUI, game.getBoard()));
         }
 
         void handleLeaveGame() {

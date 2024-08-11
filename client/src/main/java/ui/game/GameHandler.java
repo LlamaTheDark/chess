@@ -7,7 +7,7 @@ interface GameHandler {
 
     void start();
 
-    void updateGame(ChessGame game);
+    void updateGame(ChessGame game) throws InterruptedException;
 
     void printMessage(String message);
 }
