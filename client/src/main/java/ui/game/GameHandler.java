@@ -12,5 +12,5 @@ interface GameHandler {
 
     void updateGame(ChessGame game) throws InterruptedException;
 
-    void printMessage(String message);
+    void printMessage(String message, boolean error);
 }
