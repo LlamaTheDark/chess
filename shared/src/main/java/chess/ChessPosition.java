@@ -47,4 +47,20 @@ class ChessPosition {
         ChessPosition that = (ChessPosition) o;
         return getRow() == that.getRow() && getColumn() == that.getColumn();
     }
+
+    @Override
+    public
+    String toString() {
+        return switch (col) {
+            case 1 -> "a";
+            case 2 -> "b";
+            case 3 -> "c";
+            case 4 -> "d";
+            case 5 -> "e";
+            case 6 -> "f";
+            case 7 -> "g";
+            case 8 -> "h";
+            default -> throw new IllegalStateException("Unexpected value: " + col);
+        } + row;
+    }
 }

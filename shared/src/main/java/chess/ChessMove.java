@@ -70,4 +70,10 @@ class ChessMove {
         return Objects.equals(startPosition, chessMove.startPosition) &&
                Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
     }
+
+    @Override
+    public
+    String toString() {
+        return String.format("%s -> %s", startPosition, endPosition);
+    }
 }
