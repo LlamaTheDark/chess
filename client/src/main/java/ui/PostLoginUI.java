@@ -161,6 +161,8 @@ class PostLoginUI {
                         SessionHandler.authToken,
                         gameData.gameID()
                 ));
+
+                handler.setWebSocketFacade(webSocketFacade);
                 handler.start();
 
             } catch (ForbiddenException e) {

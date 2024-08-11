@@ -2,29 +2,42 @@ package ui.game;
 
 import chess.ChessGame;
 import model.GameData;
+import server.SessionHandler;
 import ui.EscapeSequences;
 import ui.exception.UnknownCommandException;
 import ui.game.thread.NotificationThread;
+import ui.game.thread.PrepareGameplayThread;
 import ui.game.thread.UpdateGameThread;
+import websocket.WebSocketFacade;
+import websocket.commands.LeaveGameCommand;
+import websocket.commands.UserGameCommand;
 
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public
-class GameplayHandler implements GameHandler {
-    private final ExecutorService threadPool = Executors.newFixedThreadPool(1);
-    private final GameplayUI      gameplayUI;
-    private final ChessGame       game;
-    private final String          gameName; // TODO: turn this into a local variable in the constructor?
+class GameplayHandler extends Thread implements GameHandler {
+    private       GameplayUI          gameplayUI;
+    private final GameData            gameData;
+    private final ChessGame.TeamColor teamColor;
+    private       WebSocketFacade     wsFacade;
 
-    private static final String GAMEPLAY_PROMPT = "CHESS_COMMAND >>> ";
+    private final ExecutorService threadManager = Executors.newSingleThreadExecutor();
+
+    private static final String GAMEPLAY_PROMPT = " [GAME COMMAND] >>> ";
 
     public
     GameplayHandler(ChessGame.TeamColor teamColor, GameData gameData) {
-        this.game = gameData.game();
-        this.gameName = gameData.gameName();
-        gameplayUI = new GameplayUI(teamColor, gameName);
+        this.gameData = gameData;
+        this.teamColor = teamColor;
+        gameplayUI = new GameplayUI(teamColor, gameData.gameName());
+        threadManager.execute(new PrepareGameplayThread(gameData.gameName(), teamColor, gameplayUI.getPrinter()));
+    }
+
+    public
+    void setWebSocketFacade(WebSocketFacade wsFacade) {
+        this.wsFacade = wsFacade;
     }
 
     enum GameplayCommand {
@@ -40,6 +53,8 @@ class GameplayHandler implements GameHandler {
     @Override
     public
     void start() {
+        assert wsFacade != null;
+
         Scanner in = new Scanner(System.in);
         GameplayCommandHandler handler = new GameplayCommandHandler();
         GameplayCommand command = GameplayCommand.NONE;
@@ -72,23 +87,22 @@ class GameplayHandler implements GameHandler {
             }
         } while (command != GameplayCommand.LEAVE_GAME);
 
+
         System.out.print(EscapeSequences.ERASE_SCREEN);
     }
 
     @Override
     public
     void updateGame(ChessGame game) throws InterruptedException {
-        this.game.setBoard(game.getBoard());
+        this.gameData.game().setBoard(game.getBoard());
         var updateGameThread = new UpdateGameThread(this.gameplayUI, game.getBoard());
-        updateGameThread.start();
-        updateGameThread.join();
-
+        threadManager.execute(updateGameThread);
     }
 
     @Override
     public
     void printMessage(String message) {
-        threadPool.submit(new NotificationThread(message, this.gameplayUI));
+        threadManager.execute(new NotificationThread(message, this.gameplayUI));
     }
 
     private
@@ -109,11 +123,15 @@ class GameplayHandler implements GameHandler {
         }
 
         void handleRedrawChessBoard() {
-            threadPool.submit(new UpdateGameThread(gameplayUI, game.getBoard()));
+            threadManager.execute(new UpdateGameThread(gameplayUI, gameData.game().getBoard()));
         }
 
         void handleLeaveGame() {
-
+            wsFacade.leaveGame(new LeaveGameCommand(
+                    UserGameCommand.CommandType.LEAVE,
+                    SessionHandler.authToken,
+                    gameData.gameID()
+            ));
         }
 
         void handleMakeMove() {
