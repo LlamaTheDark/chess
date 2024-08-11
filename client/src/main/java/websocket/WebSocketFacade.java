@@ -98,7 +98,8 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
         } catch (NoSuchMethodException |
                  InvocationTargetException |
                  InstantiationException |
-                 IllegalAccessException e) {
+                 IllegalAccessException |
+                 InterruptedException e) {
             throw new RuntimeException(e); // TODO: improve this
         }
         /*
