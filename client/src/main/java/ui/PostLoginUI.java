@@ -54,6 +54,8 @@ class PostLoginUI {
         var handler = new PostLoginCommandHandler();
         PostLoginCommand command = PostLoginCommand.NONE;
 
+        System.out.println("You are now logged in. Type 'help' for a list of commands.");
+
         do {
             try {
                 System.out.print(POST_LOGIN_PROMPT);
@@ -187,7 +189,8 @@ class PostLoginUI {
 
             } catch (NumberFormatException e) {
                 System.out.println(
-                        "Failed to join game: your first parameter is not a number.\nSyntax: observe <GAME NUMBER> " +
+                        "Failed to observe game: your first parameter is not a number.\nSyntax: observe <GAME NUMBER>" +
+                        " " +
                         "[WHITE|BLACK]");
             }
         }
