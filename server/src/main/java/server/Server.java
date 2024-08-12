@@ -16,7 +16,7 @@ class Server {
 
     public
     Server() {
-        webSocketHandler = new WebSocketHandler();
+        //        webSocketHandler = new WebSocketHandler();
     }
 
     public
@@ -24,6 +24,8 @@ class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        webSocketHandler = new WebSocketHandler();
 
         // Register upgrading to websocket protocol
         Spark.webSocket("/ws", webSocketHandler);
