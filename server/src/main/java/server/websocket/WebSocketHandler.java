@@ -1,6 +1,5 @@
 package server.websocket;
 
-import chess.ChessGame;
 import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import model.GameData;
@@ -8,6 +7,8 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import serial.Serializer;
 import service.WebSocketService;
+import service.exception.BadRequestException;
+import service.exception.ForbiddenException;
 import service.exception.UnauthorizedException;
 import websocket.commands.*;
 import websocket.messages.ErrorMessage;
@@ -18,9 +19,13 @@ import websocket.messages.ServerMessage.ServerMessageType;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
 
 @WebSocket
 public
@@ -71,7 +76,8 @@ class WebSocketHandler {
                  InstantiationException |
                  IllegalAccessException |
                  DataAccessException |
-                 InvalidMoveException e) {
+                 InvalidMoveException |
+                 ForbiddenException e) {
             sendMessage(
                     session,
                     new ErrorMessage(
@@ -132,15 +138,34 @@ class WebSocketHandler {
     }
 
     private
-    void makeMove(MakeMoveCommand command, Session session) throws DataAccessException {
-        System.out.println("WebSocketHandler.makeMove");
-        // 1. get game
+    void makeMove(MakeMoveCommand command, Session session) throws DataAccessException, UnauthorizedException {
+
+        // 1. get game and authenticate
         var gameData = wsService.getGameDataFromID(command.getGameID());
+        var username = wsService.getUsernameFromAuthToken(command.getAuthToken());
 
         // 2. check move validity
         // 3. if valid, make the change on the board
         // 3. if not valid, send back an error message
         try {
+            if (gameData.game().isOver()) {
+                throw new InvalidMoveException("Failed to make move: this game is over.");
+            }
+
+            var pieceAtPosition = gameData.game().getBoard().getPiece(command.getMove().getStartPosition());
+            if (pieceAtPosition == null) {
+                throw new InvalidMoveException("There is no piece at that starting location!");
+            }
+
+            if (pieceAtPosition.getTeamColor() != WHITE && username.equals(gameData.whiteUsername())
+                || pieceAtPosition.getTeamColor() != BLACK && username.equals(gameData.blackUsername())) {
+                throw new InvalidMoveException("That's not your piece!");
+            }
+
+            if (!List.of(gameData.whiteUsername(), gameData.blackUsername()).contains(username)) {
+                throw new InvalidMoveException("Error, failed to make move: you're not a player in this game. ");
+            }
+
             gameData.game().makeMove(command.getMove());
 
             // notification
@@ -153,7 +178,8 @@ class WebSocketHandler {
                                     wsSessionManager.getUsername(session),
                                     command.getMove()
                             )
-                    )
+                    ),
+                    session
             );
             if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
                 gameData.game().markAsOver();
@@ -184,14 +210,14 @@ class WebSocketHandler {
             }
 
             if (gameData.game().isOver()) {
-                broadcastMessage(
-                        gameData.gameID(),
-                        new NotificationMessage(
-                                ServerMessageType.NOTIFICATION,
-                                "This game is over and will be closed in 1 minute."
-                        )
-                );
-                activateCloseGameCountdown(gameData, 1);
+                //                broadcastMessage(
+                //                        gameData.gameID(),
+                //                        new NotificationMessage(
+                //                                ServerMessageType.NOTIFICATION,
+                //                                "This game is over and will be closed in 1 minute."
+                //                        )
+                //                );
+                //                activateCloseGameCountdown(gameData, 1);
             }
 
             wsService.updateGame(gameData);
@@ -204,14 +230,15 @@ class WebSocketHandler {
     }
 
     private
-    void leaveGame(LeaveGameCommand command, Session session) throws DataAccessException, InvalidMoveException {
+    void leaveGame(LeaveGameCommand command, Session session)
+    throws DataAccessException, InvalidMoveException, UnauthorizedException {
         // 1. get game
         var gameData = wsService.getGameDataFromID(command.getGameID());
-        if (gameData == null) {return;}
+        var username = wsService.getUsernameFromAuthToken(command.getAuthToken());
 
         // 2. update game to not include user anymore
-        GameData newGameData;
-        if (command.getTeamColor() == ChessGame.TeamColor.WHITE) {
+        GameData newGameData = gameData;
+        if (username.equals(gameData.whiteUsername())) {
             newGameData = new GameData(
                     gameData.gameID(),
                     null,
@@ -219,7 +246,7 @@ class WebSocketHandler {
                     gameData.gameName(),
                     gameData.game()
             );
-        } else {
+        } else if (username.equals(gameData.blackUsername())) {
             newGameData = new GameData(
                     gameData.gameID(),
                     gameData.whiteUsername(),
@@ -228,7 +255,6 @@ class WebSocketHandler {
                     gameData.game()
             );
         }
-
         wsService.updateGame(newGameData);
 
         // 3. remove session from game
@@ -247,31 +273,49 @@ class WebSocketHandler {
     }
 
     private
-    void resignGame(ResignGameCommand command, Session session) throws DataAccessException {
+    void resignGame(ResignGameCommand command, Session session)
+    throws DataAccessException, UnauthorizedException, ForbiddenException {
         GameData gameData = wsService.getGameDataFromID(command.getGameID());
-        gameData.game().markAsOver();
+        var username = wsService.getUsernameFromAuthToken(command.getAuthToken());
+        try {
 
-        broadcastMessage(
-                gameData.gameID(),
-                new LoadGameMessage(
-                        ServerMessageType.LOAD_GAME,
-                        gameData.game()
-                )
-        );
+            if (!List.of(gameData.whiteUsername(), gameData.blackUsername()).contains(username)) {
+                throw new ForbiddenException("Only players in this game can resign.");
+            }
 
-        broadcastMessage(
-                gameData.gameID(),
-                new NotificationMessage(
-                        ServerMessageType.NOTIFICATION,
-                        String.format(
-                                "%s has resigned. This game will be closed in 1 minute.",
-                                wsSessionManager.getUsername(session)
-                        )
-                )
-        );
+            if (gameData.game().isOver()) {
+                throw new ForbiddenException("Failed to resign: this game is already over.");
+            }
 
-        activateCloseGameCountdown(gameData, 1);
+            gameData.game().markAsOver();
+            wsService.updateGame(gameData);
 
+            //        broadcastMessage(
+            //                gameData.gameID(),
+            //                new LoadGameMessage(
+            //                        ServerMessageType.LOAD_GAME,
+            //                        gameData.game()
+            //                )
+            //        );
+
+            broadcastMessage(
+                    gameData.gameID(),
+                    new NotificationMessage(
+                            ServerMessageType.NOTIFICATION,
+                            String.format(
+                                    "%s has resigned. This game will be closed in 1 minute.",
+                                    wsSessionManager.getUsername(session)
+                            )
+                    )
+            );
+
+            //        activateCloseGameCountdown(gameData, 1);
+        } catch (ForbiddenException e) {
+            sendMessage(
+                    session,
+                    new ErrorMessage(ServerMessageType.ERROR, e.getMessage())
+            );
+        }
     }
 
     private
@@ -284,10 +328,17 @@ class WebSocketHandler {
     }
 
     private
-    void broadcastMessage(int gameID, ServerMessage message) {
+    void broadcastMessage(int gameID, ServerMessage message, Session session) {
         for (Session s : wsSessionManager.getSessionsForGame(gameID)) {
-            sendMessage(s, message);
+            if (s != session) {
+                sendMessage(s, message);
+            }
         }
+    }
+
+    private
+    void broadcastMessage(int gameID, ServerMessage message) {
+        broadcastMessage(gameID, message, null);
     }
 
     private

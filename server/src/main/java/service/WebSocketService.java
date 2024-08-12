@@ -1,6 +1,5 @@
 package service;
 
-import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import dataaccess.mysql.MySQLGameDAO;
 import model.GameData;
@@ -10,6 +9,16 @@ import service.util.Authenticator;
 public
 class WebSocketService {
 
+    private static MySQLGameDAO gameDAO;
+
+    static {
+        try {
+            gameDAO = new MySQLGameDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public
     String getUsernameFromAuthToken(String authToken) throws UnauthorizedException, DataAccessException {
         return Authenticator.getUsername(authToken);
@@ -17,16 +26,16 @@ class WebSocketService {
 
     public
     GameData getGameDataFromID(int gameID) throws DataAccessException {
-        return new MySQLGameDAO().getGame(gameID);
+        return gameDAO.getGame(gameID);
     }
 
     public
-    void updateGame(GameData gameData) throws DataAccessException, InvalidMoveException {
-        new MySQLGameDAO().updateGame(gameData);
+    void updateGame(GameData gameData) throws DataAccessException {
+        gameDAO.updateGame(gameData);
     }
 
     public
     void closeGame(int gameID) throws DataAccessException {
-        new MySQLGameDAO().closeGame(gameID);
+        gameDAO.closeGame(gameID);
     }
 }

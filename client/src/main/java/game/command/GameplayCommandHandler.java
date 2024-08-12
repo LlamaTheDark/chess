@@ -102,8 +102,7 @@ class GameplayCommandHandler {
         wsFacade.leaveGame(new LeaveGameCommand(
                 UserGameCommand.CommandType.LEAVE,
                 SessionHandler.authToken,
-                gameData.gameID(),
-                teamColor
+                gameData.gameID()
         ));
     }
 

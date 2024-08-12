@@ -52,8 +52,7 @@ class Serializer {
                                         case LEAVE -> new LeaveGameCommand(
                                                 commandType,
                                                 authToken,
-                                                gameID,
-                                                ChessGame.TeamColor.valueOf(jsonObject.get("teamColor").getAsString())
+                                                gameID
                                         );
                                         case RESIGN -> new ResignGameCommand(commandType, authToken, gameID);
                                     };
