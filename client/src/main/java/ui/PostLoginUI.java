@@ -19,6 +19,7 @@ import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public
@@ -69,7 +70,7 @@ class PostLoginUI {
                     case JOIN_GAME -> handler.handleJoinGame(in.next(), in.next());
                     case OBSERVE_GAME -> handler.handleObserveGame(in.next(), in.next());
                 }
-            } catch (UnknownCommandException | UIException | IOException e) {
+            } catch (UnknownCommandException | UIException | IOException | NoSuchElementException e) {
                 in.nextLine();
                 System.out.println(e.getMessage());
             }

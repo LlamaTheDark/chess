@@ -83,8 +83,8 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
     }
 
     public
-    void resignGame(ResignGameCommand command) {
-
+    void resignGame(ResignGameCommand command) throws IOException {
+        sendMessage(Serializer.serialize(command));
     }
 
     private

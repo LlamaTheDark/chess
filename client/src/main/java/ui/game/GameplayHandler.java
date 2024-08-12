@@ -16,6 +16,7 @@ import websocket.commands.ResignGameCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -116,6 +117,13 @@ class GameplayHandler extends Thread implements GameHandler {
                 in.nextLine();
                 gameplayUI.getPrinter().printCommandResponse(
                         e.getMessage(),
+                        EscapeSequences.SET_TEXT_COLOR_YELLOW,
+                        EscapeSequences.SET_TEXT_ITALIC
+                );
+            } catch (NoSuchElementException e) {
+                in.nextLine();
+                gameplayUI.getPrinter().printCommandResponse(
+                        "Unknown command. Please type 'help' for a list of commands.",
                         EscapeSequences.SET_TEXT_COLOR_YELLOW,
                         EscapeSequences.SET_TEXT_ITALIC
                 );
@@ -238,7 +246,7 @@ class GameplayHandler extends Thread implements GameHandler {
             threadManager.execute(new UpdateGameInformationThread(teamColor, gameData, gameplayUI.getPrinter(), false));
         }
 
-        void handleResignGame() {
+        void handleResignGame() throws IOException {
             wsFacade.resignGame(new ResignGameCommand(
                     UserGameCommand.CommandType.RESIGN,
                     SessionHandler.authToken,
@@ -248,17 +256,27 @@ class GameplayHandler extends Thread implements GameHandler {
 
         void handleHighlightLegalMoves(String position) throws UnknownCommandException {
             ChessPosition parsedPosition = parsePosition(position);
-            if (gameData.game().getBoard().getPiece(parsedPosition) == null) {
+            var pieceAtPosition = gameData.game().getBoard().getPiece(parsedPosition);
+            if (pieceAtPosition == null) {
                 threadManager.submit(new CommandResponseThread(
                         "There is no piece at that location!",
                         gameplayUI,
                         CommandResponseThread.MessageSeverity.WARNING
                 ));
+            } else if (pieceAtPosition.getTeamColor() != gameData.game().getTeamTurn()) {
+                threadManager.submit(new CommandResponseThread(
+                        "This piece has no legal moves because it's not that team's turn.",
+                        gameplayUI,
+                        CommandResponseThread.MessageSeverity.WARNING
+                ));
+            } else {
+                var task = threadManager.submit(new HighlightMovesThread(
+                        gameData.game().validMoves(parsedPosition),
+                        gameplayUI.getPrinter(),
+                        gameData.game().getBoard()
+                ));
+                while (true) {if (task.isDone()) {break;}}
             }
-            var task = threadManager.submit(new HighlightMovesThread(gameData.game().validMoves(parsedPosition),
-                                                                     gameplayUI.getPrinter(), gameData.game().getBoard()
-            ));
-            while (true) {if (task.isDone()) {break;}}
         }
 
     }

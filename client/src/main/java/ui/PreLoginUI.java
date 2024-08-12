@@ -7,6 +7,7 @@ import server.SessionHandler;
 import ui.exception.UIException;
 import ui.exception.UnknownCommandException;
 
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public
@@ -53,6 +54,9 @@ class PreLoginUI {
             } catch (UnknownCommandException e) {
                 in.nextLine();
                 System.out.println(e.getMessage());
+            } catch (NoSuchElementException e) {
+                in.nextLine();
+                System.out.println("Unknown command. Please type 'help' for a list of possible commands.");
             }
         } while (command != PreLoginCommand.QUIT);
     }
