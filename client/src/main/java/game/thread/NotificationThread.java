@@ -1,7 +1,7 @@
-package ui.game.thread;
+package game.thread;
 
 import ui.EscapeSequences;
-import ui.game.GameplayUI;
+import ui.GameplayUI;
 
 public
 class NotificationThread extends Thread {

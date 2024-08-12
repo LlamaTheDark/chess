@@ -1,9 +1,8 @@
-package ui.game;
+package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPosition;
-import ui.EscapeSequences;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;

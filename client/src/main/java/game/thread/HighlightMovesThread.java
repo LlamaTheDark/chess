@@ -1,9 +1,9 @@
-package ui.game.thread;
+package game.thread;
 
 import chess.ChessBoard;
 import chess.ChessMove;
 import ui.EscapeSequences;
-import ui.game.GameplayUI;
+import ui.GameplayUI;
 
 import java.util.Collection;
 

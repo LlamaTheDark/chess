@@ -1,9 +1,9 @@
 package websocket;
 
 
+import game.GameHandler;
 import serial.Serializer;
 import ui.exception.UIException;
-import ui.game.GameHandler;
 import websocket.commands.ConnectCommand;
 import websocket.commands.LeaveGameCommand;
 import websocket.commands.MakeMoveCommand;

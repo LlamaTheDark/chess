@@ -1,4 +1,4 @@
-package ui.game;
+package game;
 
 import chess.ChessGame;
 import websocket.WebSocketFacade;

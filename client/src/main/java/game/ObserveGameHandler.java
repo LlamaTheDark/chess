@@ -1,15 +1,13 @@
-package ui.game;
+package game;
 
 import chess.ChessGame;
-import chess.ChessPosition;
+import game.command.GameplayCommandHandler;
+import game.thread.*;
 import model.GameData;
-import server.SessionHandler;
 import ui.EscapeSequences;
+import ui.GameplayUI;
 import ui.exception.UnknownCommandException;
-import ui.game.thread.*;
 import websocket.WebSocketFacade;
-import websocket.commands.LeaveGameCommand;
-import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -59,7 +57,8 @@ class ObserveGameHandler extends Thread implements GameHandler {
         assert wsFacade != null;
 
         Scanner in = new Scanner(System.in);
-        ObserveGameCommandHandler handler = new ObserveGameCommandHandler();
+        GameplayCommandHandler handler =
+                new GameplayCommandHandler(gameplayUI, threadManager, wsFacade, gameData, teamColor);
         ObserveGameCommand command = ObserveGameCommand.NONE;
 
         do {
@@ -137,75 +136,5 @@ class ObserveGameHandler extends Thread implements GameHandler {
         } else {
             threadManager.execute(new NotificationThread(message, this.gameplayUI));
         }
-    }
-
-    private
-    class ObserveGameCommandHandler {
-
-        private
-        ChessPosition parsePosition(String position) throws UnknownCommandException {
-            var e = new UnknownCommandException(
-                    " Incorrect format provided for chess position.\n Please provide positions in the form " +
-                    "<letter>+<number>");
-            if (position.length() != 2) {
-                throw e;
-            }
-            var input = position.substring(0, 2);
-            int col = switch (input.charAt(0)) {
-                case 'a' -> 1;
-                case 'b' -> 2;
-                case 'c' -> 3;
-                case 'd' -> 4;
-                case 'e' -> 5;
-                case 'f' -> 6;
-                case 'g' -> 7;
-                case 'h' -> 8;
-                default -> throw e;
-            };
-            int row = Integer.parseInt(input.substring(1));
-
-            return new ChessPosition(row, col);
-        }
-
-        void handleHelp() {
-            gameplayUI.getPrinter().printCommandResponse("""
-                                                          help/h - display a list of possible commands.
-                                                         redraw/r - redraw the board.
-                                                         leave/l - leave the game.
-                                                         moves/hlm <POSITION> - highlight the legal moves for a given piece on the board.
-                                                                                                                \s
-                                                         note: positions should be given in the form <letter>+<number>
-                                                               e.g. 'a1', 'e6', etc.
-                                                         \s""");
-        }
-
-        void handleRedrawChessBoard() {
-            threadManager.execute(new UpdateGameThread(gameplayUI, gameData.game().getBoard()));
-        }
-
-        void handleLeaveGame() throws IOException {
-            wsFacade.leaveGame(new LeaveGameCommand(
-                    UserGameCommand.CommandType.LEAVE,
-                    SessionHandler.authToken,
-                    gameData.gameID(),
-                    teamColor
-            ));
-        }
-
-        void handleHighlightLegalMoves(String position) throws UnknownCommandException {
-            ChessPosition parsedPosition = parsePosition(position);
-            if (gameData.game().getBoard().getPiece(parsedPosition) == null) {
-                threadManager.submit(new CommandResponseThread(
-                        "There is no piece at that location!",
-                        gameplayUI,
-                        CommandResponseThread.MessageSeverity.WARNING
-                ));
-            }
-            var task = threadManager.submit(new HighlightMovesThread(gameData.game().validMoves(parsedPosition),
-                                                                     gameplayUI.getPrinter(), gameData.game().getBoard()
-            ));
-            while (true) {if (task.isDone()) {break;}}
-        }
-
     }
 }

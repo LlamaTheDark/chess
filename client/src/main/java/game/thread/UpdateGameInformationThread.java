@@ -1,9 +1,9 @@
-package ui.game.thread;
+package game.thread;
 
 import chess.ChessGame;
 import model.GameData;
 import ui.EscapeSequences;
-import ui.game.GameplayUI;
+import ui.GameplayUI;
 
 public
 class UpdateGameInformationThread extends Thread {
