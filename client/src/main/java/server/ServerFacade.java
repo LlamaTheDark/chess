@@ -76,11 +76,11 @@ class ServerFacade {
 
                 return response;
             } else if (statusCode == 400) {
-                throw new BadParametersException(http.getResponseMessage());
+                throw new BadParametersException();
             } else if (statusCode == 401) {
-                throw new UnauthorizedException(http.getResponseMessage());
+                throw new UnauthorizedException();
             } else if (statusCode == 403) {
-                throw new ForbiddenException(http.getResponseMessage());
+                throw new ForbiddenException();
             } else {
                 throw new UIException("something has gone terribly wrong.");
             }

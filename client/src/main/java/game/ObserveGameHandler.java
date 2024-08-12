@@ -103,9 +103,6 @@ class ObserveGameHandler extends Thread implements GameHandler {
             }
         } while (command != ObserveGameCommand.LEAVE_GAME);
 
-        // shutdown the thread manager
-        GameHandler.shutdownExecutors(threadManager);
-
         System.out.print(EscapeSequences.ERASE_SCREEN);
     }
 
