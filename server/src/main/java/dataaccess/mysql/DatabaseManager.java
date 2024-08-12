@@ -16,6 +16,34 @@ class DatabaseManager {
     private static final String PASSWORD;
     private static final String CONNECTION_URL;
 
+    public static final String[] CREATE_STATEMENTS = {
+            """
+            CREATE TABLE IF NOT EXISTS user (
+                username VARCHAR(255) NOT NULL PRIMARY KEY,
+                password VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS auth (
+                authToken VARCHAR(255) NOT NULL PRIMARY KEY,
+                username VARCHAR(255) NOT NULL
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS game (
+                gameID INT NOT NULL AUTO_INCREMENT,
+                whiteUsername VARCHAR(255) NULL,
+                blackUsername VARCHAR(255) NULL,
+                gameName VARCHAR(255) NOT NULL,
+                game TEXT NOT NULL,
+                PRIMARY KEY (gameID),
+                FOREIGN KEY(whiteUsername) REFERENCES user(username),
+                FOREIGN KEY(blackUsername) REFERENCES user(username)
+            )
+            """
+    };
+
     /*
      * Load the database information for the db.properties file.
      */

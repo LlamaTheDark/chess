@@ -8,6 +8,5 @@ class Main {
 
         PreLoginUI preLoginUI = new PreLoginUI();
         preLoginUI.start();
-
     }
 }

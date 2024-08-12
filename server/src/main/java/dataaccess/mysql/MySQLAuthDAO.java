@@ -20,7 +20,7 @@ class MySQLAuthDAO implements AuthDAO {
 
     public
     MySQLAuthDAO() throws DataAccessException {
-        DatabaseManager.configureDatabase(CREATE_STATEMENTS);
+        DatabaseManager.configureDatabase(DatabaseManager.CREATE_STATEMENTS);
     }
 
     /**

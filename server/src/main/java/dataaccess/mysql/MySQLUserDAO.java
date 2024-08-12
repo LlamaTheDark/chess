@@ -21,7 +21,7 @@ class MySQLUserDAO implements UserDAO {
 
     public
     MySQLUserDAO() throws DataAccessException {
-        DatabaseManager.configureDatabase(CREATE_STATEMENTS);
+        DatabaseManager.configureDatabase(DatabaseManager.CREATE_STATEMENTS);
     }
 
     /**
