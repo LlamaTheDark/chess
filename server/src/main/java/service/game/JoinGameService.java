@@ -25,14 +25,13 @@ class JoinGameService implements Service<JoinGameResponse, JoinGameRequest> {
 
         // bad request checks
         if (request.getPlayerColor() == null || requestedGame == null) {
-            throw new BadRequestException("Some provided fields are invalid.");
+            throw new BadRequestException();
         }
 
         var playerColor = switch (request.getPlayerColor()) {
             case "WHITE" -> PlayerColor.WHITE;
             case "BLACK" -> PlayerColor.BLACK;
-            default ->
-                    throw new BadRequestException("Please ensure your specified player color is correctly formatted.");
+            default -> throw new BadRequestException();
         };
 
 
@@ -41,7 +40,7 @@ class JoinGameService implements Service<JoinGameResponse, JoinGameRequest> {
             case WHITE -> requestedGame.whiteUsername() != null;
             case BLACK -> requestedGame.blackUsername() != null;
         }) {
-            throw new ForbiddenException("that team color is already taken");
+            throw new ForbiddenException("Error: already taken");
         }
 
         // get player username by authData
