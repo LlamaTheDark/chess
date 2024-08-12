@@ -19,7 +19,7 @@ import websocket.messages.ServerMessage.ServerMessageType;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -168,7 +168,7 @@ class WebSocketHandler {
                 throw new InvalidMoveException("That's not your piece!");
             }
 
-            if (!List.of(gameData.whiteUsername(), gameData.blackUsername()).contains(username)) {
+            if (!Arrays.asList(gameData.whiteUsername(), gameData.blackUsername()).contains(username)) {
                 throw new InvalidMoveException("Error, failed to make move: you're not a player in this game. ");
             }
 
@@ -285,7 +285,7 @@ class WebSocketHandler {
         var username = wsService.getUsernameFromAuthToken(command.getAuthToken());
         try {
 
-            if (!List.of(gameData.whiteUsername(), gameData.blackUsername()).contains(username)) {
+            if (!Arrays.asList(gameData.whiteUsername(), gameData.blackUsername()).contains(username)) {
                 throw new ForbiddenException("Only players in this game can resign.");
             }
 
