@@ -86,7 +86,6 @@ class GameplayHandler extends Thread implements GameHandler {
                 System.out.print(EscapeSequences.LOAD_CURSOR_LOCATION);
 
                 if (gameData.game().isOver() && command != GameplayCommand.LEAVE_GAME) {
-
                     threadManager.execute(new CommandResponseThread(
                             "This game is over. Type 'leave' to leave the game.",
                             gameplayUI,
@@ -111,7 +110,6 @@ class GameplayHandler extends Thread implements GameHandler {
                         EscapeSequences.SET_TEXT_COLOR_RED,
                         EscapeSequences.SET_TEXT_ITALIC
                 );
-                // TODO: change the message for the NUmberFOrmatException
             } catch (InvalidMoveException e) {
                 in.nextLine();
                 gameplayUI.getPrinter().printCommandResponse(

@@ -101,7 +101,6 @@ class ObserveGameHandler extends Thread implements GameHandler {
                         EscapeSequences.SET_TEXT_COLOR_RED,
                         EscapeSequences.SET_TEXT_ITALIC
                 );
-                // TODO: change the message for the NUmberFOrmatException
             }
         } while (command != ObserveGameCommand.LEAVE_GAME);
 
