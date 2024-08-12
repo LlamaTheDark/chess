@@ -20,12 +20,12 @@ class RegisterService implements Service<RegisterResponse, RegisterRequest> {
 
         var userDAO = new MySQLUserDAO();
         if (userDAO.getUser(request.getUsername()) != null) {
-            throw new ForbiddenException("Error: already taken");
+            throw new ForbiddenException("Username already taken");
         }
 
         // test to make sure all fields are legitimate
         if (request.getUsername() == null || request.getPassword() == null || request.getEmail() == null) {
-            throw new BadRequestException("Error: bad request");
+            throw new BadRequestException("some provided fields are in an invalid format");
         }
 
         // hash user password

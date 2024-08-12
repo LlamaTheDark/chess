@@ -20,7 +20,7 @@ class CreateGameService implements Service<CreateGameResponse, CreateGameRequest
         Authenticator.authenticate(request.getAuthToken());
 
         // bad request checks
-        if (request.getGameName() == null) {throw new BadRequestException();}
+        if (request.getGameName() == null) {throw new BadRequestException("provided field are incorrectly formatted.");}
 
         // create a GameData instance with ID = 0
         GameData gameData = new GameData(null, null, request.getGameName(), new ChessGame());

@@ -23,12 +23,13 @@ class Authenticator {
      */
     public static
     void authenticate(String authToken) throws DataAccessException, UnauthorizedException {
+        var e = new UnauthorizedException("you are not logged in.");
         if (authToken == null) {
-            throw new UnauthorizedException("Error: unauthorized");
+            throw e;
         }
         AuthDAO authDAO = new MySQLAuthDAO();
         if (authDAO.getAuthByToken(authToken) == null) {
-            throw new UnauthorizedException("Error: unauthorized");
+            throw e;
         }
     }
 

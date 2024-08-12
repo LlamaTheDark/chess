@@ -22,7 +22,7 @@ class LoginService implements Service<LoginResponse, LoginRequest> {
     LoginResponse serve(LoginRequest request) throws DataAccessException, ServiceException {
         // bad request checks
         if (request.getUsername() == null || request.getPassword() == null) {
-            throw new BadRequestException();
+            throw new BadRequestException("Login details in incorrect format.");
         }
 
         // verify user
@@ -31,7 +31,7 @@ class LoginService implements Service<LoginResponse, LoginRequest> {
                 requestedUser != null && BCrypt.checkpw(request.getPassword(), requestedUser.password());
 
         if (!credentialsMatch) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException("Incorrect username or password.");
         }
 
         String authToken = Authenticator.generateToken();

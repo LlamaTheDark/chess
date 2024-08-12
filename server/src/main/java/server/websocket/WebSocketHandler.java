@@ -115,11 +115,21 @@ class WebSocketHandler {
             );
 
             // 2. broadcast a join game notification to all in the same group
+            var gameData = wsService.getGameDataFromID(command.getGameID());
+            boolean observing =
+                    !Arrays.asList(gameData.whiteUsername(), gameData.blackUsername()).contains(sessionUsername);
             broadcastMessage(
                     command.getGameID(),
                     new NotificationMessage(
                             ServerMessageType.NOTIFICATION,
-                            String.format("%s has joined the game!", sessionUsername)
+                            String.format("%s %s", sessionUsername,
+                                          observing
+                                          ? "is observing the game."
+                                          : String.format(
+                                                  "has joined the game as %s!",
+                                                  sessionUsername.equals(gameData.whiteUsername()) ? "WHITE" : "BLACK"
+                                          )
+                            )
                     ),
                     session
             );
@@ -215,17 +225,6 @@ class WebSocketHandler {
                 );
             }
 
-            if (gameData.game().isOver()) {
-                //                broadcastMessage(
-                //                        gameData.gameID(),
-                //                        new NotificationMessage(
-                //                                ServerMessageType.NOTIFICATION,
-                //                                "This game is over and will be closed in 1 minute."
-                //                        )
-                //                );
-                //                activateCloseGameCountdown(gameData, 1);
-            }
-
             wsService.updateGame(gameData);
 
             // load game
@@ -296,20 +295,12 @@ class WebSocketHandler {
             gameData.game().markAsOver();
             wsService.updateGame(gameData);
 
-            //        broadcastMessage(
-            //                gameData.gameID(),
-            //                new LoadGameMessage(
-            //                        ServerMessageType.LOAD_GAME,
-            //                        gameData.game()
-            //                )
-            //        );
-
             broadcastMessage(
                     gameData.gameID(),
                     new NotificationMessage(
                             ServerMessageType.NOTIFICATION,
                             String.format(
-                                    "%s has resigned. This game will be closed in 1 minute.",
+                                    "%s has resigned. This game is now over.",
                                     wsSessionManager.getUsername(session)
                             )
                     )

@@ -15,7 +15,6 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public
 class GameplayHandler extends Thread implements GameHandler {
@@ -129,15 +128,7 @@ class GameplayHandler extends Thread implements GameHandler {
         } while (command != GameplayCommand.LEAVE_GAME);
 
         // shutdown the thread manager
-        threadManager.shutdown();
-        try {
-            if (threadManager.awaitTermination(5, TimeUnit.SECONDS)) {
-                threadManager.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            threadManager.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
+        GameHandler.shutdownExecutors(threadManager);
 
         System.out.print(EscapeSequences.ERASE_SCREEN);
     }
