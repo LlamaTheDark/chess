@@ -56,4 +56,15 @@ class MemoryGameDAO implements GameDAO {
         nextID = 1;
         GAME.clear();
     }
+
+    /**
+     * Removes the game with the passed gameID from the database.
+     *
+     * @param gameID
+     */
+    @Override
+    public
+    void closeGame(int gameID) throws DataAccessException {
+
+    }
 }

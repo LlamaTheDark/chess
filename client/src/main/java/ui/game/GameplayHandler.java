@@ -12,6 +12,7 @@ import ui.game.thread.*;
 import websocket.WebSocketFacade;
 import websocket.commands.LeaveGameCommand;
 import websocket.commands.MakeMoveCommand;
+import websocket.commands.ResignGameCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
@@ -80,13 +81,23 @@ class GameplayHandler extends Thread implements GameHandler {
 
                 System.out.print(EscapeSequences.LOAD_CURSOR_LOCATION);
 
-                switch (command) {
-                    case HELP -> handler.handleHelp();
-                    case REDRAW_CHESS_BOARD -> handler.handleRedrawChessBoard();
-                    case LEAVE_GAME -> handler.handleLeaveGame();
-                    case MAKE_MOVE -> handler.handleMakeMove(in.next(), in.next());
-                    case RESIGN_GAME -> handler.handleResignGame();
-                    case HIGHLIGHT_LEGAL_MOVES -> handler.handleHighlightLegalMoves(in.next());
+                if (gameData.game().isOver() && command != GameplayCommand.LEAVE_GAME) {
+
+                    threadManager.execute(new CommandResponseThread(
+                            "This game is over. Type 'leave' to leave the game.",
+                            gameplayUI,
+                            CommandResponseThread.MessageSeverity.STANDARD
+                    ));
+
+                } else {
+                    switch (command) {
+                        case HELP -> handler.handleHelp();
+                        case REDRAW_CHESS_BOARD -> handler.handleRedrawChessBoard();
+                        case LEAVE_GAME -> handler.handleLeaveGame();
+                        case MAKE_MOVE -> handler.handleMakeMove(in.next(), in.next());
+                        case RESIGN_GAME -> handler.handleResignGame();
+                        case HIGHLIGHT_LEGAL_MOVES -> handler.handleHighlightLegalMoves(in.next());
+                    }
                 }
             } catch (UnknownCommandException | IOException | NumberFormatException e) {
                 in.nextLine();
@@ -203,7 +214,11 @@ class GameplayHandler extends Thread implements GameHandler {
             if (gameData.game().getTeamTurn() != teamColor) {
                 throw new InvalidMoveException("It's not your turn!");
             }
-            if (gameData.game().getBoard().getPiece(parsedStartPosition).getTeamColor() != teamColor) {
+            var pieceAtStart = gameData.game().getBoard().getPiece(parsedStartPosition);
+            if (pieceAtStart == null) {
+                throw new InvalidMoveException("There is no piece at that location!");
+            }
+            if (pieceAtStart.getTeamColor() != teamColor) {
                 throw new InvalidMoveException("That piece doesn't belong to you!");
             }
 
@@ -219,14 +234,18 @@ class GameplayHandler extends Thread implements GameHandler {
         }
 
         void handleResignGame() {
-
+            wsFacade.resignGame(new ResignGameCommand(
+                    UserGameCommand.CommandType.RESIGN,
+                    SessionHandler.authToken,
+                    gameData.gameID()
+            ));
         }
 
         void handleHighlightLegalMoves(String position) throws UnknownCommandException {
             ChessPosition parsedPosition = parsePosition(position);
             if (gameData.game().getBoard().getPiece(parsedPosition) == null) {
                 threadManager.submit(new CommandResponseThread(
-                        "There is no piece at that location",
+                        "There is no piece at that location!",
                         gameplayUI,
                         CommandResponseThread.MessageSeverity.WARNING
                 ));

@@ -49,4 +49,11 @@ interface GameDAO {
      * @throws DataAccessException if there is a failure to access the data.
      */
     void clear() throws DataAccessException;
+
+    /**
+     * Removes the game with the passed gameID from the database.
+     *
+     * @param gameID
+     */
+    void closeGame(int gameID) throws DataAccessException;
 }

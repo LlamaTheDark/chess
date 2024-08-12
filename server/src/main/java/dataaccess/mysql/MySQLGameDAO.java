@@ -188,4 +188,21 @@ class MySQLGameDAO implements GameDAO {
                                       AUTO_INCREMENT = 1;
                                       """);
     }
+
+    /**
+     * Removes the game with the passed gameID from the database.
+     *
+     * @param gameID
+     */
+    @Override
+    public
+    void closeGame(int gameID) throws DataAccessException {
+        DatabaseManager.executeUpdate(
+                """
+                DELETE FROM game
+                WHERE gameID = ?
+                """,
+                gameID
+        );
+    }
 }

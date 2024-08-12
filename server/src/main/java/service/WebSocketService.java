@@ -24,4 +24,9 @@ class WebSocketService {
     void updateGame(GameData gameData) throws DataAccessException, InvalidMoveException {
         new MySQLGameDAO().updateGame(gameData);
     }
+
+    public
+    void closeGame(int gameID) throws DataAccessException {
+        new MySQLGameDAO().closeGame(gameID);
+    }
 }

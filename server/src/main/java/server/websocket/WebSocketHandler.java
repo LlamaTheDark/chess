@@ -18,6 +18,9 @@ import websocket.messages.ServerMessage.ServerMessageType;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @WebSocket
 public
@@ -25,16 +28,23 @@ class WebSocketHandler {
     private final WebSocketConnectionManager wsSessionManager = new WebSocketConnectionManager();
     private final WebSocketService           wsService        = new WebSocketService();
 
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+    public
+    WebSocketConnectionManager getWsSessionManager() {
+        return wsSessionManager;
+    }
+
     @OnWebSocketConnect
     public
     void onConnect(Session session) {
-        System.out.println("Web socket connected! Session open at: " + session.getLocalAddress());
+        System.out.println("Web socket connected! Session open at: " + session.getRemoteAddress());
     }
 
     @OnWebSocketClose
     public
     void onClose(Session session, int i, String s) {
-        System.out.println("Web socket closed! Session was at: " + session.getLocalAddress());
+        System.out.println("Web socket closed! Session was at: " + session.getRemoteAddress());
     }
 
     @OnWebSocketError
@@ -125,7 +135,7 @@ class WebSocketHandler {
                             String.format(
                                     "%s has made a move (%s)",
                                     wsSessionManager.getUsername(session),
-                                    command.getMove() // TODO: implement nice toString method for ChessMove
+                                    command.getMove()
                             )
                     )
             );
@@ -139,7 +149,6 @@ class WebSocketHandler {
                         )
                 );
             } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
-                gameData.game().markAsOver();
                 broadcastMessage(
                         gameData.gameID(),
                         new NotificationMessage(
@@ -158,6 +167,27 @@ class WebSocketHandler {
                 );
             }
 
+            if (gameData.game().isOver()) {
+                broadcastMessage(
+                        gameData.gameID(),
+                        new NotificationMessage(
+                                ServerMessageType.NOTIFICATION,
+                                "Game is over! This game will be closed in 1 minute."
+                        )
+                );
+                scheduler.schedule(() -> {
+                    try {
+                        wsService.closeGame(gameData.gameID());
+                    } catch (DataAccessException e) {
+                        System.err.printf(
+                                "Failed to close game with id %d. Message: %s",
+                                gameData.gameID(),
+                                e.getMessage()
+                        );
+                    }
+                }, 1, TimeUnit.MINUTES);
+            }
+
             wsService.updateGame(gameData);
 
             // load game
@@ -171,6 +201,7 @@ class WebSocketHandler {
     void leaveGame(LeaveGameCommand command, Session session) throws DataAccessException, InvalidMoveException {
         // 1. get game
         var gameData = wsService.getGameDataFromID(command.getGameID());
+        if (gameData == null) {return;}
 
         // 2. update game to not include user anymore
         GameData newGameData;
@@ -205,6 +236,8 @@ class WebSocketHandler {
                         String.format("%s has left the game.", wsSessionManager.getUsername(session))
                 )
         );
+
+        session.close();
     }
 
     private

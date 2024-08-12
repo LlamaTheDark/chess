@@ -141,7 +141,7 @@ class ChessGame {
     ChessRuleBook getRuleBook() {return ruleBook;}
 
     public
-    boolean isGameOver() {return state.gameOver;}
+    boolean isOver() {return state.gameOver;}
 
     public
     void markAsOver() {state.gameOver = true;}

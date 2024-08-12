@@ -83,7 +83,9 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
     }
 
     public
-    void resignGame(ResignGameCommand command) {}
+    void resignGame(ResignGameCommand command) {
+
+    }
 
     private
     void sendMessage(String message) throws IOException {
