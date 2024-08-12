@@ -111,16 +111,16 @@ class GameplayCommandHandler {
     throws UnknownCommandException, InvalidMoveException, IOException {
 
         var parsedStartPosition = parsePosition(startPosition);
-        if (gameData.game().getTeamTurn() != teamColor) {
-            throw new InvalidMoveException("It's not your turn!");
-        }
-        var pieceAtStart = gameData.game().getBoard().getPiece(parsedStartPosition);
-        if (pieceAtStart == null) {
-            throw new InvalidMoveException("There is no piece at that location!");
-        }
-        if (pieceAtStart.getTeamColor() != teamColor) {
-            throw new InvalidMoveException("That piece doesn't belong to you!");
-        }
+        //        if (gameData.game().getTeamTurn() != teamColor) {
+        //            throw new InvalidMoveException("It's not your turn!");
+        //        }
+        //        var pieceAtStart = gameData.game().getBoard().getPiece(parsedStartPosition);
+        //        if (pieceAtStart == null) {
+        //            throw new InvalidMoveException("There is no piece at that location!");
+        //        }
+        //        if (pieceAtStart.getTeamColor() != teamColor) {
+        //            throw new InvalidMoveException("That piece doesn't belong to you!");
+        //        }
 
         var parsedEndPosition = parsePosition(endPosition);
 

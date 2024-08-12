@@ -21,22 +21,26 @@ import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public
 class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
-    Session     session;
-    GameHandler gameHandler;
+    private Session            session;
+    private GameHandler        gameHandler;
+    private WebSocketContainer container;
+
 
     private final
     ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture<?> task;
 
     public
     WebSocketFacade(String url, GameHandler gameHandler) throws UIException {
         try {
             URI uri = new URI(url.replace("http", "ws"));
 
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+            container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, uri);
 
             this.gameHandler = gameHandler;
@@ -53,13 +57,15 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
     @Override
     public
     void onOpen(Session session, EndpointConfig endpointConfig) {
-        scheduler.scheduleAtFixedRate(() -> sendPing(session), 0, 4, TimeUnit.MINUTES);
+        this.task = scheduler.scheduleAtFixedRate(() -> sendPing(session), 0, 4, TimeUnit.MINUTES);
     }
 
     @Override
     public
     void onClose(Session session, CloseReason closeReason) {
-        scheduler.shutdown();
+        this.task.cancel(true);
+        scheduler.shutdownNow();
+        scheduler.close();
     }
 
     @Override

@@ -13,6 +13,12 @@ import java.util.Scanner;
 public
 class PreLoginUI {
     static final String PRE_LOGIN_PROMPT = "[LOGGED OUT] >>> ";
+    static       String url;
+
+    public
+    PreLoginUI(String url) {
+        this.url = url;
+    }
 
     /**
      * A type of command that can be given before a user logs in.
@@ -83,7 +89,7 @@ class PreLoginUI {
             try {
                 var response = serverFacade.login(new LoginRequest(username, password));
                 SessionHandler.authToken = response.getAuthToken();
-                new PostLoginUI().start();
+                new PostLoginUI(url).start();
             } catch (UIException e) {
                 System.out.println("Failed to log in: " + e.getMessage());
             }
@@ -95,7 +101,7 @@ class PreLoginUI {
             try {
                 var response = serverFacade.register(new RegisterRequest(username, password, email));
                 SessionHandler.authToken = response.getAuthToken();
-                new PostLoginUI().start();
+                new PostLoginUI(url).start();
             } catch (Exception e) {
                 System.out.println("Failed to register: " + e.getMessage());
             }

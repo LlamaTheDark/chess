@@ -25,6 +25,7 @@ import java.util.Scanner;
 public
 class PostLoginUI {
     static final String POST_LOGIN_PROMPT = "[LOGGED IN] >>> ";
+    static       String url;
 
     /**
      * A type of command that can be given after a user logs in.
@@ -37,6 +38,11 @@ class PostLoginUI {
         JOIN_GAME,
         OBSERVE_GAME,
         NONE
+    }
+
+    public
+    PostLoginUI(String url) {
+        this.url = url;
     }
 
     /**
@@ -157,7 +163,7 @@ class PostLoginUI {
 
                 GameHandler handler =
                         new GameplayHandler(ChessGame.TeamColor.valueOf(playerColor), gameData);
-                connectToGame(handler, gameData.gameID(), "ws://localhost:8080/ws");
+                connectToGame(handler, gameData.gameID(), url);
 
             } catch (ForbiddenException e) {
                 System.out.println("Failed to join game: the requested player color is taken.");
@@ -177,7 +183,7 @@ class PostLoginUI {
                 GameData gameData = SessionHandler.getGameDataFromIndex(index);
 
                 GameHandler handler = new ObserveGameHandler(ChessGame.TeamColor.valueOf(teamColor), gameData);
-                connectToGame(handler, gameData.gameID(), "ws://localhost:8080/ws");
+                connectToGame(handler, gameData.gameID(), url);
 
             } catch (NumberFormatException e) {
                 System.out.println(
