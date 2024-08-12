@@ -30,10 +30,16 @@ import static chess.ChessGame.TeamColor.WHITE;
 @WebSocket
 public
 class WebSocketHandler {
-    private final WebSocketConnectionManager wsSessionManager = new WebSocketConnectionManager();
-    private final WebSocketService           wsService        = new WebSocketService();
+    private final WebSocketConnectionManager wsSessionManager;
+    private final WebSocketService           wsService;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+
+    public
+    WebSocketHandler() {
+        wsSessionManager = new WebSocketConnectionManager();
+        wsService = new WebSocketService();
+    }
 
     public
     WebSocketConnectionManager getWsSessionManager() {

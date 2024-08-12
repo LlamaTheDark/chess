@@ -9,9 +9,10 @@ import service.util.Authenticator;
 public
 class WebSocketService {
 
-    private static MySQLGameDAO gameDAO;
+    private final MySQLGameDAO gameDAO;
 
-    static {
+    public
+    WebSocketService() {
         try {
             gameDAO = new MySQLGameDAO();
         } catch (DataAccessException e) {
