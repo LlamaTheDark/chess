@@ -45,7 +45,7 @@ class GameplayHandler extends Thread implements GameHandler {
     @Override
     public
     void updateGame(ChessGame game) {
-        this.gameData = GameHandler.updateGame(game, gameData, gameplayUI, teamColor, threadManager);
+        this.gameData = GameHandler.updateGame(game, gameData, gameplayUI, teamColor, threadManager, false);
     }
 
     @Override

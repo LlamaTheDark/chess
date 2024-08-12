@@ -60,7 +60,8 @@ interface GameHandler {
                         GameData gameData,
                         GameplayUI gameplayUI,
                         ChessGame.TeamColor teamColor,
-                        ExecutorService threadManager) {
+                        ExecutorService threadManager,
+                        boolean observing) {
         var newGameData = new GameData(
                 gameData.gameID(),
                 gameData.whiteUsername(),
@@ -69,7 +70,12 @@ interface GameHandler {
                 game
         );
         threadManager.execute(new UpdateGameThread(gameplayUI, game.getBoard()));
-        threadManager.execute(new UpdateGameInformationThread(teamColor, newGameData, gameplayUI.getPrinter(), false));
+        threadManager.execute(new UpdateGameInformationThread(
+                teamColor,
+                newGameData,
+                gameplayUI.getPrinter(),
+                observing
+        ));
 
         return newGameData;
     }
@@ -118,7 +124,7 @@ interface GameHandler {
                         case HELP -> handler.handleHelp(observing);
                         case REDRAW_CHESS_BOARD -> handler.handleRedrawChessBoard(gameData);
                         case LEAVE_GAME -> handler.handleLeaveGame(gameData);
-                        case MAKE_MOVE -> handler.handleMakeMove(in.next(), in.next(), gameData);
+                        case MAKE_MOVE -> handler.handleMakeMove(in.next(), in.next(), gameData, observing);
                         case RESIGN_GAME -> handler.handleResignGame(gameData);
                         case HIGHLIGHT_LEGAL_MOVES -> handler.handleHighlightLegalMoves(in.next(), gameData);
                     }

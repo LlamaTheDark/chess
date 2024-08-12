@@ -111,7 +111,7 @@ class GameplayCommandHandler {
     }
 
     public
-    void handleMakeMove(String startPosition, String endPosition, GameData gameData)
+    void handleMakeMove(String startPosition, String endPosition, GameData gameData, boolean observing)
     throws UnknownCommandException, InvalidMoveException, IOException {
 
         var parsedStartPosition = parsePosition(startPosition);
@@ -123,7 +123,7 @@ class GameplayCommandHandler {
                                               gameData.gameID(), move
         ));
 
-        threadManager.execute(new UpdateGameInformationThread(teamColor, gameData, gameplayUI.getPrinter(), false));
+        threadManager.execute(new UpdateGameInformationThread(teamColor, gameData, gameplayUI.getPrinter(), observing));
     }
 
     public
