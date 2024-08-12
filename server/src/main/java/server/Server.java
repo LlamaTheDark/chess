@@ -16,7 +16,7 @@ class Server {
 
     public
     Server() {
-        //        webSocketHandler = new WebSocketHandler();
+        webSocketHandler = new WebSocketHandler();
     }
 
     public
@@ -25,10 +25,8 @@ class Server {
 
         Spark.staticFiles.location("web");
 
-        //        webSocketHandler = new WebSocketHandler();
-
         // Register upgrading to websocket protocol
-        //        Spark.webSocket("/ws", webSocketHandler);
+        Spark.webSocket("/ws", webSocketHandler);
 
         // Register your endpoints and handle exceptions here.
         registerUserEndpoints();
