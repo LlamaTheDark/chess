@@ -88,32 +88,47 @@ class WebSocketHandler {
 
     private
     void connect(ConnectCommand command, Session session) throws UnauthorizedException, DataAccessException {
-        // 1. add the session to our session manager
-        var sessionUsername = wsService.getUsernameFromAuthToken(command.getAuthToken());
+        try {
+            // 1. add the session to our session manager
+            var sessionUsername = wsService.getUsernameFromAuthToken(command.getAuthToken());
 
-        wsSessionManager.addSessionToGame(
-                command.getGameID(),
-                session,
-                sessionUsername
-        );
+            if (wsService.getGameDataFromID(command.getGameID()) == null) {
+                throw new BadRequestException("Error: there is no game with this ID!");
+            }
 
-        // 2. broadcast a join game notification to all in the same group
-        broadcastMessage(
-                command.getGameID(),
-                new NotificationMessage(
-                        ServerMessageType.NOTIFICATION,
-                        String.format("%s has joined the game!", sessionUsername)
-                )
-        );
+            wsSessionManager.addSessionToGame(
+                    command.getGameID(),
+                    session,
+                    sessionUsername
+            );
 
-        // 3. create and send a server message load game response
-        sendMessage(
-                session,
-                new LoadGameMessage(
-                        ServerMessageType.LOAD_GAME,
-                        wsService.getGameDataFromID(command.getGameID()).game()
-                )
-        );
+            // 2. broadcast a join game notification to all in the same group
+            broadcastMessage(
+                    command.getGameID(),
+                    new NotificationMessage(
+                            ServerMessageType.NOTIFICATION,
+                            String.format("%s has joined the game!", sessionUsername)
+                    ),
+                    session
+            );
+
+            // 3. create and send a server message load game response
+            sendMessage(
+                    session,
+                    new LoadGameMessage(
+                            ServerMessageType.LOAD_GAME,
+                            wsService.getGameDataFromID(command.getGameID()).game()
+                    )
+            );
+        } catch (BadRequestException e) {
+            sendMessage(
+                    session,
+                    new ErrorMessage(
+                            ServerMessageType.ERROR,
+                            e.getMessage()
+                    )
+            );
+        }
     }
 
     private
