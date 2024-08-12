@@ -13,6 +13,7 @@ import ui.exception.UIException;
 import ui.exception.UnknownCommandException;
 import ui.game.GameHandler;
 import ui.game.GameplayHandler;
+import ui.game.ObserveGameHandler;
 import websocket.WebSocketFacade;
 import websocket.commands.ConnectCommand;
 import websocket.commands.UserGameCommand;
@@ -66,9 +67,9 @@ class PostLoginUI {
                     case CREATE_GAME -> handler.handleCreateGame(in.next());
                     case LIST_GAMES -> handler.handleListGames();
                     case JOIN_GAME -> handler.handleJoinGame(in.next(), in.next());
-                    case OBSERVE_GAME -> handler.handleObserveGame(in.next());
+                    case OBSERVE_GAME -> handler.handleObserveGame(in.next(), in.next());
                 }
-            } catch (UnknownCommandException e) {
+            } catch (UnknownCommandException | UIException | IOException e) {
                 in.nextLine();
                 System.out.println(e.getMessage());
             }
@@ -87,7 +88,7 @@ class PostLoginUI {
                                \tcreate <NAME> - create a new game
                                \tlist - list all games
                                \tjoin <GAME NUMBER> [WHITE|BLACK] - join a game as the WHITE or BLACK team
-                               \tobserve <ID> observe a game
+                               \tobserve <GAME NUMBER> [WHITE|BLACK] - observe a game from the WHITE or BLACK team perspective
                                \tlogout - return to start screen
                                \thelp - display list of possible commands
                                """);
@@ -155,15 +156,7 @@ class PostLoginUI {
 
                 GameHandler handler =
                         new GameplayHandler(ChessGame.TeamColor.valueOf(playerColor), gameData);
-                WebSocketFacade webSocketFacade = new WebSocketFacade("ws://localhost:8080/ws", handler);
-                webSocketFacade.connect(new ConnectCommand(
-                        UserGameCommand.CommandType.CONNECT,
-                        SessionHandler.authToken,
-                        gameData.gameID()
-                ));
-
-                handler.setWebSocketFacade(webSocketFacade);
-                handler.start();
+                connectToGame(handler, gameData.gameID(), "ws://localhost:8080/ws");
 
             } catch (ForbiddenException e) {
                 System.out.println("Failed to join game: the requested player color is taken.");
@@ -177,15 +170,32 @@ class PostLoginUI {
         }
 
         private
-        void handleObserveGame(String gameIndexInList) {
+        void handleObserveGame(String indexInList, String teamColor) throws UIException, IOException {
             try {
-                var serverFacade = new ServerFacade();
-                serverFacade.observeGame();
+                int index = Integer.parseInt(indexInList);
+                GameData gameData = SessionHandler.getGameDataFromIndex(index);
+
+                GameHandler handler = new ObserveGameHandler(ChessGame.TeamColor.valueOf(teamColor), gameData);
+                connectToGame(handler, gameData.gameID(), "ws://localhost:8080/ws");
+
             } catch (NumberFormatException e) {
                 System.out.println(
-                        "Failed to join game: your first parameter is not a number.\nSyntax: join <GAME NUMBER> " +
+                        "Failed to join game: your first parameter is not a number.\nSyntax: observe <GAME NUMBER> " +
                         "[WHITE|BLACK]");
             }
+        }
+
+        private
+        void connectToGame(GameHandler handler, int gameID, String url) throws UIException, IOException {
+            WebSocketFacade webSocketFacade = new WebSocketFacade(url, handler);
+            webSocketFacade.connect(new ConnectCommand(
+                    UserGameCommand.CommandType.CONNECT,
+                    SessionHandler.authToken,
+                    gameID
+            ));
+
+            handler.setWebSocketFacade(webSocketFacade);
+            handler.start();
         }
     }
 

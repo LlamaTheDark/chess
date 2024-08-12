@@ -10,12 +10,17 @@ class UpdateGameInformationThread extends Thread {
     private final GameData                gameData;
     private final GameplayUI.BoardPrinter printer;
     private final ChessGame.TeamColor     teamColor;
+    private final boolean                 observing;
 
     public
-    UpdateGameInformationThread(ChessGame.TeamColor teamColor, GameData gameData, GameplayUI.BoardPrinter printer) {
+    UpdateGameInformationThread(ChessGame.TeamColor teamColor,
+                                GameData gameData,
+                                GameplayUI.BoardPrinter printer,
+                                boolean observing) {
         this.gameData = gameData;
         this.printer = printer;
         this.teamColor = teamColor;
+        this.observing = observing;
     }
 
     public
@@ -24,7 +29,8 @@ class UpdateGameInformationThread extends Thread {
         printer.printChessGameInformation(
                 gameData.gameName(),
                 teamColor,
-                gameData.game().getTeamTurn()
+                gameData.game().getTeamTurn(),
+                observing
         );
         System.out.print(EscapeSequences.LOAD_CURSOR_LOCATION);
     }

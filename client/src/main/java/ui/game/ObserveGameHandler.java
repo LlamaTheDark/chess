@@ -1,9 +1,7 @@
 package ui.game;
 
 import chess.ChessGame;
-import chess.ChessMove;
 import chess.ChessPosition;
-import chess.InvalidMoveException;
 import model.GameData;
 import server.SessionHandler;
 import ui.EscapeSequences;
@@ -11,8 +9,6 @@ import ui.exception.UnknownCommandException;
 import ui.game.thread.*;
 import websocket.WebSocketFacade;
 import websocket.commands.LeaveGameCommand;
-import websocket.commands.MakeMoveCommand;
-import websocket.commands.ResignGameCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
@@ -21,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public
-class GameplayHandler extends Thread implements GameHandler {
+class ObserveGameHandler extends Thread implements GameHandler {
     private final GameplayUI gameplayUI;
     private       GameData   gameData;
 
@@ -37,7 +33,7 @@ class GameplayHandler extends Thread implements GameHandler {
     private static final String GAMEPLAY_PROMPT = " [GAME COMMAND] >>> ";
 
     public
-    GameplayHandler(ChessGame.TeamColor teamColor, GameData gameData) {
+    ObserveGameHandler(ChessGame.TeamColor teamColor, GameData gameData) {
         this.gameData = gameData;
         this.teamColor = teamColor;
         gameplayUI = new GameplayUI(teamColor, gameData.gameName());
@@ -49,12 +45,10 @@ class GameplayHandler extends Thread implements GameHandler {
         this.wsFacade = wsFacade;
     }
 
-    enum GameplayCommand {
+    enum ObserveGameCommand {
         HELP,
         REDRAW_CHESS_BOARD,
         LEAVE_GAME,
-        MAKE_MOVE,
-        RESIGN_GAME,
         HIGHLIGHT_LEGAL_MOVES,
         NONE,
     }
@@ -65,8 +59,8 @@ class GameplayHandler extends Thread implements GameHandler {
         assert wsFacade != null;
 
         Scanner in = new Scanner(System.in);
-        GameplayCommandHandler handler = new GameplayCommandHandler();
-        GameplayCommand command = GameplayCommand.NONE;
+        ObserveGameCommandHandler handler = new ObserveGameCommandHandler();
+        ObserveGameCommand command = ObserveGameCommand.NONE;
 
         do {
             try {
@@ -75,18 +69,16 @@ class GameplayHandler extends Thread implements GameHandler {
                 System.out.print(EscapeSequences.SAVE_CURSOR_LOCATION);
 
                 command = switch (in.next().toLowerCase()) {
-                    case "help", "h" -> GameplayCommand.HELP;
-                    case "redraw", "r" -> GameplayCommand.REDRAW_CHESS_BOARD;
-                    case "leave", "l" -> GameplayCommand.LEAVE_GAME;
-                    case "move", "m" -> GameplayCommand.MAKE_MOVE;
-                    case "resign", "rs" -> GameplayCommand.RESIGN_GAME;
-                    case "moves", "pmoves", "hlm" -> GameplayCommand.HIGHLIGHT_LEGAL_MOVES;
+                    case "help", "h" -> ObserveGameCommand.HELP;
+                    case "redraw", "r" -> ObserveGameCommand.REDRAW_CHESS_BOARD;
+                    case "leave", "l" -> ObserveGameCommand.LEAVE_GAME;
+                    case "moves", "pmoves", "hlm" -> ObserveGameCommand.HIGHLIGHT_LEGAL_MOVES;
                     default -> throw new UnknownCommandException();
                 };
 
                 System.out.print(EscapeSequences.LOAD_CURSOR_LOCATION);
 
-                if (gameData.game().isOver() && command != GameplayCommand.LEAVE_GAME) {
+                if (gameData.game().isOver() && command != ObserveGameCommand.LEAVE_GAME) {
 
                     threadManager.execute(new CommandResponseThread(
                             "This game is over. Type 'leave' to leave the game.",
@@ -99,8 +91,6 @@ class GameplayHandler extends Thread implements GameHandler {
                         case HELP -> handler.handleHelp();
                         case REDRAW_CHESS_BOARD -> handler.handleRedrawChessBoard();
                         case LEAVE_GAME -> handler.handleLeaveGame();
-                        case MAKE_MOVE -> handler.handleMakeMove(in.next(), in.next());
-                        case RESIGN_GAME -> handler.handleResignGame();
                         case HIGHLIGHT_LEGAL_MOVES -> handler.handleHighlightLegalMoves(in.next());
                     }
                 }
@@ -112,16 +102,8 @@ class GameplayHandler extends Thread implements GameHandler {
                         EscapeSequences.SET_TEXT_ITALIC
                 );
                 // TODO: change the message for the NUmberFOrmatException
-            } catch (InvalidMoveException e) {
-                in.nextLine();
-                gameplayUI.getPrinter().printCommandResponse(
-                        e.getMessage(),
-                        EscapeSequences.SET_TEXT_COLOR_YELLOW,
-                        EscapeSequences.SET_TEXT_ITALIC
-                );
             }
-        } while (command != GameplayCommand.LEAVE_GAME);
-
+        } while (command != ObserveGameCommand.LEAVE_GAME);
 
         System.out.print(EscapeSequences.ERASE_SCREEN);
     }
@@ -137,7 +119,7 @@ class GameplayHandler extends Thread implements GameHandler {
                 game
         );
         threadManager.execute(new UpdateGameThread(this.gameplayUI, game.getBoard()));
-        threadManager.execute(new UpdateGameInformationThread(teamColor, gameData, gameplayUI.getPrinter(), false));
+        threadManager.execute(new UpdateGameInformationThread(teamColor, gameData, gameplayUI.getPrinter(), true));
     }
 
     @Override
@@ -158,7 +140,7 @@ class GameplayHandler extends Thread implements GameHandler {
     }
 
     private
-    class GameplayCommandHandler {
+    class ObserveGameCommandHandler {
 
         private
         ChessPosition parsePosition(String position) throws UnknownCommandException {
@@ -190,8 +172,6 @@ class GameplayHandler extends Thread implements GameHandler {
                                                           help/h - display a list of possible commands.
                                                          redraw/r - redraw the board.
                                                          leave/l - leave the game.
-                                                         move/m <STARTING POSITION> <ENDING POSITION> - move a piece from the first to the second position.
-                                                         resign/rs - forfeit the game.
                                                          moves/hlm <POSITION> - highlight the legal moves for a given piece on the board.
                                                                                                                 \s
                                                          note: positions should be given in the form <letter>+<number>
@@ -209,40 +189,6 @@ class GameplayHandler extends Thread implements GameHandler {
                     SessionHandler.authToken,
                     gameData.gameID(),
                     teamColor
-            ));
-        }
-
-        void handleMakeMove(String startPosition, String endPosition)
-        throws UnknownCommandException, InvalidMoveException, IOException {
-
-            var parsedStartPosition = parsePosition(startPosition);
-            if (gameData.game().getTeamTurn() != teamColor) {
-                throw new InvalidMoveException("It's not your turn!");
-            }
-            var pieceAtStart = gameData.game().getBoard().getPiece(parsedStartPosition);
-            if (pieceAtStart == null) {
-                throw new InvalidMoveException("There is no piece at that location!");
-            }
-            if (pieceAtStart.getTeamColor() != teamColor) {
-                throw new InvalidMoveException("That piece doesn't belong to you!");
-            }
-
-            var parsedEndPosition = parsePosition(endPosition);
-
-            ChessMove move = new ChessMove(parsedStartPosition, parsedEndPosition);
-
-            wsFacade.makeMove(new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, SessionHandler.authToken,
-                                                  gameData.gameID(), move
-            ));
-
-            threadManager.execute(new UpdateGameInformationThread(teamColor, gameData, gameplayUI.getPrinter(), false));
-        }
-
-        void handleResignGame() {
-            wsFacade.resignGame(new ResignGameCommand(
-                    UserGameCommand.CommandType.RESIGN,
-                    SessionHandler.authToken,
-                    gameData.gameID()
             ));
         }
 

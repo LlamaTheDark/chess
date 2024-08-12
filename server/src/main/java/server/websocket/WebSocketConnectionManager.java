@@ -32,6 +32,12 @@ class WebSocketConnectionManager {
         for (Integer gameID : sessions.keySet()) {
             removeSessionFromGame(gameID, session);
         }
+        usernames.remove(session);
+    }
+
+    public
+    void removeGame(int gameID) {
+        sessions.remove(gameID);
     }
 
     String getUsername(Session session) {
@@ -39,4 +45,5 @@ class WebSocketConnectionManager {
     }
 
     Set<Session> getSessionsForGame(int gameID) {return sessions.get(gameID);}
+
 }

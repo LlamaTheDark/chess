@@ -158,7 +158,8 @@ class GameplayUI {
         public synchronized
         void printChessGameInformation(String gameName,
                                        ChessGame.TeamColor teamColor,
-                                       ChessGame.TeamColor turnColor) {
+                                       ChessGame.TeamColor turnColor,
+                                       boolean observing) {
 
             for (int i = 0; i < 2; i++) {
                 System.out.print(EscapeSequences.moveCursorToLocation(
@@ -172,11 +173,13 @@ class GameplayUI {
                     BoardConstants.CHESS_INFORMATION_ROW,
                     BoardConstants.CHESS_INFORMATION_COL
             ));
-            System.out.printf(
-                    "Game Name: %s | Your Color: %s",
-                    gameName,
-                    teamColor
-            );
+            System.out.printf("Game Name: %s", gameName);
+            if (!observing) {
+                System.out.printf(" | Your Color: %s", teamColor);
+            } else {
+                System.out.print(" | YOU ARE OBSERVING");
+            }
+
             System.out.println();
             for (int i = 0; i < BoardConstants.CHESS_INFORMATION_COL - 1; i++) {
                 System.out.print(" ");

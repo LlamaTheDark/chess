@@ -134,9 +134,5 @@ class ServerFacade {
     JoinGameResponse joinGame(JoinGameRequest request) throws UIException {
         return (JoinGameResponse) makeRequest("/game", "PUT", Serializer.serialize(request), JoinGameResponse.class);
     }
-
-    public
-    void observeGame() {
-    }
 }
 

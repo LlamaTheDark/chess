@@ -28,7 +28,7 @@ class WebSocketHandler {
     private final WebSocketConnectionManager wsSessionManager = new WebSocketConnectionManager();
     private final WebSocketService           wsService        = new WebSocketService();
 
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
 
     public
     WebSocketConnectionManager getWsSessionManager() {
@@ -45,6 +45,7 @@ class WebSocketHandler {
     public
     void onClose(Session session, int i, String s) {
         System.out.println("Web socket closed! Session was at: " + session.getRemoteAddress());
+        wsSessionManager.removeSession(session);
     }
 
     @OnWebSocketError
@@ -175,17 +176,7 @@ class WebSocketHandler {
                                 "Game is over! This game will be closed in 1 minute."
                         )
                 );
-                scheduler.schedule(() -> {
-                    try {
-                        wsService.closeGame(gameData.gameID());
-                    } catch (DataAccessException e) {
-                        System.err.printf(
-                                "Failed to close game with id %d. Message: %s",
-                                gameData.gameID(),
-                                e.getMessage()
-                        );
-                    }
-                }, 1, TimeUnit.MINUTES);
+                activateCloseGameCountdown(gameData, 1);
             }
 
             wsService.updateGame(gameData);
@@ -241,7 +232,32 @@ class WebSocketHandler {
     }
 
     private
-    void resignGame(ResignGameCommand command, Session session) {}
+    void resignGame(ResignGameCommand command, Session session) throws DataAccessException {
+        GameData gameData = wsService.getGameDataFromID(command.getGameID());
+        gameData.game().markAsOver();
+
+        broadcastMessage(
+                gameData.gameID(),
+                new LoadGameMessage(
+                        ServerMessageType.LOAD_GAME,
+                        gameData.game()
+                )
+        );
+
+        broadcastMessage(
+                gameData.gameID(),
+                new NotificationMessage(
+                        ServerMessageType.NOTIFICATION,
+                        String.format(
+                                "%s has resigned. This game is over and will be closed in 1 minute.",
+                                wsSessionManager.getUsername(session)
+                        )
+                )
+        );
+
+        activateCloseGameCountdown(gameData, 1);
+
+    }
 
     private
     void sendMessage(Session session, ServerMessage message) {
@@ -257,5 +273,21 @@ class WebSocketHandler {
         for (Session s : wsSessionManager.getSessionsForGame(gameID)) {
             sendMessage(s, message);
         }
+    }
+
+    private
+    void activateCloseGameCountdown(GameData gameData, int minutes) {
+        scheduler.schedule(() -> {
+            try {
+                wsSessionManager.removeGame(gameData.gameID());
+                wsService.closeGame(gameData.gameID());
+            } catch (DataAccessException e) {
+                System.err.printf(
+                        "Failed to close game with id %d. Message: %s",
+                        gameData.gameID(),
+                        e.getMessage()
+                );
+            }
+        }, minutes, TimeUnit.MINUTES);
     }
 }
