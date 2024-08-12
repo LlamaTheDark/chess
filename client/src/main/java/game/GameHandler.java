@@ -1,6 +1,10 @@
 package game;
 
 import chess.ChessGame;
+import game.thread.UpdateGameInformationThread;
+import game.thread.UpdateGameThread;
+import model.GameData;
+import ui.GameplayUI;
 import websocket.WebSocketFacade;
 
 import java.util.concurrent.ExecutorService;
@@ -31,5 +35,24 @@ interface GameHandler {
                 Thread.currentThread().interrupt();
             }
         }
+    }
+
+    static
+    GameData updateGame(ChessGame game,
+                        GameData gameData,
+                        GameplayUI gameplayUI,
+                        ChessGame.TeamColor teamColor,
+                        ExecutorService threadManager) {
+        var newGameData = new GameData(
+                gameData.gameID(),
+                gameData.whiteUsername(),
+                gameData.blackUsername(),
+                gameData.gameName(),
+                game
+        );
+        threadManager.execute(new UpdateGameThread(gameplayUI, game.getBoard()));
+        threadManager.execute(new UpdateGameInformationThread(teamColor, newGameData, gameplayUI.getPrinter(), false));
+
+        return newGameData;
     }
 }

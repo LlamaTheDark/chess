@@ -2,7 +2,9 @@ package game;
 
 import chess.ChessGame;
 import game.command.GameplayCommandHandler;
-import game.thread.*;
+import game.thread.CommandResponseThread;
+import game.thread.NotificationThread;
+import game.thread.PrepareGameplayThread;
 import model.GameData;
 import ui.EscapeSequences;
 import ui.GameplayUI;
@@ -112,15 +114,7 @@ class ObserveGameHandler extends Thread implements GameHandler {
     @Override
     public
     void updateGame(ChessGame game) {
-        this.gameData = new GameData(
-                gameData.gameID(),
-                gameData.whiteUsername(),
-                gameData.blackUsername(),
-                gameData.gameName(),
-                game
-        );
-        threadManager.execute(new UpdateGameThread(this.gameplayUI, game.getBoard()));
-        threadManager.execute(new UpdateGameInformationThread(teamColor, gameData, gameplayUI.getPrinter(), true));
+        this.gameData = GameHandler.updateGame(game, gameData, gameplayUI, teamColor, threadManager);
     }
 
     @Override
