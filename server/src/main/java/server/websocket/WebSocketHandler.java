@@ -22,7 +22,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
@@ -336,21 +335,5 @@ class WebSocketHandler {
     private
     void broadcastMessage(int gameID, ServerMessage message) {
         broadcastMessage(gameID, message, null);
-    }
-
-    private
-    void activateCloseGameCountdown(GameData gameData, int minutes) {
-        scheduler.schedule(() -> {
-            try {
-                wsSessionManager.removeGame(gameData.gameID());
-                wsService.closeGame(gameData.gameID());
-            } catch (DataAccessException e) {
-                System.err.printf(
-                        "Failed to close game with id %d. Message: %s",
-                        gameData.gameID(),
-                        e.getMessage()
-                );
-            }
-        }, minutes, TimeUnit.MINUTES);
     }
 }

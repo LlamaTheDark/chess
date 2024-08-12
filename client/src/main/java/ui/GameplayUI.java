@@ -198,7 +198,6 @@ class GameplayUI {
             recentNotificationTimes.add(LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss a")));
             if (message.length() > longestNotificationLength) {longestNotificationLength = message.length();}
             if (recentNotifications.size() > BoardConstants.MAX_NOTIFICATIONS) {
-                // TODO: turn this and your specific screen coords into static final variables
                 recentNotifications.removeFirst();
                 recentNotificationTimes.removeFirst();
             }

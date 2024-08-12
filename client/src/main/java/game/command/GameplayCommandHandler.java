@@ -68,27 +68,31 @@ class GameplayCommandHandler {
     public
     void handleHelp(boolean observing) {
         if (!observing) {
-            gameplayUI.getPrinter().printCommandResponse("""
-                                                          help/h - display a list of possible commands.
-                                                         redraw/r - redraw the board.
-                                                         leave/l - leave the game.
-                                                         move/m <STARTING POSITION> <ENDING POSITION> - move a piece from the first to the second position.
-                                                         resign/rs - forfeit the game.
-                                                         moves/hlm <POSITION> - highlight the legal moves for a given piece on the board.
-                                                                                                                \s
-                                                         note: positions should be given in the form <letter>+<number>
-                                                               e.g. 'a1', 'e6', etc.
-                                                         \s""");
+            gameplayUI.getPrinter().printCommandResponse(
+                    """
+                     help/h - display a list of possible commands.
+                    redraw/r - redraw the board.
+                    leave/l - leave the game.
+                    move/m <STARTING POSITION> <ENDING POSITION> - move a piece from the first to the second position.
+                    resign/rs - forfeit the game.
+                    moves/hlm <POSITION> - highlight the legal moves for a given piece on the board.
+                                                                           \s
+                    note: positions should be given in the form <letter>+<number>
+                          e.g. 'a1', 'e6', etc.
+                    \s"""
+            );
         } else {
-            gameplayUI.getPrinter().printCommandResponse("""
-                                                          help/h - display a list of possible commands.
-                                                         redraw/r - redraw the board.
-                                                         leave/l - leave the game.
-                                                         moves/hlm <POSITION> - highlight the legal moves for a given piece on the board.
-                                                                                                                \s
-                                                         note: positions should be given in the form <letter>+<number>
-                                                               e.g. 'a1', 'e6', etc.
-                                                         \s""");
+            gameplayUI.getPrinter().printCommandResponse(
+                    """
+                     help/h - display a list of possible commands.
+                    redraw/r - redraw the board.
+                    leave/l - leave the game.
+                    moves/hlm <POSITION> - highlight the legal moves for a given piece on the board.
+                                                                           \s
+                    note: positions should be given in the form <letter>+<number>
+                          e.g. 'a1', 'e6', etc.
+                    \s"""
+            );
         }
     }
 
@@ -111,17 +115,6 @@ class GameplayCommandHandler {
     throws UnknownCommandException, InvalidMoveException, IOException {
 
         var parsedStartPosition = parsePosition(startPosition);
-        //        if (gameData.game().getTeamTurn() != teamColor) {
-        //            throw new InvalidMoveException("It's not your turn!");
-        //        }
-        //        var pieceAtStart = gameData.game().getBoard().getPiece(parsedStartPosition);
-        //        if (pieceAtStart == null) {
-        //            throw new InvalidMoveException("There is no piece at that location!");
-        //        }
-        //        if (pieceAtStart.getTeamColor() != teamColor) {
-        //            throw new InvalidMoveException("That piece doesn't belong to you!");
-        //        }
-
         var parsedEndPosition = parsePosition(endPosition);
 
         ChessMove move = new ChessMove(parsedStartPosition, parsedEndPosition);

@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO: handle request validation &c
 public
 class WebSocketConnectionManager {
     /**

@@ -48,9 +48,6 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
             this.session.addMessageHandler(this);
         } catch (DeploymentException | IOException | URISyntaxException e) {
             throw new UIException(e.getMessage());
-            /*
-            TODO: this is a terrible exception to throw, don't leave it like this.
-             */
         }
     }
 
@@ -124,7 +121,7 @@ class WebSocketFacade extends Endpoint implements MessageHandler.Whole<String> {
                  InstantiationException |
                  IllegalAccessException |
                  InterruptedException e) {
-            throw new RuntimeException(e); // TODO: improve this
+            throw new RuntimeException(e);
         }
         /*
         1. parse message
