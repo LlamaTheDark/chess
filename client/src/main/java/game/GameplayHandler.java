@@ -1,36 +1,16 @@
 package game;
 
 import chess.ChessGame;
-import game.thread.PrepareGameplayThread;
 import model.GameData;
-import ui.GameplayUI;
 import websocket.WebSocketFacade;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public
-class GameplayHandler extends Thread implements GameHandler {
-    private final GameplayUI gameplayUI;
-    private       GameData   gameData;
-
-    /**
-     * Which team is this client playing or observing for? WHITE or BLACK.
-     * <p>
-     */
-    private final ChessGame.TeamColor teamColor;
-    private       WebSocketFacade     wsFacade;
-
-    private final ExecutorService threadManager = Executors.newSingleThreadExecutor();
-
+class GameplayHandler extends GameHandler {
     private static final String GAMEPLAY_PROMPT = " [GAME COMMAND] >>> ";
 
     public
     GameplayHandler(ChessGame.TeamColor teamColor, GameData gameData) {
-        this.gameData = gameData;
-        this.teamColor = teamColor;
-        gameplayUI = new GameplayUI(teamColor, gameData.gameName());
-        threadManager.execute(new PrepareGameplayThread(gameData, teamColor, gameplayUI.getPrinter()));
+        super(teamColor, gameData, false);
     }
 
     public

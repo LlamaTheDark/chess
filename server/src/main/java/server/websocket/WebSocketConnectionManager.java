@@ -34,11 +34,6 @@ class WebSocketConnectionManager {
         usernames.remove(session);
     }
 
-    public
-    void removeGame(int gameID) {
-        sessions.remove(gameID);
-    }
-
     String getUsername(Session session) {
         return usernames.get(session);
     }

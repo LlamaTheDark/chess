@@ -3,10 +3,7 @@ package game;
 import chess.ChessGame;
 import chess.InvalidMoveException;
 import game.command.GameplayCommandHandler;
-import game.thread.CommandResponseThread;
-import game.thread.NotificationThread;
-import game.thread.UpdateGameInformationThread;
-import game.thread.UpdateGameThread;
+import game.thread.*;
 import model.GameData;
 import ui.EscapeSequences;
 import ui.GameplayUI;
@@ -17,10 +14,34 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public
-interface GameHandler {
+abstract
+class GameHandler {
+    final GameplayUI gameplayUI;
+    GameData gameData;
+
+    /**
+     * Which team is this client playing or observing for? WHITE or BLACK.
+     * <p>
+     */
+    final ChessGame.TeamColor teamColor;
+    WebSocketFacade wsFacade;
+    final boolean observing;
+
+    final ExecutorService threadManager = Executors.newSingleThreadExecutor();
+
+    protected
+    GameHandler(ChessGame.TeamColor teamColor, GameData gameData, boolean observing) {
+        this.gameData = gameData;
+        this.teamColor = teamColor;
+        this.observing = observing;
+        gameplayUI = new GameplayUI(teamColor, gameData.gameName());
+        threadManager.execute(new PrepareGameplayThread(gameData, teamColor, gameplayUI.getPrinter()));
+    }
+
     enum GameplayCommand {
         HELP,
         REDRAW_CHESS_BOARD,
@@ -31,12 +52,17 @@ interface GameHandler {
         NONE,
     }
 
+
+    public abstract
     void start();
 
+    public abstract
     void setWebSocketFacade(WebSocketFacade wsFacade);
 
+    public abstract
     void updateGame(ChessGame game) throws InterruptedException;
 
+    public abstract
     void printMessage(String message, boolean error);
 
     static
