@@ -93,14 +93,15 @@ class GameplayHandler extends Thread implements GameHandler {
 
                 } else {
                     switch (command) {
-                        case HELP -> handler.handleHelp();
-                        case REDRAW_CHESS_BOARD -> handler.handleRedrawChessBoard();
-                        case LEAVE_GAME -> handler.handleLeaveGame();
-                        case MAKE_MOVE -> handler.handleMakeMove(in.next(), in.next());
-                        case RESIGN_GAME -> handler.handleResignGame();
-                        case HIGHLIGHT_LEGAL_MOVES -> handler.handleHighlightLegalMoves(in.next());
+                        case HELP -> handler.handleHelp(false);
+                        case REDRAW_CHESS_BOARD -> handler.handleRedrawChessBoard(gameData);
+                        case LEAVE_GAME -> handler.handleLeaveGame(gameData);
+                        case MAKE_MOVE -> handler.handleMakeMove(in.next(), in.next(), gameData);
+                        case RESIGN_GAME -> handler.handleResignGame(gameData);
+                        case HIGHLIGHT_LEGAL_MOVES -> handler.handleHighlightLegalMoves(in.next(), gameData);
                     }
                 }
+
             } catch (UnknownCommandException | IOException | NumberFormatException e) {
                 in.nextLine();
                 gameplayUI.getPrinter().printCommandResponse(

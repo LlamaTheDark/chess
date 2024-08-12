@@ -173,7 +173,7 @@ class WebSocketHandler {
                         gameData.gameID(),
                         new NotificationMessage(
                                 ServerMessageType.NOTIFICATION,
-                                "Game is over! This game will be closed in 1 minute."
+                                "This game is over and will be closed in 1 minute."
                         )
                 );
                 activateCloseGameCountdown(gameData, 1);
@@ -249,7 +249,7 @@ class WebSocketHandler {
                 new NotificationMessage(
                         ServerMessageType.NOTIFICATION,
                         String.format(
-                                "%s has resigned. This game is over and will be closed in 1 minute.",
+                                "%s has resigned. This game will be closed in 1 minute.",
                                 wsSessionManager.getUsername(session)
                         )
                 )

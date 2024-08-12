@@ -78,7 +78,6 @@ class ObserveGameHandler extends Thread implements GameHandler {
                 System.out.print(EscapeSequences.LOAD_CURSOR_LOCATION);
 
                 if (gameData.game().isOver() && command != ObserveGameCommand.LEAVE_GAME) {
-
                     threadManager.execute(new CommandResponseThread(
                             "This game is over. Type 'leave' to leave the game.",
                             gameplayUI,
@@ -87,10 +86,10 @@ class ObserveGameHandler extends Thread implements GameHandler {
 
                 } else {
                     switch (command) {
-                        case HELP -> handler.handleHelp();
-                        case REDRAW_CHESS_BOARD -> handler.handleRedrawChessBoard();
-                        case LEAVE_GAME -> handler.handleLeaveGame();
-                        case HIGHLIGHT_LEGAL_MOVES -> handler.handleHighlightLegalMoves(in.next());
+                        case HELP -> handler.handleHelp(true);
+                        case REDRAW_CHESS_BOARD -> handler.handleRedrawChessBoard(gameData);
+                        case LEAVE_GAME -> handler.handleLeaveGame(gameData);
+                        case HIGHLIGHT_LEGAL_MOVES -> handler.handleHighlightLegalMoves(in.next(), gameData);
                     }
                 }
             } catch (UnknownCommandException | IOException | NumberFormatException e) {

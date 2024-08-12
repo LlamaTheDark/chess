@@ -23,6 +23,11 @@ import java.util.concurrent.ExecutorService;
 
 public
 class GameplayCommandHandler {
+    GameplayUI          gameplayUI;
+    ExecutorService     threadManager;
+    WebSocketFacade     wsFacade;
+    ChessGame.TeamColor teamColor;
+
     public
     GameplayCommandHandler(GameplayUI gameplayUI,
                            ExecutorService threadManager,
@@ -32,15 +37,8 @@ class GameplayCommandHandler {
         this.gameplayUI = gameplayUI;
         this.threadManager = threadManager;
         this.wsFacade = wsFacade;
-        this.gameData = gameData;
         this.teamColor = teamColor;
     }
-
-    GameplayUI          gameplayUI;
-    ExecutorService     threadManager;
-    WebSocketFacade     wsFacade;
-    GameData            gameData;
-    ChessGame.TeamColor teamColor;
 
     private
     ChessPosition parsePosition(String position) throws UnknownCommandException {
@@ -68,27 +66,39 @@ class GameplayCommandHandler {
     }
 
     public
-    void handleHelp() {
-        gameplayUI.getPrinter().printCommandResponse("""
-                                                      help/h - display a list of possible commands.
-                                                     redraw/r - redraw the board.
-                                                     leave/l - leave the game.
-                                                     move/m <STARTING POSITION> <ENDING POSITION> - move a piece from the first to the second position.
-                                                     resign/rs - forfeit the game.
-                                                     moves/hlm <POSITION> - highlight the legal moves for a given piece on the board.
-                                                                                                            \s
-                                                     note: positions should be given in the form <letter>+<number>
-                                                           e.g. 'a1', 'e6', etc.
-                                                     \s""");
+    void handleHelp(boolean observing) {
+        if (!observing) {
+            gameplayUI.getPrinter().printCommandResponse("""
+                                                          help/h - display a list of possible commands.
+                                                         redraw/r - redraw the board.
+                                                         leave/l - leave the game.
+                                                         move/m <STARTING POSITION> <ENDING POSITION> - move a piece from the first to the second position.
+                                                         resign/rs - forfeit the game.
+                                                         moves/hlm <POSITION> - highlight the legal moves for a given piece on the board.
+                                                                                                                \s
+                                                         note: positions should be given in the form <letter>+<number>
+                                                               e.g. 'a1', 'e6', etc.
+                                                         \s""");
+        } else {
+            gameplayUI.getPrinter().printCommandResponse("""
+                                                          help/h - display a list of possible commands.
+                                                         redraw/r - redraw the board.
+                                                         leave/l - leave the game.
+                                                         moves/hlm <POSITION> - highlight the legal moves for a given piece on the board.
+                                                                                                                \s
+                                                         note: positions should be given in the form <letter>+<number>
+                                                               e.g. 'a1', 'e6', etc.
+                                                         \s""");
+        }
     }
 
     public
-    void handleRedrawChessBoard() {
+    void handleRedrawChessBoard(GameData gameData) {
         threadManager.execute(new UpdateGameThread(gameplayUI, gameData.game().getBoard()));
     }
 
     public
-    void handleLeaveGame() throws IOException {
+    void handleLeaveGame(GameData gameData) throws IOException {
         wsFacade.leaveGame(new LeaveGameCommand(
                 UserGameCommand.CommandType.LEAVE,
                 SessionHandler.authToken,
@@ -98,7 +108,7 @@ class GameplayCommandHandler {
     }
 
     public
-    void handleMakeMove(String startPosition, String endPosition)
+    void handleMakeMove(String startPosition, String endPosition, GameData gameData)
     throws UnknownCommandException, InvalidMoveException, IOException {
 
         var parsedStartPosition = parsePosition(startPosition);
@@ -125,7 +135,7 @@ class GameplayCommandHandler {
     }
 
     public
-    void handleResignGame() throws IOException {
+    void handleResignGame(GameData gameData) throws IOException {
         wsFacade.resignGame(new ResignGameCommand(
                 UserGameCommand.CommandType.RESIGN,
                 SessionHandler.authToken,
@@ -134,7 +144,7 @@ class GameplayCommandHandler {
     }
 
     public
-    void handleHighlightLegalMoves(String position) throws UnknownCommandException {
+    void handleHighlightLegalMoves(String position, GameData gameData) throws UnknownCommandException {
         ChessPosition parsedPosition = parsePosition(position);
         var pieceAtPosition = gameData.game().getBoard().getPiece(parsedPosition);
         if (pieceAtPosition == null) {
