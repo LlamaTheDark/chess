@@ -115,9 +115,7 @@ class WebSocketHandler {
         // 3. if valid, make the change on the board
         // 3. if not valid, send back an error message
         try {
-            wsService.makeMove(command.getMove(), gameData);
-            // load game
-            broadcastMessage(gameData.gameID(), new LoadGameMessage(ServerMessageType.LOAD_GAME, gameData.game()));
+            gameData.game().makeMove(command.getMove());
 
             // notification
             broadcastMessage(
@@ -131,8 +129,41 @@ class WebSocketHandler {
                             )
                     )
             );
+            if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
+                gameData.game().markAsOver();
+                broadcastMessage(
+                        gameData.gameID(),
+                        new NotificationMessage(
+                                ServerMessageType.NOTIFICATION,
+                                String.format("Team %s is in checkmate!", gameData.game().getTeamTurn())
+                        )
+                );
+            } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
+                gameData.game().markAsOver();
+                broadcastMessage(
+                        gameData.gameID(),
+                        new NotificationMessage(
+                                ServerMessageType.NOTIFICATION,
+                                String.format("Team %s is in check!", gameData.game().getTeamTurn())
+                        )
+                );
+            } else if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
+                gameData.game().markAsOver();
+                broadcastMessage(
+                        gameData.gameID(),
+                        new NotificationMessage(
+                                ServerMessageType.NOTIFICATION,
+                                "Game is in stalemate!"
+                        )
+                );
+            }
+
+            wsService.updateGame(gameData);
+
+            // load game
+            broadcastMessage(gameData.gameID(), new LoadGameMessage(ServerMessageType.LOAD_GAME, gameData.game()));
         } catch (InvalidMoveException e) {
-            sendMessage(session, new ErrorMessage(ServerMessageType.ERROR, "Invalid move!"));
+            sendMessage(session, new ErrorMessage(ServerMessageType.ERROR, e.getMessage()));
         }
     }
 

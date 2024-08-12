@@ -128,12 +128,14 @@ class GameplayHandler extends Thread implements GameHandler {
     public
     void printMessage(String message, boolean error) {
         if (error) {
+            System.out.print(EscapeSequences.SAVE_CURSOR_LOCATION);
             gameplayUI.getPrinter()
                       .printCommandResponse(
                               message,
                               EscapeSequences.SET_TEXT_COLOR_RED,
                               EscapeSequences.SET_TEXT_ITALIC
                       );
+            System.out.print(EscapeSequences.LOAD_CURSOR_LOCATION);
         } else {
             threadManager.execute(new NotificationThread(message, this.gameplayUI));
         }
@@ -222,6 +224,13 @@ class GameplayHandler extends Thread implements GameHandler {
 
         void handleHighlightLegalMoves(String position) throws UnknownCommandException {
             ChessPosition parsedPosition = parsePosition(position);
+            if (gameData.game().getBoard().getPiece(parsedPosition) == null) {
+                threadManager.submit(new CommandResponseThread(
+                        "There is no piece at that location",
+                        gameplayUI,
+                        CommandResponseThread.MessageSeverity.WARNING
+                ));
+            }
             var task = threadManager.submit(new HighlightMovesThread(gameData.game().validMoves(parsedPosition),
                                                                      gameplayUI.getPrinter(), gameData.game().getBoard()
             ));

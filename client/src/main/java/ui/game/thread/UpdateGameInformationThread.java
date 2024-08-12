@@ -7,18 +7,15 @@ import ui.game.GameplayUI;
 
 public
 class UpdateGameInformationThread extends Thread {
-    private final GameData gameData;
+    private final GameData                gameData;
     private final GameplayUI.BoardPrinter printer;
-    private final ChessGame.TeamColor teamColor;
-    private final String opponentUsername;
+    private final ChessGame.TeamColor     teamColor;
 
     public
     UpdateGameInformationThread(ChessGame.TeamColor teamColor, GameData gameData, GameplayUI.BoardPrinter printer) {
         this.gameData = gameData;
         this.printer = printer;
         this.teamColor = teamColor;
-        this.opponentUsername =
-                teamColor == ChessGame.TeamColor.WHITE ? gameData.blackUsername() : gameData.whiteUsername();
     }
 
     public
@@ -27,8 +24,7 @@ class UpdateGameInformationThread extends Thread {
         printer.printChessGameInformation(
                 gameData.gameName(),
                 teamColor,
-                gameData.game().getTeamTurn(),
-                opponentUsername
+                gameData.game().getTeamTurn()
         );
         System.out.print(EscapeSequences.LOAD_CURSOR_LOCATION);
     }

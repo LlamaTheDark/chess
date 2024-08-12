@@ -158,8 +158,7 @@ class GameplayUI {
         public synchronized
         void printChessGameInformation(String gameName,
                                        ChessGame.TeamColor teamColor,
-                                       ChessGame.TeamColor turnColor,
-                                       String opponentUsername) {
+                                       ChessGame.TeamColor turnColor) {
 
             for (int i = 0; i < 2; i++) {
                 System.out.print(EscapeSequences.moveCursorToLocation(
@@ -169,16 +168,14 @@ class GameplayUI {
                 System.out.println(EscapeSequences.ERASE_LINE);
             }
 
-
             System.out.print(EscapeSequences.moveCursorToLocation(
                     BoardConstants.CHESS_INFORMATION_ROW,
                     BoardConstants.CHESS_INFORMATION_COL
             ));
             System.out.printf(
-                    "Game Name: %s | Your Color: %s | Opponent's Username: %s",
+                    "Game Name: %s | Your Color: %s",
                     gameName,
-                    teamColor,
-                    opponentUsername
+                    teamColor
             );
             System.out.println();
             for (int i = 0; i < BoardConstants.CHESS_INFORMATION_COL - 1; i++) {

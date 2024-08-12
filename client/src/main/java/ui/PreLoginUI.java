@@ -48,6 +48,7 @@ class PreLoginUI {
                     case HELP -> handler.handleHelp();
                     case LOGIN -> handler.handleLogin(in.next(), in.next());
                     case REGISTER -> handler.handleRegister(in.next(), in.next(), in.next());
+                    default -> {}
                 }
             } catch (UnknownCommandException e) {
                 in.nextLine();

@@ -1,6 +1,5 @@
 package service;
 
-import chess.ChessMove;
 import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import dataaccess.mysql.MySQLGameDAO;
@@ -19,12 +18,6 @@ class WebSocketService {
     public
     GameData getGameDataFromID(int gameID) throws DataAccessException {
         return new MySQLGameDAO().getGame(gameID);
-    }
-
-    public
-    void makeMove(ChessMove move, GameData gameData) throws DataAccessException, InvalidMoveException {
-        gameData.game().makeMove(move);
-        new MySQLGameDAO().updateGame(gameData);
     }
 
     public

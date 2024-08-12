@@ -64,8 +64,12 @@ class ChessGame {
 
         var piece = state.board.getPiece(move.getStartPosition());
 
-        if (!(piece.getTeamColor() == state.teamTurn)
-            || !validMoves.contains(move)) {throw new InvalidMoveException("It's not your turn!");}
+        if (piece.getTeamColor() != state.teamTurn) {
+            throw new InvalidMoveException("It's not your turn!");
+        }
+        if (!validMoves.contains(move)) {
+            throw new InvalidMoveException("That's not a valid move for that piece!");
+        }
 
         state.board.addPiece(
                 move.getEndPosition(),
@@ -139,6 +143,9 @@ class ChessGame {
     public
     boolean isGameOver() {return state.gameOver;}
 
+    public
+    void markAsOver() {state.gameOver = true;}
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -159,6 +166,7 @@ class ChessGame {
             this.board = board;
             this.board.resetBoard();
         }
+
 
         @Override
         public
